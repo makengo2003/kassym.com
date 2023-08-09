@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/video.css' %}">
+<link rel="stylesheet" href="{% static 'css/mediaVideo.css' %}">
+<link rel="stylesheet" href="{% static 'css/mediaBaspa.css' %}">
+
+<style>
+.reg_btns {
+    margin-right: 0;
+}
+</style>
+{% endblock %}
+
+
+{% block body %}
+<div class="container">
+	<div>
+		<a onclick="window.location.href = document.referrer">
+			<div class="back_to_main">
+				<img src="{% static 'imgs/back.png' %}" height="20" alt=""><span>Назад</span>
+			</div>
+		</a>
+
+		<div class="hello">
+			<h2 style="margin-top: 30px">{{ lesson.name }}</h2>
+		</div>
+
+		<div class="content_block">
+			<div class="video_block">
+				<video controls preload="auto">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}">
+				</video>
+
+				<div class="lessons_list_block">
+				<div class="course_name">
+					<b style="margin: 0">{{ course.name }}</b>
+				</div>
+
+				{% for lesson_i in lessons %}
+				<button onclick="window.location.href = '/lesson/?id={{ lesson_i.id }}'">
+					<div class="lesson_name{% if lesson_i.id == lesson.id %} active{% endif %}" style="{% if forloop.last %}border-bottom: none;{% endif %}">
+						<img src="{% static 'imgs/play.png' %}" alt="">
+						<span>{{ lesson_i.name }}</span>
+					</div>
+				</button>
+				{% endfor %}
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--<div class="container">-->
+<!--	<a onclick="window.location.href = document.referrer">-->
+<!--		<div class="back_to_main">-->
+<!--			<img src="{% static 'imgs/back.png' %}" height="20" alt=""><span>Назад</span>-->
+<!--		</div>-->
+<!--	</a>-->
+
+<!--	<div class="content_block">-->
+<!--		<div class="video_block">-->
+<!--			<div class="hello">-->
+<!--				<h3 style="margin: 0; padding: 0">{{ lesson.name }}</h3>-->
+<!--			</div>-->
+
+<!--			<video controls preload="auto">-->
+<!--				<source src="/api/course/video_stream/?id={{ lesson.id }}">-->
+<!--			</video>-->
+<!--		</div>-->
+
+<!--		<div class="lessons_list_block">-->
+<!--			<div class="course_name">-->
+<!--				<b>{{ course.name }}</b>-->
+<!--			</div>-->
+
+<!--			{% for lesson_i in lessons %}-->
+<!--			<button onclick="window.location.href = '/lesson/?id={{ lesson_i.id }}'">-->
+<!--				<div class="lesson_name {% if lesson_i.id == lesson.id %}active{% endif %}">-->
+<!--					<img src="{% static 'imgs/play.png' %}" alt="">-->
+<!--					<b>{{ lesson_i.name }}</b>-->
+<!--				</div>-->
+<!--			</button>-->
+<!--			{% endfor %}-->
+<!--		</div>-->
+<!--	</div>-->
+<!--</div>-->
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+<style>
+#search_form_in_main_page {
+	display: none;
+	margin: 0px 8px 15px 8px;
+}
+
+@media (max-width: 560px){
+	#search_form_in_main_page {
+        	display: flex;
+	}
+}
+</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container main main_body">
+		<div class="main_block">
+			<div class="slider_block">
+				<div class="sliderr" style="margin: auto 0px; ">
+					<div id="slider" style="display: flex; overflow-x: hidden;">
+						<img src="{% static 'imgs/carousel.png' %}">
+					</div>
+				</div>
+			</div>
+
+			{% if request.user.is_authenticated %}
+			<form action="/search_result/" class="search_form" id="search_form_in_main_page">
+                               <input style="width: 100%" value="{{ search_input }}" type="text" placeholder="Поиск товара" name="search_input" class="search_products_form_input">
+                               <input type="submit" value="поиск">
+                        </form>
+			{% endif %}
+
+			<div style="margin-bottom: 20px;">
+				<b class="catalog_b">Каталог/</b><b class="nishes_b">Ниши</b>
+			</div>
+
+			{% if main_category %}
+			<a style="text-decoration: none" href="{% if request.user.is_authenticated %}/products/?category_id={{ main_category.id }}{% else %}#log_window{% endif %}">
+				<div class="main_card" style="width: auto;">
+					<div class="main_card_img" style='background-image: url("{% static "imgs/main_category.png" %}"); width: auto;'></div>
+
+					<div class="main_card_text">
+						<b>{{ main_category.name }}</b>
+
+						<div>
+							<span style="margin-left: 0">{{ main_category.products_count }} товаров</span>
+						</div>
+					</div>
+				</div>
+			</a>
+			{% endif %}
+
+			<div class="main_page_cards">
+				{% for category in categories %}
+					{% if category.id != main_category.id %}
+				<a href="{% if request.user.is_authenticated %}/products/?category_id={{ category.id }}{% else %}#log_window{% endif %}">
+					<div class="main_card">
+						<div class="main_card_img" style='background-image: url("{{ category.poster.url }}");'></div>
+
+						<div class="main_card_text">
+							<b>{{ category.name }}</b>
+
+							<div>
+								<span style="margin-left: 0">{{ category.products_count }} товаров</span>
+							</div>
+						</div>
+					</div>
+				</a>
+					{% endif %}
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

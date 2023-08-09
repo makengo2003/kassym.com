@@ -1,0 +1,88 @@
+.analtics_page{
+  padding: 20px;
+  margin-left: 20px;
+}
+
+.admins_list b{
+  font-size: 20px;
+}
+
+.period_form select, option, input{
+  padding: 5px;
+  font-size: 16px;
+}
+
+.period_form b{
+  margin-bottom: 5px;
+  display: block;
+  font-size: 18px;
+}
+
+.period_selects{
+  display: flex;
+}
+
+.period_selects input[type='submit']{
+  margin-left: 30px;
+  border-radius: 5px;
+  border: 1px solid green;
+  background-color: green;
+  color: white;
+}
+
+.finish{
+  margin-left: 30px;
+}
+
+.analityc_block{
+  margin: 10px 0;
+  border: 1px solid rgba(0, 0, 0, .5);
+  border-radius: 3px;
+  width: 100%;
+  min-width: 1100px;
+}
+
+.analityc_block summary{
+  cursor: pointer;
+  padding: 10px 5px;
+  list-style: none;
+  user-select: none;
+}
+
+.right_arrow{
+  height: 8px;
+  margin-bottom: 3px;
+  margin-right: 5px;
+}
+
+.analityc_block details .right_arrow{
+  rotate: 270deg;
+}
+
+.analityc_block details[open] .right_arrow{
+  rotate: 180deg;
+}
+
+.charts{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.chart{
+  width: 40%;
+  margin: 10px 20px;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .1);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.pies_chart{
+  height: 300px;
+  width: fit-content;
+}
+
+canvas{
+  min-width: 100%;
+  height: 100%;
+}

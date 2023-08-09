@@ -1,0 +1,45 @@
+{% load static %}
+<div class="cards_block" id="products_app">
+	<a v-for="product in products" :href="'/product/?product_id=' + product.id" class="product_card" style="color: black;">
+		<div class="card" @click="open_product_page($event, product)"> <!-- @click="open_product_page(product)" -->
+			<div class="card_img" :style='{ backgroundImage: "url(" + product.image + ")", }'>
+			</div>
+
+			<div class="card_info">
+				<div class="printer_price">
+					<b v-cloak>${ product.price } ₽</b>
+				</div>
+
+
+				<div class="printer_name">
+					<p v-cloak>${ product.name }</p>
+				</div>
+
+				<div class="printer_code">
+				</div>
+
+				<div class="printer_code" style="margin-top: 5px;">
+					<p v-if="product.is_available" v-cloak class="product_is_available_text">В наличии</p>
+					<p v-else class="product_is_not_available_text">Нет в наличии</p>
+				</div>
+
+				<div class="like">
+					<input type="checkbox" :id="'printer' + product.id" v-model="product.is_favourite" @change="update_product_is_favourite_field(product)">
+					<label @mouseover="actionable_element_mouse_over()" @mouseout="actionable_element_mouse_out()" :for="'printer' + product.id">
+						<img v-if="product.is_favourite" src="{% static 'imgs/full_heart.png' %}" alt="">
+						<img v-else src="{% static 'imgs/empty_heart.png' %}" alt="">
+					</label>
+				</div>
+			</div>
+		</div>
+	</a>
+</div>
+
+
+<script src="{% static 'js/services/user_services.js' %}"></script>
+<script src="{% static 'js/services/product_services.js' %}"></script>
+<script src="{% static 'js/apps/products_app.js' %}"></script>
+
+{% if request.user.is_authenticated %}
+<script src="{% static 'js/auth/index.js' %}"></script>
+{% endif %}

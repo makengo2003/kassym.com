@@ -1,0 +1,154 @@
+html, body{
+  height: 100%;
+}
+
+.wrapper_page{
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main_body{
+  flex: 1 1 auto;
+}
+
+footer{
+  background-color: #20262E;
+  margin-top: 100px;
+}
+
+.footer_infos{
+  color: white;
+    width: 100%;
+    padding: 30px 0 180px 0;
+    position: relative;
+}
+
+.footer_info{
+  width: 100%;
+}
+
+.footer_flex{
+  display: flex;
+  width: 100%;
+}
+
+.footer_info b{
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.footer_info b, .footer_info a{
+  display: block;
+  color: white;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.footer_info a, .footer_info p{
+  margin: 10px 0;
+  font-size: 18px;
+  width: 100%;
+}
+
+.copyright{
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  margin-bottom: 30px;
+  border-top: 1px solid grey;
+  padding-top: 10px;
+}
+
+.copyright p{
+  font-size: 18px;
+  margin: 0;
+}
+
+.our_contacts{
+  margin-left: auto;
+}
+
+.contact_links{
+  margin-top: 5px;
+  display: flex;
+}
+
+.contact_links img{
+  height: 45px;
+  opacity: 0.3;
+  display: block;
+  margin-right: 10px;
+}
+
+.contact_links img:hover{
+  opacity: 1;
+}
+
+@media (max-width: 1300px){
+  .footer_info{
+    margin-right: 100px;
+  }
+}
+
+@media (max-width: 900px){
+  .footer_infos{
+    flex-direction: column;
+  }
+
+  .footer_info{
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 767px){
+  footer .container{
+    width: calc(100% - 20px);
+    padding: 0 10px;
+  }
+
+  .footer_info{
+    margin-right: 0;
+  }
+
+  .copyright{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .copyright p{
+    margin-top: 30px;
+  }
+
+  .our_contacts{
+    margin-left: 0;
+    order: -1;
+  }
+}
+
+@media (max-width: 560px){
+  .footer_infos{
+    padding-bottom: 160px;
+  }
+
+  .footer_info{
+    font-size: 18px;
+    margin-bottom: 30px;
+  }
+
+  .footer_info b{
+      font-size: 18px;
+    }
+
+    .footer_info a, .footer_info p{
+      font-size: 16px;
+    }
+
+  .footer_flex{
+    display: block;
+  }
+}

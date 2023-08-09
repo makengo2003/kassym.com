@@ -1,0 +1,240 @@
+{% load category_tags %}
+{% get_categories as categories %}
+{% get_main_category as main_category %}
+{% load site_settings_tags %}
+{% get_contacts as contacts %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>{% block title %}kassym.qazaq{% endblock %}</title>
+
+	<link rel="stylesheet" href="{% static 'css/baspa.css' %}">
+	<link rel="stylesheet" href="{% static 'css/hamburger.css' %}">
+	<link rel="stylesheet" href="{% static 'css/window.css' %}">
+	<link rel="stylesheet" href="{% static 'css/mediaBaspa.css' %}">
+	<link rel="stylesheet" href="{% static 'css/footer.css' %}">
+
+    {% block styles %}
+    {% endblock %}
+
+	<script>
+		window.location.hash = ""
+		let user_is_authenticated = {% if request.user.is_authenticated %}true{% else %}false{% endif %}
+		let username = {% if request.user.is_authenticated %}"{{ request.user.username }}"{% else %}""{% endif %}
+		let user_fullname = {% if request.user.is_authenticated %}"{{ request.user.first_name }} {{ request.user.last_name }}"{% else %}""{% endif %}
+		let product_id_for_buying_now = 0
+		let product_count_for_buying_now = 0
+		let cart_id_for_buying_now = 0
+	</script>
+	<script src="{% static 'js/packages/vue.global.prod.js' %}"></script>
+	<script src="{% static 'js/packages/axios.min.js' %}"></script>
+	<script src="{% static 'js/packages/sweetalert.min.js' %}"></script>
+	<script src="{% static 'js/packages/vue-cookies.js' %}"></script>
+</head>
+<body>
+	<div class="wrapper_page">
+		<div class="navbar">
+			<div class="hamburger-menu">
+				<input id="menu__toggle" type="checkbox">
+					<label class="menu__btn" for="menu__toggle">
+					  <span></span>
+					</label>
+				<ul class="menu__box">
+					{% if not request.user.is_authenticated %}
+					<li class="menu__item">
+						<div class="log">
+							<a href="#log_window">Войти</a>
+						</div>
+					</li>
+					{% endif %}
+
+					{% if request.user.is_authenticated  %}
+					<div class="search_form" style="margin-left: 8px">
+                                                <form action="/search_result/">
+                                                        <input value="{{ search_input }}" type="text" placeholder="Поиск товара" name="search_input" class="search_products_form_input">
+                                                        <input type="submit" value="поиск">
+                                                </form>
+                                        </div>
+					{% endif %}
+
+					<li class="menu__item"><a href="/agreement/">Договор - оферта</a></li>
+
+					{% if request.user.is_authenticated %}
+					<li class="menu__item"><a href="/profile/">Профиль</a></li>
+					<li class="menu__item"><a href="/favourites/">Избранные</a></li>
+					<li class="menu__item"><a href="/courses/">Курсы</a></li>
+					{% endif %}
+
+					<div class="burger_details">
+						<details>
+							<summary><span>Ниши</span> <img src="{% static 'imgs/details.png' %}" class="details_img" alt=""></summary>
+							<div class="categories">
+								{% for category in categories %}
+								<div class="category category2">
+									<input type="radio" id="laser" name="printer_category">
+									<label for="laser"><a href="{% if request.user.is_authenticated %}{% url 'products_page' %}?category_id={{ category.id }}{% else %}#log_window{% endif %}">{{ category.name }}</a></label>
+								</div>
+								{% endfor %}
+							</div>
+						</details>
+					</div>
+
+					{% if request.user.is_authenticated %}
+					<li class="menu__item last_item"><a style="color: #175145;" href="{% url 'logout' %}">Выход</a></li>
+					{% endif %}
+				</ul>
+			</div>
+
+			<div class="container nav">
+				<a class="logo_form" href="/">kassym.qazaq</a>
+
+				{% if request.user.is_authenticated %}
+				<div class="nav_left">
+					<div class="search_form">
+						<form action="/search_result/">
+							<input value="{{ search_input }}" type="text" placeholder="Поиск товара" name="search_input" class="search_products_form_input">
+							<input type="submit" value="поиск">
+						</form>
+					</div>
+				</div>
+				{% endif %}
+
+				<div class="nav_right">
+					<div class="nav_links">
+						<div class="nav_link">
+							<a href="/agreement/">Договор - оферта</a>
+						</div>
+						{% if request.user.is_authenticated %}
+						<div class="nav_link">
+							<a href="/favourites/">Избранные</a>
+						</div>
+						<div class="nav_link">
+							<a href="/courses/">Курсы</a>
+						</div>
+						{% endif %}
+					</div>
+
+					<div class="reg_btns">
+						{% if not request.user.is_authenticated %}
+						<div class="log">
+							<a href="#log_window">Войти</a>
+						</div>
+						{% else %}
+						<div class="log">
+							<a href="{% url 'profile_page' %}">Профиль</a>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{% block body %}
+		{% endblock %}
+
+		<footer>
+			<div class="container">
+				<div class="footer_infos">
+					<div class="footer_flex">
+						<div class="footer_info">
+							<b>Информация</b>
+							<a href="/about_us/">О компании</a>
+							<a href="/agreement/">Договор - оферта</a>
+						</div>
+
+						<div class="footer_info">
+							<b>Магазин</b>
+							<a href="/">Ниши</a>
+							{% if request.user.is_authenticated %}
+							<a href="/profile/">Профиль</a>
+							<a href="/favourites/">Избранные</a>
+							{% endif %}
+						</div>
+
+						<div class="footer_info">
+							<b>Контакты</b>
+							{% for contact in contacts %}
+								{% if contact.type == 'footer' %}
+									{% autoescape off %}
+										{{ contact.contact }}
+									{% endautoescape %}
+								{% endif %}
+							{% endfor %}
+						</div>
+					</div>
+
+					<div class="copyright">
+						<p>© Kassym.qazaq 2023 Copyright</p>
+
+						<div class="our_contacts">
+							<span>Наши соц. сети:</span>
+							<div class="contact_links">
+								{% for contact in contacts %}
+									{% if contact.type == 'instagram' %}
+										<a target="_blank" href="{{ contact.link }}"><img src="{% static 'imgs/footer_instagram.png' %}" alt=""></a>
+									{% elif contact.type == 'whatsapp' %}
+										<a target="_blank" href="{{ contact.link }}"><img src="{% static 'imgs/footer_whatsapp.png' %}" alt=""></a>
+									{% endif %}
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	{% if not request.user.is_authenticated %}
+	<div id="log_window">
+		<form @submit.prevent="login_request">
+			{% csrf_token %}
+			<div class="reg_block">
+				<h3 style="color: red; display: none" id="login_required_for_purchase">Необходима Авторизация для покупки товара!</h3>
+				<b>Войти</b>
+
+				<div class="reg_inputs">
+					<span>Номер телефона</span>
+					<input type="text" v-model="LoginRequestSchema['username']" required oninput="phone_number_on_input(event)">
+				</div>
+
+				<div class="reg_inputs">
+					<span>Пароль</span>
+					<input type="password" v-model="LoginRequestSchema['password']" required>
+				</div>
+
+				<ul class="reg_text" style="padding-left: 20px; display: block">
+					<li v-for="error in login_form_errors" style="color: red" v-cloak>${ error }</li>
+				</ul>
+
+				<div class="reg_text">
+					{% for contact in contacts %}
+						{% if contact.type == 'whatsapp' %}
+							<p>Чтобы зарегистрироваться напишите на <a href="{{ contact.link }}">Whatsapp</a></p>
+						{% endif %}
+					{% endfor %}
+				</div>
+
+				<div class="reg_inputs">
+					<input type="submit" value="Войти" id="login_form_submit_btn">
+				</div>
+				<div class="close">
+					<a href="#"><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<script src="{% static 'js/services/user_services.js' %}"></script>
+	<script src="{% static 'js/auth/index.js' %}"></script>
+	<script src="{% static 'js/auth/vue_apps.js' %}"></script>
+    {% endif %}
+
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,123 @@
+.add_category_block{
+	margin: 20px 0;
+	width: fit-content;
+}
+
+.add_category_block{
+	position: relative;
+}
+
+.category_name_input input[type='text']{
+	outline: none;
+	font-size: 18px;
+	padding: 3px 5px;
+	width: 400px;
+}
+
+.show_in_web{
+	position: absolute;
+	right: 0;
+	top: 0;
+	display: flex;
+	align-items: center;
+}
+
+.show_in_web label{
+	margin-right: 5px;
+}
+
+.category_name_input input[type='checkbox']{
+	width: 20px;
+	height: 20px;
+	outline: none;
+}
+
+.table_blocks{
+	border: 1px solid;
+	width: fit-content;
+	display: flex;
+	margin-top: 20px;
+	border-radius: 5px 5px 0 0;
+	border-bottom: none;
+}
+
+.first_table_block{
+	border-right: 1px solid;
+}
+
+.table_block{
+	width: 400px;
+}
+
+.table_title{
+	border-bottom: 1px solid;
+	padding: 10px;
+}
+
+.table_title b{
+	font-size: 18px;
+}
+
+.table_content{
+	padding: 10px;
+}
+
+.table_input{
+	margin: 10px 0;
+	display: flex;
+	align-items: center;
+}
+
+.table_input input{
+	width: calc(400px - 13px);
+	outline: none;
+	font-size: 18px;
+	padding: 3px 5px;
+}
+
+.table_input button{
+	background: none;
+	cursor: pointer;
+	padding: 0;
+	margin-left: 5px;
+	border: none;
+}
+
+.table_input img{
+	height: 22px;
+}
+
+.add_filter button{
+	width: 100%;
+	padding: 10px;
+	cursor: pointer;
+	border-radius: 0 0 5px 5px;
+	outline: none;
+	background-color: #175145;
+	color: white;
+	border: #175145;
+	font-size: 18px;
+}
+
+.add_category_block_btns{
+	width: fit-content;
+	margin: 10px 0 0 auto;
+}
+
+.add_category_block_btns button{
+	font-size: 18px;
+	padding: 5px 10px;
+	border-radius: 5px;
+	border: none;
+	color: white;
+	cursor: pointer;
+}
+
+.add_btn{
+	background-color: green;
+	margin-right: 10px;
+}
+
+.delete_btn{
+	background-color: red;
+}

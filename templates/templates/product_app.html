@@ -1,0 +1,95 @@
+{% load static %}
+
+<div class="container about main_body" id="product_app">
+	<div id="main_image_window">
+		<div class="main_image_window_form">
+			<img src="" alt="" id="current_image">
+			<div class="close">
+				<a href="#"><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+			</div>
+		</div>
+	</div>
+
+	<div class="about_product_block">
+		<div class="go_back">
+			<a onclick="go_back_function()"><img src="{% static 'imgs/back.png' %}" alt=""><span>Назад</span></a>
+		</div>
+
+		<b class="product_name" v-cloak>${ product.name }</b>
+
+		<div class="product_blocks">
+			<div class="w_links">
+				<div class="product_img">
+					<div class="product_images">
+						<div v-for="image in product.images" style="cursor: pointer" @click="show_product_image(image.image)" class="product_image" :style="{ backgroundImage: 'url(' + image.image + ')' }" >
+						</div>
+					</div>
+
+					<div style="cursor: pointer" class="product_main_image" :style="{ backgroundImage: 'url(' + current_image + ')' }" @click="open_current_image()">
+					</div>
+				</div>
+
+				<div class="down_links">
+					<div class="down_link" v-for="(image, index) in product.images" :key="index">
+						<a :href="image.image" download>Скачать Фото №${ index + 1 }</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="about_product">
+				<b class="about_p">О товаре</b>
+
+				<div class="printer_code" style="margin-top: 5px; margin-bottom: 10px;">
+					<p v-if="product.is_available" v-cloak class="product_is_available_text">В наличии</p>
+					<p v-else class="product_is_not_available_text">Нет в наличии</p>
+				</div>
+
+				<div class="product_descriptions">
+					<b>Описание</b>
+					<div id="product_description">
+					</div>
+					<b v-if="product.height || product.width || product.length" v-cloak>Характеристики</b>
+					<ul v-if="product.height || product.width || product.length" id="product_options" style="margin-top: 0; padding: 12px 15px;" v-cloak>
+						<li v-if="product.height" v-cloak><b>Высота: </b>${ product.height }</li>
+						<li v-if="product.width" v-cloak><b>Ширина: </b>${ product.width }</li>
+						<li v-if="product.length" v-cloak><b>Длина: </b>${ product.length }</li>
+					</ul>
+					<b v-if="product.vendor_number" v-cloak>Номер поставщика: </b><span v-cloak>${ product.vendor_number }</span>
+				</div>
+
+				<div class="buy_product_btn" style="display: flex; align-items: center;">
+					{% for contact in contacts %}
+						{% if contact.type == 'order_manager' %}
+							<a :href="'{{ contact.link }}?text=Я хотел купить товар ' + product.name" target="_blank">Заказать</a>
+						{% endif %}
+					{% endfor %}
+					<h2 style="margin-left: 10px; color: #175145;" v-cloak>${ product.price } ₽</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script src="{% static 'js/packages/quill.js' %}"></script>
+<script src="{% static 'js/packages/image-resize.min.js' %}"></script>
+<script src="{% static 'js/services/user_services.js' %}"></script>
+<script src="{% static 'js/services/cart_services.js' %}"></script>
+<script src="{% static 'js/services/order_services.js' %}"></script>
+<script src="{% static 'js/services/product_services.js' %}"></script>
+<script src="{% static 'js/auth/index.js' %}"></script>
+<script src="{% static 'js/pages/product_page/vue_apps.js' %}"></script>
+
+<script>
+function go_back_function() {
+	var div_closes_when_product_opens = document.getElementById("div_closes_when_product_opens")
+	if (div_closes_when_product_opens) {
+		div_closes_when_product_opens.style.display = mounted_products_app.div_display_style
+		document.getElementById("product_preview").style.display = "none"
+		console.log(mounted_products_app.scroll_position)
+		window.scrollTo(0, mounted_products_app.scroll_position)
+	} else {
+		window.location.href = document.referrer
+	}
+}
+</script>

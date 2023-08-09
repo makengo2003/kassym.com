@@ -1,0 +1,162 @@
+.go_back{
+	margin-top: 20px;
+}
+
+.add_product{
+	margin: 20px 0 0 0;
+	display: flex;
+	align-items: center;
+}
+
+.add_product_btn{
+	width: 100%;
+	border: 1px solid #175145;
+	border-radius: 0 0 5px 5px;
+	background-color: #175145;
+	color: white;
+	font-size: 18px;
+	padding: 5px;
+}
+
+.add_product input[type='text']{
+	padding: 5px;
+	outline: none;
+	font-size: 18px;
+	width: 500px;
+}
+
+.add_product select{
+	width: 513px;
+	padding: 5px;
+	outline: none;
+	font-size: 18px;
+}
+
+.add_product input[type='checkbox']{
+	height: 15px;
+	width: 15px;
+}
+
+.product_imgs_inputs{
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.product_imgs_inputs input{
+	display: block;
+	padding: 5px 0 10px 0;
+}
+
+.product_imgs_inputs b{
+	margin-bottom: 10px;
+}
+
+.characteristic{
+	display: flex;
+	align-items: flex-start;
+	border: 1px solid;
+}
+
+.characteristic_block{
+	display: flex;
+	flex-direction: column;
+	padding: 10px 20px; 
+	height: 100%;
+	width: 546px;
+}
+
+.characteristic_block_div{
+	margin-bottom: 10px;
+	display: flex;
+}
+
+.characteristic_block button{
+	background: none;
+	border: none;
+}
+
+.characteristic_block select{
+	margin-bottom: 20px;
+}
+
+.characteristic_block b{
+	margin-bottom: 10px;
+}
+
+.characteristic_values{
+	display: flex;
+  	flex-grow: row;
+  	flex-wrap: wrap;
+  	margin-bottom: 0;
+  	margin-bottom: 10px;
+}
+
+.characteristic_value{
+	display: flex;
+	align-items: center;
+	margin-right: 20px;
+}
+
+.characteristic_value input{
+	display: none;
+}
+
+.characteristic_value label{
+	user-select: none;
+	padding: 7.5px 10px;
+	border-radius: 10px;
+	cursor: pointer;
+	border: 1px solid;
+}
+
+.characteristic_value input:checked + label{
+	background-color: #175145;
+	color: white;
+	border: 1px solid #175145;
+}
+
+.btns button{
+	padding: 5px 10px;
+	border-radius: 5px;
+	border: none;
+	font-size: 18px;
+	margin-right: 20px;
+	color: white;
+	cursor: pointer;
+}
+
+.btns .create button{
+	background-color: green;
+}
+
+.btns .delete button{
+	background-color: red;
+}
+
+.btns .edit button{
+	background-color: blue;
+}
+
+.block_css{
+	display: block;
+}
+
+.block_css input{
+	display: block;
+}
+
+.block_css select{
+	display: block;
+}
+
+/*.ql-toolbar{
+	margin-top: 20px;
+}*/
+
+.go_back{
+	margin-top: 0;
+}
+
+.ql-editor {
+    width: 100%;
+}

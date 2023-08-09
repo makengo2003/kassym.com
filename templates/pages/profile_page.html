@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block styles %}
+	<link rel="stylesheet" href="{% static 'css/categories_page.css' %}">
+	<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+	<link rel="stylesheet" href="{% static 'css/mediaProfile.css' %}">
+	<link rel="stylesheet" href="{% static 'css/mediaBaspa.css' %}">
+{% endblock %}
+
+
+{% block body %}
+	<div id="change_password_window">
+		<form @submit.prevent="change_password_request()">
+			{% csrf_token %}
+			<div class="reg_block">
+				<b>Изменить пароль</b>
+
+				<div class="reg_inputs">
+					<span>Старый пароль</span>
+					<input type="password" v-model="ChangePasswordRequestSchema['old_password']" required>
+				</div>
+
+				<div class="reg_inputs">
+					<span>Новый пароль</span>
+					<input type="password" v-model="ChangePasswordRequestSchema['new_password1']" required>
+				</div>
+
+				<div class="reg_inputs">
+					<span>Подтвердить пароль</span>
+					<input type="password" v-model="ChangePasswordRequestSchema['new_password2']" required>
+				</div>
+
+				<ul class="reg_text" style="padding-left: 20px; display: block">
+					<li v-for="error in change_password_form_errors" style="color: red" v-cloak>${ error }</li>
+				</ul>
+
+				<div class="reg_inputs" style="margin-top: 20px">
+					<button type="submit" id="change_password_form_submit_btn">Подтвердить</button>
+				</div>
+
+				<div class="close">
+					<a href="#"><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div id="change_user_fullname_window">
+		<form action="/api/user/change_user_fullname/" method="post">
+			{% csrf_token %}
+			<div class="reg_block">
+				<b>Изменить ФИО</b>
+
+				<div class="reg_inputs">
+					<span>Имя</span>
+					<input type="text" name="first_name" required>
+				</div>
+
+				<div class="reg_inputs">
+					<span>Фамилия</span>
+					<input type="text" name="last_name" required>
+				</div>
+
+				<div class="reg_inputs" style="margin-top: 20px">
+					<button type="submit" id="change_user_fullname_form_submit_btn">Изменить</button>
+				</div>
+
+				<div class="close">
+					<a href="#"><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="container profile_block main_body">
+		<div class="user_name">
+			<b>{{ request.user.client.fullname }}</b>
+			<span>{{ request.user.username }}</span>
+		</div>
+
+		<div class="edit_profile" style="margin-bottom: 50px;">
+			<a href="#change_password_window">Изменить пароль</a>
+			<a href="#change_user_fullname_window">Изменить ФИО</a>
+			<a href="{% url 'logout' %}">Выйти из системы</a>
+		</div>
+
+		<div class="log">
+			<a href="/" style="text-decoration: none;">Перейти к каталогу</a>
+		</div>
+	</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/services/user_services.js' %}"></script>
+<script src="{% static 'js/auth/vue_apps.js' %}"></script>
+{% endblock %}

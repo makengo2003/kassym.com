@@ -1,0 +1,90 @@
+.leave_comment_block{
+	background-color: #F5F5F5;
+	padding: 20px;
+	border-radius: 10px;
+	margin: 0px 0px 20px 0px;
+}
+
+.leave_your_comment{
+	font-size: 20px;
+}
+
+.rating-area {
+	overflow: hidden;
+	width: 100px;
+	margin: 5px 0 10px 0;
+}
+.rating-area:not(:checked) > input {
+	display: none;
+}
+.rating-area:not(:checked) > label {
+	float: right;
+	width: 20px;
+	padding: 0;
+	cursor: pointer;
+	font-size: 25px;
+	line-height: 20px;
+	color: lightgrey;
+}
+.rating-area:not(:checked) > label:before {
+	content: '★';
+}
+.rating-area > input:checked ~ label {
+	color: gold;
+}
+.rating-area:not(:checked) > label:hover,
+.rating-area:not(:checked) > label:hover ~ label {
+	color: gold;
+}
+.rating-area > input:checked + label:hover,
+.rating-area > input:checked + label:hover ~ label,
+.rating-area > input:checked ~ label:hover,
+.rating-area > input:checked ~ label:hover ~ label,
+.rating-area > label:hover ~ input:checked ~ label {
+	color: gold;
+}
+.rate-area > label:active {
+	position: relative;
+}
+
+.leave_comment textarea{
+	width: calc(100% - 6px);
+	outline: none;
+	font-size: 17px;
+}
+
+.leave_comment label {
+    font-weight: bold;
+}
+
+.leave_raiting {
+    margin-bottom: 13px;
+}
+
+
+.leave_raiting span{
+	margin: 10px 0 0 0;
+	display: block;
+	font-weight: bold;
+}
+
+.leave_disadvantage{
+	margin: 10px 0;
+}
+
+#leave_feedback_form_submit_btn{
+	background-color: #175145;
+	padding: 5px 10px;
+	color: white;
+	border-radius: 5px;
+	border: none;
+	font-size: 18px;
+	margin-top: 10px;
+}
+
+
+@media (max-width: 400px){
+	.leave_your_comment{
+		font-size: 18px;
+	}
+}

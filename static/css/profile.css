@@ -1,0 +1,82 @@
+.profile_block{
+	margin: 30px auto;
+}
+
+.user_name b{
+	font-size: 25px;
+}
+
+.user_name span{
+	display: block;
+}
+
+.edit_profile{
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+.edit_profile a{
+	text-decoration: none;
+	color: black;
+	border-radius: 5px;
+	background: rgba(0, 142, 222, 0.46);
+	padding: 5px 10px;
+}
+
+.my_orders{
+	margin-bottom: 10px;
+}
+
+.my_orders b{
+	font-size: 25px;
+}
+
+.order_card{
+	display: flex;
+	align-items: center;
+	border-radius: 10px;
+	padding: 15px;
+	box-shadow: 0 0 2px 2px rgba(0, 0, 0, .1);
+	width: 900px;
+	position: relative;
+	margin-bottom: 25px;
+}
+
+.order_card_img{
+	margin-right: 30px;
+	min-height: 200px;
+	min-width: 200px;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	border-radius: 10px;
+}
+
+.order_info{
+	display: flex;
+	margin: 5px 0;
+	align-items: center;
+}
+
+.order_info p{
+	margin: 0 5px 0 0;
+	opacity: .5;
+}
+
+.order_info span{
+	font-weight: bold;
+}
+
+.more{
+	position: absolute;
+	right: 15px;
+	bottom: 15px;
+}
+
+.more a{
+	color: white;
+	text-decoration: none;
+	padding: 5px 10px;
+	border-radius: 5px;
+	background-color: #A3A3A3;
+}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+	<link rel="stylesheet" href="{% static 'css/order.css' %}">
+	<link rel="stylesheet" href="{% static 'css/checkbox.css' %}">
+	<link rel="stylesheet" href="{% static 'css/about_order.css' %}">
+	<link rel="stylesheet" href="{% static 'css/my_cart.css' %}">
+	<link rel="stylesheet" href="{% static 'css/favs.css' %}">
+	<link rel="stylesheet" href="{% static 'css/mediaFavs.css' %}">
+	<link rel="stylesheet" href="{% static 'css/mediaBaspa.css' %}">
+	<link rel="stylesheet" href="{% static 'css/categories_page.css' %}">
+	<link rel="stylesheet" href="{% static 'css/favourites_page.css' %}">
+
+	<link rel="stylesheet" href="{% static 'css/product.css' %}">
+        <link rel="stylesheet" href="{% static 'css/mediaProduct.css' %}">
+        <link rel="stylesheet" href="{% static 'css/mediaCategories_page.css' %}">
+        <!--<link rel="stylesheet" href="{% static 'css/order.css' %}">-->
+        <link rel="stylesheet" href="{% static 'css/quill.snow.css' %}">
+        <link rel="stylesheet" href="{% static 'css/leave_comment.css' %}">
+        <style>
+                .ql-editor {
+                        padding-left: 0px;
+                        padding-top: 0;
+                }
+        </style>
+{% endblock %}
+
+
+{% block body %}
+<div class="container main_body" id="div_closes_when_product_opens">
+	<div class="go_back">
+		<a onclick="window.location.href = document.referrer"><img src="{% static 'imgs/arrow.png' %}" alt=""><span>Назад</span></a>
+	</div>
+
+	<div class="my_cart_title">
+		<b>Мои избранные</b>
+	</div>
+
+	<div class="my_cart_blocks">
+		<div class="in_cart_cards my_cart_block">
+			<div class="cart_cards_block">
+				<div class="cart_texts">
+					<span><img src="{% static 'imgs/full_heart.png' %}" alt=""></span>
+					<b>Избранные</b>
+					<a onclick="clear_favourites()" id="clear_favourites_btn">Очистить всё</a>
+				</div>
+				<h3 id="favourites_are_empty_text" style="display: none">Избранных нет!</h3>
+
+				{% include 'templates/products_app.html' %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="product_preview" style="display: none">
+        {% include "templates/product_app.html" %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/pages/favourites_page/index.js' %}"></script>
+{% endblock %}

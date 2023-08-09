@@ -1,0 +1,30 @@
+@media (max-width: 1300px) {
+	.product_card {
+		margin-left: 7px;
+	}
+}
+
+@media (max-width: 990px) {
+	.product_card {
+		margin-left: 60px;
+    	margin-right: 45px;
+	}
+}
+
+
+@media (max-width: 900px) {
+	.product_card {
+		margin-left: 34px;
+		margin-right: 15px;
+	}
+}
+
+
+@media (max-width: 767px) {
+	.product_card {
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+

@@ -1,0 +1,199 @@
+hr{
+	width: calc(100% + 38px);
+	opacity: .5;
+	margin: 0 0 0 -20px;
+}
+
+.cart_cards_block{
+	margin-bottom: 35px;
+}
+
+.total{
+	margin-bottom: 0;
+}
+
+.methods{
+	display: flex;
+}
+
+.method{
+	width: 100%;
+	padding: 25px 20px 0 20px;
+}
+
+.first_method{
+	padding-left: 0;
+}
+
+.last_method{
+	border-left: 1px solid rgba(0, 0, 0, .2);
+}
+
+.method_text{
+	display: flex;
+	align-items: center;
+}
+
+.method_text img{
+	height: 20px;
+}
+
+.method_text b{
+	margin-left: 15px;
+}
+
+.checkbox{
+	margin-bottom: 25px;
+}
+
+.custom-checkbox>span {
+    display: inline-flex;
+    align-items: inherit;
+    user-select: none;
+}
+
+.custom-checkbox>span::before {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+    margin-top: -2px;
+}
+
+.custom-checkbox>input:checked+span::before {
+	height: 14px;
+	width: 14px;
+	border: 4px solid #008EDE;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+    background-size: contain;
+}
+
+.user_data{
+	padding: 25px 0;
+}
+
+.data_inputs{
+	margin-left: 32px;
+}
+
+.data_input{
+	margin: 20px 0;
+}
+
+.data_input input{
+	display: block;
+	background-color: #F0F0F0;
+ 	border: none;
+ 	width: calc(100% - 10px);
+ 	outline: none;
+ 	font-size: 20px;
+ 	padding: 10px 5px;
+}
+
+.data_input textarea{
+	font-size: 20px;
+	padding: 10px 5px;
+ 	width: calc(100% - 11px);
+ 	outline: none;
+ 	background-color: #F0F0F0;
+ 	border: none;
+}
+
+.order_btn{
+	padding: 30px 0 0 0;
+	width: fit-content;
+	margin-left: auto;
+}
+
+.order_btn a{
+	padding: 15px 25px;
+ 	font-size: 20px;
+ 	background-color: #175145;
+ 	border-radius: 5px;
+ 	color: white;
+ 	text-decoration: none;
+ 	font-weight: bold;
+ 	display: block;
+ 	width: fit-content;
+ 	margin-left: auto;
+}
+
+.my_cart_blocks{
+	margin-bottom: 50px;
+}
+
+.zat_form{
+	text-align: center;
+}
+
+.complite{
+	margin-bottom: 20px;
+}
+
+.zat_form b{
+	display: block;
+	font-size: 20px;
+}
+
+.zat_form p{
+	margin-top: 0;
+	margin-bottom: 25px;
+}
+
+.complite_order{
+	padding: 8px 50px;
+	font-weight: bold;
+	text-decoration: none;
+	color: white;
+	background-color: #175145;
+	border-radius: 5px;
+}
+
+.order_check{
+	text-align: left;
+}
+
+
+    /* создание в label псевдоэлемента before со следующими стилями */
+    .custom-checkbox>span::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      flex-grow: 0;
+      border: 1px solid #008EDE;
+      border-radius: 20px;
+      margin-right: 10px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 50% 50%;
+    }
+
+    /* стили для активного чекбокса (при нажатии на него) */
+    .custom-checkbox>input:not(:disabled):active+span::before {
+      background-color: #008EDE;
+      border-color: #008EDE;
+    }
+
+    /* стили для чекбокса, находящегося в состоянии checked */
+    .custom-checkbox>input:checked+span::before {
+      border-color: #008EDE;
+      background-color: #008EDE;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+      background-size: contain;
+    }
+
+    .method_checks{
+      padding: 25px 25px 0 25px;
+    }
+
+#pay_order_window_btn, #make_order_form_submit_btn{
+	background-color: #175145;
+	border: none;
+	padding: 5px 10px;
+	color: white;
+	font-size: 18px;
+	font-weight: bold;
+	border-radius: 5px;
+	margin-left: auto;
+}

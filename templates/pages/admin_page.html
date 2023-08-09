@@ -1,0 +1,658 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>kassym.qazaq dashboard</title>
+
+	<link rel="stylesheet" href="{% static 'css/baspa.css' %}">
+	<link rel="stylesheet" href="{% static 'css/adminka_all_goods.css' %}">
+	<link rel="stylesheet" href="{% static 'css/adminka_categories.css' %}">
+	<link rel="stylesheet" href="{% static 'css/adminka_analytics.css' %}">
+	<link rel="stylesheet" href="{% static 'css/about_order.css' %}">
+	<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+	<link rel="stylesheet" href="{% static 'css/adminka_order.css' %}">
+	<link rel="stylesheet" href="{% static 'css/adminka_checkbox.css' %}">
+	<link rel="stylesheet" href="{% static 'css/adminka_settings.css' %}">
+	<link rel="stylesheet" href="{% static 'css/window.css' %}">
+	<link rel="stylesheet" href="{% static 'css/adminka_add_category.css' %}">
+	<link rel="stylesheet" href="{% static 'css/adminka_add_product.css' %}">
+	<link rel="stylesheet" href="{% static 'css/quill.snow.css' %}">
+	<link rel="stylesheet" href="{% static 'css/default.min.css' %}">
+
+	<script src="{% static 'js/packages/highlight.min.js' %}"></script>
+	<script src="{% static 'js/packages/axios.min.js' %}"></script>
+	<script src="{% static 'js/packages/chart.js' %}"></script>
+	<script src="{% static 'js/packages/quill.js' %}"></script>
+	<script src="{% static 'js/packages/image-resize.min.js' %}"></script>
+	<script src="{% static 'js/packages/sweetalert.min.js' %}"></script>
+	<script src="{% static 'js/packages/vue.global.prod.js' %}"></script>
+	<script src="{% static 'js/packages/vue-cookies.js' %}"></script>
+	<script src="{% static 'js/packages/quill.imageCompressor.min.js' %}"></script>
+</head>
+<body style="font-family: sans-serif">
+	<div class="window">
+		<div class="vertical_menu" id="vertical_menu_app">
+			<div class="logo block border_bottom">
+				<a class="logo_form" href="/" style="margin-left: 0; text-decoration: none;">kassym.qazaq</a>
+			</div>
+
+			<div class="admin block border_bottom">
+				<b>Қасым Айдархан</b>
+			</div>
+
+			<div class="admin_sections block border_bottom">
+				<div class="admin_section">
+					<input type="radio" name="admin_section" id="goods" value="products" v-model="current_section" @change="open_section()">
+					<label for="goods">Товары</label>
+				</div>
+
+				<div class="admin_section">
+					<input type="radio" name="admin_section" id="users" value="clients" v-model="current_section" @change="open_section()">
+					<label for="users">Пользователи</label>
+				</div>
+
+				<div class="admin_section">
+					<input type="radio" name="admin_section" id="site_courses" value="courses" v-model="current_section" @change="open_section()">
+					<label for="site_courses">Курсы</label>
+				</div>
+			</div>
+
+			<div class="admin_settings block">
+				<div class="admin_section" name="admin_section">
+					<input type="radio" name="admin_section" id="settings_section" value="settings" v-model="current_section" @change="open_section()">
+					<label for="settings_section">Настройки</label>
+				</div>
+
+				<div class="quit">
+					<a href="{% url 'logout' %}">Выйти</a>
+				</div>
+			</div>
+		</div>
+
+		<div style="display: none" id="products">
+			<div class="main_container all_goods_container">
+				<div class="main_container_sections">
+					<div class="main_container_section">
+						<input type="radio" name="main_container_section" id="all_goods" value="all_products" v-model="current_section" @change="open_section()">
+						<label for="all_goods">Все товары</label>
+					</div>
+					<div class="main_container_section">
+						<input type="radio" name="main_container_section" id="categories" value="categories" v-model="current_section" @change="open_section()">
+						<label for="categories">Ниши</label>
+					</div>
+				</div>
+
+				<div class="categories_container">
+					<div class="categories_list" v-if="current_section == 'categories'">
+						<ul style="padding: 0;">
+							<li v-for="category in categories" id="'category_id_for_drag_and_drop_' + category.id" @dragstart="drag_start" @dragover="drag_over" @drop="drop" class="admin_section category_section dropzone" draggable="true">
+								<input class="category_select_radio" type="radio" name="category" :id="'category_' + category.id" :value="category" v-model="current_category" @change="get_category_products()">
+								<label :for="'category_' + category.id" v-cloak>
+									<img src="{% static 'imgs/drag.png' %}" alt="">
+									${ category.name }
+								</label>
+
+								<a v-if="category.id != main_category_id" @click="open_category_form(category)"><img src="{% static 'imgs/edit.png' %}"></a>
+							</li>
+						</ul>
+						<div class="add_category">
+							<a @click="open_category_form()">Добавить нишу</a>
+						</div>
+					</div>
+
+					<div class="categories_card_container">
+						<div class="add_category">
+							<a @click="open_product_form()">Добавить товар</a>
+						</div>
+						<div class="categories_cards_parts">
+							<div class="categories_photo">
+								<span>Фото</span>
+							</div>
+
+							<div class="categories_name">
+								<span>Наименование</span>
+							</div>
+
+							<div class="categories_price">
+								<span>Цена</span>
+							</div>
+
+							<div class="categories_category">
+								<span>Ниша</span>
+							</div>
+
+							<div class="categories_availability">
+								<span>В наличии</span>
+							</div>
+
+							<div class="categories_edit">
+							</div>
+						</div>
+
+						<div v-for="product in products" class="categories_card_block" :id="'product_card_' + product.id">
+							<div class="categories_photo" :style="{backgroundImage: 'url(' + product.image + ')'}">
+							</div>
+
+							<div class="categories_name">
+								<input type="text" :value="product.name" disabled>
+							</div>
+
+							<div class="categories_price">
+								<input type="text" :value="product.price + ' ₽'" disabled>
+							</div>
+
+							<div class="categories_category">
+								<input type="text" :value="product.category_name" disabled>
+							</div>
+
+							<div class="categories_availability">
+								<input type="checkbox" :checked="product.is_available" @change="change_product_is_available_status(product)">
+							</div>
+
+							<div class="categories_edit">
+								<a @click="open_product_form(product)">Изменить</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="category_form_window">
+					<form id="category_form" @submit.prevent="category_form_submit()">
+						{% csrf_token %}
+						<div class="cards_container" style="margin-left: initial;">
+							<div class="add_category_block">
+								<div class="category_name_input">
+									<h3 style="margin-bottom: 5px">Название ниши</h3>
+									<input type="text" v-model="category_form['name']" required>
+									<h3 style="margin-bottom: 5px">Обложка ниши</h3>
+									<p style="width: 415px; line-break: anywhere" v-if="category_form.poster != null && !category_poster_is_uploaded_to_input()">Текущий: <a :href="category_form.poster" v-cloak>${ category_form.poster.replace('/media/category_posters/', '') }</a></p>
+									<input style="padding: 0" type="file" @change="handle_category_poster_upload($event)" :required="category_form.poster == ''" class="product_form_image_input">
+
+									<div class="show_in_web">
+										<label style="font-weight: bold" for="show_in_web">Отобразить на сайте</label><input id="show_in_web" type="checkbox" v-model="category_form['is_available']">
+									</div>
+								</div>
+
+								<div class="add_category_block_btns">
+									<div v-if="category_form['category_id'] == 0">
+										<button class="add_btn" type="submit">Сохранить</button>
+									</div>
+									<div v-else>
+										<button class="add_btn" type="submit">Сохранить</button>
+										<button class="delete_btn" type="button" @click="delete_category()">Удалить</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="close">
+							<a href="#"><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+						</div>
+					</form>
+				</div>
+
+				<div id="product_form_window">
+					<form id="product_form" @submit.prevent="product_form_submit()">
+						{% csrf_token %}
+						<div class="add_product_block">
+							<div class="add_product block_css">
+								<b>Название ниши:</b>
+								<select v-model="product_form['category_id']" @change="set_category_filtration()" required>
+									<option v-for="category in categories" :value="category.id" v-cloak>${ category.name }</option>
+								</select>
+							</div>
+							<div class="add_product block_css">
+								<b>Название продукта:</b>
+								<input type="text" placeholder="Название продукта" required v-model="product_form['name']">
+							</div>
+							<div class="add_product block_css">
+								<b>Описание</b>
+								<div id="product_form_description_editor"></div>
+							</div>
+							<div class="add_product block_css">
+								<b>Цена продукта:</b>
+								<input type="number" placeholder="Цена продукта" required v-model="product_form['price']">
+							</div>
+							<div class="add_product block_css">
+								<b>Высота:</b>
+								<input type="text" placeholder="Высота" v-model="product_form['height']">
+							</div>
+							<div class="add_product block_css">
+								<b>Ширина:</b>
+								<input type="text" placeholder="Ширина" v-model="product_form['width']">
+							</div>
+							<div class="add_product block_css">
+								<b>Длина:</b>
+								<input type="text" placeholder="Длина" v-model="product_form['length']">
+							</div>
+							<div class="add_product">
+								<input type="checkbox" id="product_form_product_is_available_checkbox" v-model="product_form['is_available']">
+								<label for="product_form_product_is_available_checkbox">Продукт в наличии</label>
+							</div>
+							<div class="add_product block_css">
+								<b>Номер поставщика:</b>
+								<input type="text" placeholder="Номер поставщика" v-model="product_form['vendor_number']">
+							</div>
+							<div class="add_product product_imgs_inputs">
+								<b>Загрузите фотографии продукта:</b>
+								<div v-for="(image, key) in product_form['images']" :key="key">
+									<span v-if="key == 0">По умолчанию</span>
+									<input type="file" @change="handle_file_upload(image, $event)" :required="image.image == ''" class="product_form_image_input">
+									<span v-if="image.image != null && !image_is_uploaded_to_input(image)">Текущий: <a :href="image.image" v-cloak>${ image.image.replace('/media/products_images/', '') }</a></span>
+									<hr>
+								</div>
+							</div>
+
+							<div class="add_product btns">
+								<div v-if="product_form['product_id'] == 0">
+									<button class="add_btn" type="submit">Сохранить</button>
+								</div>
+								<div v-else>
+									<button class="add_btn" type="submit">Сохранить</button>
+									<button class="delete_btn" type="button" @click="delete_product()">Удалить</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="close">
+							<a onclick='document.getElementById("product_form_window").style.display = "none"'><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div style="display: none" id="clients">
+			<div class="main_container settings_container">
+				<div class="admin_btns">
+					<div class="all_users">
+						<a>Все пользователи</a>
+					</div>
+					<div class="add_category">
+						<a @click="open_client_form()">Добавить пользователя</a>
+					</div>
+				</div>
+				<div class="categories_cards_parts">
+					<div class="user_ID">
+						<span>№</span>
+					</div>
+
+					<div class="user_name">
+						<span>ФИО</span>
+					</div>
+
+					<div class="user_phone">
+						<span>Номер</span>
+					</div>
+
+					<div class="IP_name">
+						<span>Имя ИП</span>
+					</div>
+
+					<div class="user_start">
+						<span>Начиная с</span>
+					</div>
+
+					<div class="user_end">
+						<span>До</span>
+					</div>
+
+					<div class="categories_edit">
+					</div>
+				</div>
+
+
+				<div id="client_form_window" style="display: none">
+					<form id="client_form" @submit.prevent="client_form_submit()">
+						{% csrf_token %}
+						<div v-if="client_form['id'] != 0" class="add_product block_css" style="margin-top: 0">
+							<b>Создано:</b>
+							<input type="date" :value="client_form['created_at']" disabled>
+						</div>
+						<div v-if="client_form['id'] != 0" class="add_product block_css">
+							<b>Пароль:</b>
+							<input type="text" :value="client_form['password']" disabled>
+						</div>
+						<div class="add_product block_css" :style="[client_form['id'] == 0 ? {'margin-top': '0px'} : {}]">
+							<b>ФИО:</b>
+							<input type="text" placeholder="ФИО" required v-model="client_form['fullname']">
+						</div>
+						<div class="add_product block_css">
+							<b>Номер телефона:</b>
+							<input type="text" placeholder="Номер телефона" required v-model="client_form['phone_number']" oninput="phone_number_on_input(event)">
+						</div>
+						<div class="add_product block_css">
+							<b>Названия ИП:</b>
+							<input type="text" placeholder="Названия ИП" required v-model="client_form['company_name']">
+						</div>
+						<div class="add_product block_css">
+							<b>Дата просрочки:</b>
+							<input type="date" required v-model="client_form['expires_at']">
+						</div>
+
+						<ul style="padding-left: 20px">
+							<li style="color: red" v-for="error in client_form['errors']">${ error }</li>
+						</ul>
+
+						<div class="add_product_block">
+							<div class="add_product btns">
+								<div v-if="client_form['id'] == 0">
+									<button class="add_btn" type="submit">Сохранить</button>
+								</div>
+								<div v-else>
+									<button class="add_btn" type="submit">Сохранить</button>
+									<button class="delete_btn" type="button" @click="delete_client()">Удалить</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="close">
+							<a onclick='document.getElementById("client_form_window").style.display = "none"'><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+						</div>
+					</form>
+				</div>
+
+
+				<div v-for="(client, index) in clients" class="categories_card_block" :key="index">
+					<div v-if="client.is_expired" class="status_circle red_circle">
+						<span>•</span>
+					</div>
+					<div v-else class="status_circle green_circle">
+						<span>•</span>
+					</div>
+
+					<div class="user_ID">
+						<span>${ index + 1 }</span>
+					</div>
+
+					<div class="user_name">
+						<input type="text" :value="client.fullname" disabled>
+					</div>
+
+					<div class="user_phone">
+						<input type="text" :value="client.phone_number" disabled>
+					</div>
+
+					<div class="IP_name">
+						<input type="text" :value="client.company_name" disabled>
+					</div>
+
+					<div class="user_start">
+						<input type="text" :value="client.created_at" disabled>
+					</div>
+
+					<div class="user_end">
+						<input type="text" :value="client.expires_at" disabled>
+					</div>
+
+					<div class="categories_edit">
+						<a @click="open_client_form(client)">Изменить</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div style="display: none" id="courses">
+			<div class="main_container settings_container">
+				<div class="add_category">
+					<a @click="open_course_form()">Добавить курсы</a>
+				</div>
+				<div class="categories_cards_parts" style="justify-content: initial;">
+					<div class="number">
+						<span>№</span>
+					</div>
+					<div class="lesson_name" style="width: 120px">
+						<span>Язык</span>
+					</div>
+					<div class="lesson_name">
+						<span>Название курса</span>
+					</div>
+					<div class="categories_edit">
+					</div>
+				</div>
+				<div class="categories_card_block" style="justify-content: initial;" v-for="(course, index) in courses" :key="index">
+					<div class="number">
+						<span>${ index + 1 }</span>
+					</div>
+					<div class="lesson_name" style="width: 120px">
+						<span>${ course.language }</span>
+					</div>
+					<div class="lesson_name">
+						<span>${ course.name }</span>
+					</div>
+					<div class="categories_edit for_lessons" style="margin-left: auto">
+						<a @click="open_course_form(course)">Изменить</a>
+					</div>
+				</div>
+			</div>
+
+			<div id="course_form_window">
+				<form @submit.prevent="course_form_submit()">
+					<div id="add_courses_window">
+						<div class="add_courses_form">
+							<div class="window_input">
+								<b>Название курса:</b>
+								<input type="text" placeholder="Название курса" v-model="course_form.name" required>
+							</div>
+
+							<div class="window_input">
+								<b>Обложка:</b>
+								<p style="margin: 5px 0;" v-if="course_form.poster != null && !course_poster_is_uploaded_to_input()">Текущий: <a :href="course_form.poster" v-cloak>${ course_form.poster.replace('/media/course_posters/', '') }</a></p>
+								<input type="file" @change="handle_course_poster_upload($event)" :required="course_form.poster == ''" class="product_form_image_input">
+							</div>
+
+							<div class="window_input">
+								<b>Язык:</b>
+								<select required v-model="course_form.language">
+									<option value="RU">Русский</option>
+									<option value="KZ">Қазақша</option>
+								</select>
+							</div>
+
+							<div class="window_input" style="display: flex; align-items: center;">
+								<input type="checkbox" id="course_form_is_available" v-model="course_form.is_available" style="height: 20px; width: 20px;">
+								<label for="course_form_is_available"><b>Отобразить на сайте</b></label>
+							</div>
+
+							<div class="add_lessons_block">
+								<b>Уроки</b>
+
+								<div class="add_lesson_form">
+									<div class="add_lesson_title">
+										<b>Название урока:</b>
+										<b class="for_file">Загрузите видео:</b>
+									</div>
+
+									<div class="add_lesson_inputs" v-for="lesson in course_form.lessons">
+										<input type="text" v-model="lesson.name" required>
+										<div style="margin-left: auto">
+											<p style="margin: 5px 0; width: 415px; line-break: anywhere;" v-if="lesson.video != null && !lesson_video_is_uploaded_to_input(lesson)">Текущий: <a :href="lesson.video" v-cloak>${ lesson.video.replace('/media/course_videos/', '') }</a></p>
+											<input type="file" @change="handle_lesson_video_upload(lesson, $event)" :required="lesson.video == ''" class="product_form_image_input">
+										</div>
+
+										<button type="button" @click="delete_lesson(lesson)"><img src="{% static 'imgs/trash.png' %}"></button>
+									</div>
+								</div>
+
+								<div class="add_lesson_btn">
+									<button type="button" @click="add_lesson()">Добавить урок</button>
+								</div>
+							</div>
+
+							<div v-if="course_form['on_submit']">
+								<h3 style="margin-bottom: 5px">Сохранение...</h3>
+								<h4 style="color: red; margin-top: 0px;">Не закрывайте окно</h4>
+							</div>
+							<div v-else class="add_product btns">
+								<button class="add_btn" type="submit">Сохранить</button>
+								<button v-if="course_form['id'] != 0" class="delete_btn" type="button" @click="delete_course()">Удалить</button>
+							</div>
+
+							<div class="close" v-if="!course_form['on_submit']">
+								<a onclick='document.getElementById("course_form_window").style.display = "none"'><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<div style="display: none" id="settings">
+			<div class="main_container settings_container">
+				<div v-if="!settings_section_is_opened" class="set_menu">
+					<div class="set">
+						<a href="#change_password_window">Изменить пароль админа</a>
+					</div>
+					<div class="set">
+						<a @click="open_contacts_form()">Изменить контакты</a>
+					</div>
+					<div class="set">
+						<a @click="open_about_us_form()">Изменить текст "О компании"</a>
+					</div>
+					<div class="set">
+						<a @click="open_guarantee_form()">Изменить текст "Договор - оферта"</a>
+					</div>
+				</div>
+
+				<div class="contacts_block" v-if="contacts_form_is_opened" id="contacts_settings">
+					<div class="go_back">
+						<a @click="contacts_form_is_opened = false">Назад</a>
+					</div>
+
+					<form @submit.prevent="save_contacts()" class="carousel_s_block">
+						{% csrf_token %}
+						<div class="contacts">
+							<div class="contact" style="display: initial">
+								<p><b>Номер телефона</b></p>
+								<input type="text" v-model="contacts_form.phone_number.contact" placeholder="Номер телефона" oninput="phone_number_on_input(event)">
+							</div>
+
+							<div class="contact" style="display: initial">
+								<p><b>Whatsapp</b></p>
+								<input type="text" v-model="contacts_form.whatsapp.contact" placeholder="Whatsapp" oninput="phone_number_on_input(event)">
+							</div>
+
+							<div class="contact" style="display: initial">
+								<p><b>Instagram</b></p>
+								<input type="text" v-model="contacts_form.instagram.contact" placeholder="Instagram">
+							</div>
+
+							<div class="contact" style="display: initial">
+								<p><b>Эл. почта</b></p>
+								<input type="text" v-model="contacts_form.email.contact" placeholder="Эл. почта">
+							</div>
+
+							<div class="contact" style="display: initial">
+								<p><b>Whatsapp менеджера по заказам</b></p>
+								<input type="text" v-model="contacts_form.order_manager.contact" placeholder="Менеджер по заказам" oninput="phone_number_on_input(event)">
+							</div>
+
+							<div class="footer_contact" style="margin-top: 30px">
+								<b>Контакты в Footer-e</b>
+								<div id="footer_contact_quill"></div>
+							</div>
+						</div>
+
+						<div class="edit_btns">
+							<button type="submit" class="save" :disabled="!contacts_form_is_opened">Сохранить</button>
+						</div>
+					</form>
+				</div>
+
+				<div v-if="about_us_form_is_opened">
+					<div class="go_back">
+						<a @click="about_us_form_is_opened = false">Назад</a>
+					</div>
+
+					<form @submit.prevent="about_us_form_submit()">
+						{% csrf_token %}
+						<div id="about_us_quill"></div>
+
+						<div class="edit_btns">
+							<button type="submit" class="save" :disabled="!about_us_form_is_opened">Сохранить</button>
+						</div>
+					</form>
+				</div>
+
+				<div v-if="guarantee_form_is_opened">
+					<div class="go_back">
+						<a @click="guarantee_form_is_opened = false">Назад</a>
+					</div>
+
+					<form @submit.prevent="guarantee_form_submit()">
+						{% csrf_token %}
+						<p><b>Прикрепите файл договор-оферта</b></p>
+						<p><a href="/agreement/">Скачать текущий файл договор-оферта</a></p>
+						<input type="file" style="margin: 0; padding: 0" @change="handle_guarantee_file_upload($event)">
+
+						<div class="edit_btns" style="margin-top: 20px">
+							<button type="submit" class="save" :disabled="!guarantee_form_is_opened">Сохранить</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div id="change_password_window">
+			<form @submit.prevent="change_password_request()">
+				{% csrf_token %}
+				<div class="reg_block">
+					<b>Изменить пароль</b>
+
+					<div class="reg_inputs">
+						<span>Старый пароль</span>
+						<input type="password" v-model="ChangePasswordRequestSchema['old_password']" required>
+					</div>
+
+					<div class="reg_inputs">
+						<span>Новый пароль</span>
+						<input type="password" v-model="ChangePasswordRequestSchema['new_password1']" required>
+					</div>
+
+					<div class="reg_inputs">
+						<span>Подтвердить пароль</span>
+						<input type="password" v-model="ChangePasswordRequestSchema['new_password2']" required>
+					</div>
+
+					<ul class="reg_text" style="padding-left: 20px; display: block">
+						<li v-for="error in change_password_form_errors" style="color: red" v-cloak>${ error }</li>
+					</ul>
+
+					<div class="reg_inputs" style="margin-top: 20px">
+						<button type="submit" id="change_password_form_submit_btn">Подтвердить</button>
+					</div>
+
+					<div class="close">
+						<a href="#"><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+
+	<script>
+		user_is_authenticated = true
+		main_category_id = {{ MAIN_CATEGORY_ID }}
+	</script>
+
+	<script src="{% static 'js/services/product_services.js' %}"></script>
+	<script src="{% static 'js/services/category_services.js' %}"></script>
+	<script src="{% static 'js/services/client_services.js' %}"></script>
+	<script src="{% static 'js/services/site_settings_services.js' %}"></script>
+
+	<script src="{% static 'js/pages/admin_page/products_app.js' %}"></script>
+	<script src="{% static 'js/pages/admin_page/settings_app.js' %}"></script>
+	<script src="{% static 'js/pages/admin_page/clients_app.js' %}"></script>
+	<script src="{% static 'js/pages/admin_page/courses_app.js' %}"></script>
+
+	<script src="{% static 'js/pages/admin_page/vertical_menu_app.js' %}"></script>
+
+	<script src="{% static 'js/auth/index.js' %}"></script>
+	<script src="{% static 'js/auth/vue_apps.js' %}"></script>
+	<script src="{% static 'js/services/user_services.js' %}"></script>
+</body>
+</html>

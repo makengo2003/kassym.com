@@ -1,0 +1,23 @@
+.my_cart_blocks{
+	width: 1045px;
+}
+
+.my_cart_block{
+	padding-right: calc(20px - 12.5px);
+	padding-bottom: 0;
+}
+
+.cart_texts{
+	width: calc(100% - 12.5px);
+}
+
+.cart_texts span{
+	color: #175145;
+	font-size: 23px;
+	display: block;
+}
+
+.buy_btn{
+	margin: 0;
+	margin-right: auto;
+}

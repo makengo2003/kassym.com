@@ -1,0 +1,172 @@
+body{
+	background-color: #f8f8f8;
+}
+
+.navbar{
+	background-color: white;
+}
+
+.go_back{
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.go_back a{
+	background-color: #175145;
+	color: white;
+}
+
+.my_cart_title{
+	margin-bottom: 10px;
+}
+
+.my_cart_title b{
+	font-size: 25px;
+}
+
+.my_cart_blocks{
+	display: flex;
+	position: relative;
+	margin-bottom: 20px;
+}
+
+.my_cart_block{
+	padding: 30px 20px;
+	background-color: white;
+}
+
+.in_cart_cards{
+	width: 100%;
+}
+
+.in_cart_block{
+	margin-left: 20px;
+	min-width: 265px;
+	position: sticky;
+	top: 5px;
+}
+
+.cart_texts{
+	display: flex;
+	align-items: center;
+	margin-bottom: 30px;
+}
+
+.cart_texts a{
+	color: #00A6F0;
+	text-decoration: none;
+}
+
+.cart_texts img{
+	height: 22px;
+	margin-right: 10px;
+	margin-top: -5px;
+}
+
+.cart_texts a{
+	display: block;
+	margin-left: auto;
+}
+
+.cart_cards{
+	margin-left: 30px;
+}
+
+.other_order_name{
+	padding-right: 20px;
+}
+
+.other_order_amount{
+	min-width: 120px;
+}
+
+.other_order_price{
+	min-width: 110px;
+}
+
+.card_amount{
+	margin-right: 15px;
+}
+
+.number{
+	border-radius: 5px;
+	width: 70px;
+}
+
+.remove_cart_order{
+	margin-left: 30px;
+	margin-right: 5px;
+}
+
+.remove_cart_order a{
+	width: fit-content;
+	height: fit-content;
+}
+
+.in_cart{
+	font-size: 17px;
+	margin-bottom: 25px;
+}
+
+.order_infos{
+	border-top: 1px solid rgba(0, 0, 0, .2);
+	border-bottom: 1px solid rgba(0, 0, 0, .2);
+	padding: 20px 0;
+}
+
+.order_info{
+	display: flex;
+	align-items: center;
+}
+
+.order_info span{
+	opacity: .5;
+	font-weight: bold;
+}
+
+.order_info p{
+	display: block;
+	margin: 10px 0;
+	margin-left: auto;
+}
+
+.total{
+	display: flex;
+	align-items: center;
+	margin: 20px 0;
+}
+
+.cart_btns{
+	width: 100%;
+	text-align: center;
+}
+
+.cart_btns a{
+	text-decoration: none;
+}
+
+.checkout{
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.checkout a{
+	background-color: #175145;
+	color: white;
+	width: calc(100% - 2px);
+	display: block;
+	border-radius: 5px;
+	padding: 10px 0;
+	font-weight: bold;
+	border: 1px solid #175145;
+}
+
+.one_click a{
+	border: 1px solid #175145;
+	color: #175145;
+	width: calc(100% - 2px);
+	display: block;
+	border-radius: 5px;
+	padding: 10px 0;
+	font-weight: bold;
+}

@@ -1,0 +1,253 @@
+.hamburger{
+  position: absolute;
+  right: 5px;
+  top: 9px;
+}
+
+.hamburger-menu{
+	position: relative;
+}
+
+[for=burger]{
+  display: block;
+  font-weight: bold;
+  font-size: 30px;
+  user-select: none;
+}
+
+/* скрываем чекбокс */
+#menu__toggle {
+  display: none;
+}
+/* стилизуем кнопку */
+.menu__btn {
+  display: flex; /* используем flex для центрирования содержимого */
+  align-items: center;  /* центрируем содержимое кнопки */
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  z-index: 2001;
+  user-select: none;
+}
+/* добавляем "гамбургер" */
+.menu__btn > span,
+.menu__btn > span::before,
+.menu__btn > span::after {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: black;
+}
+.menu__btn > span::before {
+  content: '';
+  top: -8px;
+}
+.menu__btn > span::after {
+  content: '';
+  top: 8px;
+}
+
+/* контейнер меню */
+.menu__box {
+  display: block;
+  position: fixed;
+  visibility: hidden;
+  top: 0;
+  left: -100%;
+  width: 280px;
+  height: 100%;
+  margin: 0;
+  padding: 50px 0;
+  list-style: none;
+  text-align: left;
+  box-shadow: 1px 0px 6px rgba(0, 0, 0, .2);
+  z-index: 2000;
+  background-color: white;
+}
+/* элементы меню */
+.menu__item {
+  display: block;
+  padding: 12px 24px;
+}
+
+.menu__item a{
+  font-family: 'Geometria', sans-serif;
+  font-size: 20px;
+  color: black;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+#menu__toggle:checked ~ .menu__btn {
+  position: fixed;
+}
+
+#menu__toggle:checked ~ .menu__btn > span {
+  transform: rotate(45deg);
+}
+#menu__toggle:checked ~ .menu__btn > span::before {
+  top: 0;
+  transform: rotate(0);
+  background-color: black;
+}
+#menu__toggle:checked ~ .menu__btn > span::after {
+  top: 0;
+  background-color: black;
+  transform: rotate(90deg);
+}
+#menu__toggle:checked ~ .menu__box {
+  visibility: visible;
+  left: 0;
+}
+
+.menu__item{
+	display: flex;
+}
+
+.last_item a{
+	font-weight: bold;
+}
+
+.reg, .log{
+	margin: 0;
+}
+
+.reg{
+	margin-right: 5px;
+}
+
+.reg a{
+	font-size: 16px;
+	font-weight: normal;
+	color: #175145;
+}
+
+.log a{
+	font-size: 16px;
+	font-weight: normal;
+	color: white;
+}
+
+.search_form2{
+	display: flex;
+}
+
+.search_form2 input{
+	border: 1px solid #175145;
+	font-size: 18px;
+	padding: 5px;
+	outline: none;
+}
+
+.menu__box .search_form2 input[type=text]{
+	width: 100%;
+	padding: 5px 10px 5px 22px;
+}
+
+.search_form2 input[type=text]::placeholder{
+	color: #175145;
+	opacity: .6
+}
+
+.search_form2 input[type=submit]{
+	margin-left: -5px;
+	color: white;
+	background-color: #175145;
+	cursor: pointer;
+	padding: 5px 10px;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .menu__box .search_form2 input[type=text]{
+    width: 100%;
+    padding: 5px 10px 5px 22px;
+  }
+
+  .search_form2 input[type=text]::placeholder{
+    color: black;
+    opacity: .6
+  }
+
+  .search_form2 input[type=submit]{
+    margin-left: -5px;
+    color: white;
+    border-radius: 0;
+    background-color: #175145;
+    cursor: pointer;
+    padding: 5px 10px;
+  }  
+
+  .burger_details details summary{
+    list-style: none;
+    display: flex;
+    align-items: center;
+  }                           
+}
+
+.search_form2 .search_products_form_input{
+  padding: 5px 10px;
+}
+
+.burger_details{
+	padding: 10px 10px 10px 24px;
+	border-bottom: 1px solid #175145;
+	border-top: 1px solid #175145;
+	margin-top: 15px;
+}
+
+.burger_details details summary{
+	font-size: 20px;
+	cursor: pointer;
+	user-select: none;
+	color: black;
+}
+
+.burger_details details summary{
+	list-style: none;
+	display: flex;
+	align-items: center;
+}
+
+.burger_details details summary span{
+	display: block;
+	margin-right: auto;
+}
+
+.burger_details details summary img{
+	display: block;
+	height: 8px;
+}
+
+.burger_details details[open] .details_img{
+	rotate: 180deg;
+}
+
+.category2{
+	padding-left: 0;
+}
+
+.filter_block{
+	margin: 20px 10px 20px 24px;
+}
+
+.burger_cart{
+	border-radius: 50%;
+    width: 15px;
+    min-width: fit-content;
+    height: 14px;
+    padding: 2px 2px 2px 1px;
+
+    background: #67C233;
+    color: white;
+    text-align: center;
+
+    font: 12px Arial, sans-serif;
+}
+
+.category2 b{
+	font-size: 18px;
+}

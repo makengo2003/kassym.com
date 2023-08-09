@@ -1,0 +1,124 @@
+input[type='file']::-webkit-file-upload-button{
+  background-color: #175145;
+  border: none;
+  color: white;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 3px 5px;
+}
+
+.settings_container{
+  padding: 20px 20px 20px 40px;
+}
+
+.set{
+  margin: 20px 0;
+}
+
+.set_menu a{
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  color: blue;
+  display: block;
+  text-decoration: none;
+}
+
+.carousel_f_block ol{
+  padding-left: 22px;
+  margin-bottom: 20px;
+}
+
+.carousel_f_block li{
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.edit_carousel button{
+  background-color: green;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 20px;
+  cursor: pointer;
+}
+
+.car_input{
+  margin: 10px 0;
+  border: 1px solid rgba(0, 0, 0, .5);
+  padding: 10px 10px;
+  border-radius: 5px;
+  width: auto;
+  display: flex;
+  align-items: center;
+}
+
+.car_input input{
+  margin-right: 5px;
+}
+
+.car_input button{
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.car_input img{
+  height: 20px;
+}
+
+.edit_btns button{
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  padding: 5px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.save{
+  background-color: green;
+  margin-right: 15px;
+}
+
+.back{
+  background-color: red;
+}
+
+.add_img{
+  margin: 10px 0;
+}
+
+.add_img a{
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #175145;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#contacts_settings .contact input {
+    width: 300px;
+    margin-right: 10px;
+    margin-left: 10px;
+    border: 1px solid black;
+    outline: none;
+    border-radius: 3px;
+}
+
+#contacts_settings .contact {
+    align-items: center;
+    margin-bottom: 10px;
+    display: flex;
+}
+
+#contacts_settings .contacts {
+    margin-bottom: 20px;
+}

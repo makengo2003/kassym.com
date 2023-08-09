@@ -1,0 +1,236 @@
+body{
+	margin: 0;
+	font-family: 'Geometria';
+}
+
+.block{
+	padding: 16px 30px;
+}
+
+.border_bottom{
+	border-bottom: 1px solid rgba(0, 0, 0, .2);
+}
+
+.window{
+	display: flex;
+}
+
+.vertical_menu{
+	height: 100vh;
+	box-shadow: 0 0 5px 5px rgba(0, 0, 0, .1);
+	position: fixed;
+	left: 0;
+	width: 230px;
+	background-color: white;
+	z-index: 2;
+}
+
+.logo img{
+	display: block;
+}
+
+.logo_text{
+	height: 35px;
+}
+
+.logo_img{
+	height: 45px;
+	margin-right: 10px;
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+}
+
+.admin_section{
+	padding: 10px 0;
+	position: relative;
+}
+
+.admin_section input{
+	display: none;
+}
+
+.admin_section label{
+	cursor: pointer;
+	font-size: 18px;
+}
+
+.admin_section span{
+	color: white;
+	background-color: #FF0000;
+	font-size: 14px;
+	padding: 0 3px;
+	margin-left: 5px;
+	border-radius: 3px;
+	user-select: none;
+}
+
+.admin_section input:checked + label::before{
+	content: '•';
+	color: #008EDE;
+	font-size: 25px;
+	position: absolute;
+	left: -12px;
+	top: 5px;
+}
+
+.quit a{
+	color: #BE274C;
+	font-weight: bold;
+	font-size: 20px;
+	text-decoration: none;
+}
+
+.main_container{
+	margin-left: 230px;
+	min-width: 1150px;
+}
+
+.cards_container{
+	margin-left: 20px;
+}
+
+.main_container_sections{
+	display: flex;
+	align-items: center;
+	padding: 29px 10px 27px 40px;
+	width: 270px;
+}
+
+.main_container_section{
+	margin-right: 30px;
+}
+
+.main_container_section input{
+	display: none;
+}
+
+.main_container_section label{
+	font-size: 18px;
+	cursor: pointer;
+}
+
+.main_container_section input:checked + label{
+	color: #008EDE;
+}
+
+.cards_parts{
+	width: calc(100vw - 220px - 50px);
+	display: flex;
+	align-items: center;
+	min-width: 1150px;
+	justify-content: space-between;
+  	flex-grow: row;
+  	padding: 10px;
+  	flex-wrap: nowrap;
+  	font-size: 16px;
+}
+
+.cards_parts .photo{
+	min-width: 82px;
+}
+
+.card_block{
+	width: calc(100vw - 220px - 50px);
+	display: flex;
+	align-items: center;
+	min-width: 1150px;
+	justify-content: space-between;
+  	flex-grow: row;
+  	flex-wrap: nowrap;
+  	padding: 10px;
+  	border-radius: 15px;
+  	border: 1px solid;
+  	margin-bottom: 10px;
+}
+
+.card_block .photo{
+	text-align: center;
+	border-radius: 10px;
+	padding: 5px;
+	border: 1px solid red;
+	width: 72px;
+}
+
+.card_block input[type='text']:disabled{
+	color: black;
+	font-size: 16px;
+}
+
+.card_block select:disabled{
+	color: black;
+}
+
+.card_block select{
+	color: black;
+	font-size: 16px;
+}
+
+.photo img{
+	height: 60px;
+	width: 60px;
+}
+
+.name{
+	min-width: 310px;
+}
+
+.name input{
+	min-width: 300px;
+	border: none;
+}
+
+.price{
+	min-width: 110px;
+}
+
+.price input{
+	border: none;
+	width: 100px;
+}
+
+.code{
+	min-width: 95px;
+}
+
+.code input{
+	border: none;
+	width: 90px;
+}
+
+.status{
+	min-width: 120px;
+}
+
+.category{
+	min-width: 202px;
+}
+
+.category input{
+	width: 198px;
+	border: none;
+}
+
+.availability{
+	text-align: center;
+	min-width: 85px;
+}
+
+.availability input{
+	height: 20px;
+	width: 20px;
+}
+
+.edit{
+	min-width: 100px;
+}
+
+.edit a{
+	padding: 5px 10px;
+	color: white;
+	text-decoration: none;
+	border-radius: 5px;
+	background-color: #175145;
+}

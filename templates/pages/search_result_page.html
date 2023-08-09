@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/order.css' %}">
+<link rel="stylesheet" href="{% static 'css/categories_page.css' %}">
+<link rel="stylesheet" href="{% static 'css/checkbox.css' %}">
+<link rel="stylesheet" href="{% static 'css/mediaCategories.css' %}">
+
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+        <link rel="stylesheet" href="{% static 'css/mediaProduct.css' %}">
+        <link rel="stylesheet" href="{% static 'css/mediaCategories_page.css' %}">
+        <!--<link rel="stylesheet" href="{% static 'css/order.css' %}">-->
+        <link rel="stylesheet" href="{% static 'css/quill.snow.css' %}">
+        <link rel="stylesheet" href="{% static 'css/leave_comment.css' %}">
+        <style>
+                .ql-editor {
+                        padding-left: 0px;
+                        padding-top: 0;
+                }
+        </style>
+{% endblock %}
+
+
+{% block body %}
+<div class="container main main_body" id="div_closes_when_product_opens">
+	<div class="main_block">
+		{% include 'templates/products_app.html' %}
+	</div>
+
+	<div id="search_result_app"></div>
+</div>
+
+<div id="product_preview" style="display: none">
+        {% include "templates/product_app.html" %}
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/pages/search_result_page/vue_apps.js' %}"></script>
+{% endblock %}

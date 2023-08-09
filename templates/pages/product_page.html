@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+	<link rel="stylesheet" href="{% static 'css/product.css' %}">
+	<link rel="stylesheet" href="{% static 'css/mediaProduct.css' %}">
+	<link rel="stylesheet" href="{% static 'css/mediaCategories_page.css' %}">
+	<link rel="stylesheet" href="{% static 'css/order.css' %}">
+	<link rel="stylesheet" href="{% static 'css/quill.snow.css' %}">
+	<link rel="stylesheet" href="{% static 'css/leave_comment.css' %}">
+	<style>
+		.ql-editor {
+			padding-left: 0px;
+			padding-top: 0;
+		}
+	</style>
+{% endblock %}
+
+
+{% block body %}
+{% include 'templates/product_app.html' %}
+{% endblock %}

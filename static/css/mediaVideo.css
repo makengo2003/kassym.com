@@ -1,0 +1,72 @@
+@media (max-width: 1300px){
+  .container{
+    width: 980px;
+  }
+
+  .video_block video{
+    max-width: 570px;
+  }
+}
+
+@media (max-width: 990px){
+  .container{
+    width: 880px;
+  }
+
+  .video_block video{
+    max-width: 475px;
+  }
+}
+
+@media (max-width: 900px){
+  .container{
+    width: 750px;
+  }
+
+  .video_block video{
+    max-width: initial;
+  }
+
+  .lessons_list_block{
+    max-width: 100%;
+    max-height: 400px;
+    overflow: auto;
+    margin: 0;
+    margin-top: 40px;
+    width: max-content;
+  }
+
+  .video_block {
+    flex-direction: column;
+  }
+
+  .back_to_main {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 767px){
+  .container{
+    width: 540px;
+  }
+
+  .video_block b{
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 560px){
+  .container{
+    width: 390px;
+  }
+}
+
+@media (max-width: 400px){
+  .container{
+    width: 300px  ;
+  }
+
+  .lessons_list_block{
+    min-width: initial;
+  }
+}

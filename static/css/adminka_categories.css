@@ -1,0 +1,303 @@
+a, button {
+	cursor: pointer;
+}
+
+.categories_container{
+	display: flex;
+	z-index: 1;
+}
+
+.categories_list{
+	width: 270px;
+	padding-right: 10px;
+	height: calc(100vh - 78.4px);
+	border-right: 1px solid rgba(0, 0, 0, .2);
+	border-top: 1px solid rgba(0, 0, 0, .2);
+	padding-left: 40px;
+	position: sticky;
+	top: 5px;
+}
+
+.categories_list .add_category{
+    margin-top: 20px;
+}
+
+.admin_section{
+	display: flex;
+	align-items: center;
+}
+
+.categories_list .admin_section label{
+	font-size: 17px;
+	width: -webkit-fill-available;
+	display: flex;
+    align-items: center;
+}
+
+.admin_section a{
+	display: block;
+	width: fit-content;
+	height: fit-content;
+	margin-top: 2px;
+}
+
+.admin_section a img{
+	height: 25px;
+}
+
+.admin_btns{
+	display: flex;
+	align-items: center;
+}
+
+.all_users{
+	margin-right: 10px;
+	padding: 5px 10px 5px;
+}
+
+.all_users a{
+	text-decoration: none;
+	color: #007EC5;
+}
+
+.add_category a{
+	padding: 5px 10px;
+	text-decoration: none;
+	color: white;
+	background-color: #175145;
+	border-radius: 5px;
+	font-size: 16px;
+	border: none;
+}
+
+.all_users{
+	color: #007EC5;
+	background: none;
+}
+
+.add_category {
+	margin-top: 5px;
+	margin-bottom: 10px;;
+}
+
+.category_section input:checked + label::before{
+	content: '';
+	color: #008EDE;
+	font-size: 30px;
+	position: absolute;
+	left: -13px;
+	top: 10px;
+}
+
+.category_section input:checked + label {
+    color: #008EDE;
+}
+
+.categories_card_container{
+	margin-left: 40px;
+}
+
+.categories_cards_parts{
+	min-width: 810px;
+	max-width: calc(100vw - 320px);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+  	flex-grow: row;
+  	padding: 10px;
+  	flex-wrap: nowrap;
+  	font-size: 16px;
+}
+
+.categories_card_block{
+	position: relative;
+	min-width: 810px;
+	max-width: calc(100vw - 320px);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+  	flex-grow: row;
+  	flex-wrap: nowrap;
+  	padding: 15px;
+  	border-radius: 15px;
+  	border: 1px solid;
+  	margin-bottom: 15px;
+}
+
+.categories_card_block input{
+	font-size: 16px;
+	background: none;
+}
+
+.categories_cards_parts span{
+	padding-left: 5px;
+}
+
+.user_ID{
+	min-width: 45px;
+	max-width: 45px;
+}
+
+.user_name{
+	min-width: 170px;
+}
+
+.user_name input{
+	max-width: 160px;
+	border: none;
+}
+
+.user_phone{
+	min-width: 110px;
+}
+
+.user_phone input{
+	border: none;
+	width: 100px;
+}
+
+.IP_name{
+	min-width: 150px;
+}
+
+.IP_name input{
+	border: none;
+	width: 140px;
+}
+
+.user_start{
+	min-width: 100px;
+}
+
+.user_start input{
+	width: 90px;
+	border: none;
+}
+
+.user_end{
+	width: 100px;
+}
+
+.user_end input{
+	width: 90px;
+	border: none;
+}
+
+.categories_edit{
+	min-width: 100px;
+}
+
+.categories_edit a{
+	padding: 5px 10px;
+	color: white;
+	text-decoration: none;
+	border-radius: 5px;
+	background-color: #008EDE;
+}
+
+.dropzone img {
+    height: 25px;
+    margin-right: 5px;
+    cursor: grab;
+}
+
+.status_circle{
+	position: absolute;
+	left: -30px;
+	height: fit-content;
+}
+
+.status_circle span{
+	font-size: 70px;
+	height: fit-content;
+}
+
+.green_circle{
+	color: #00C514;
+}
+
+.red_circle{
+	color: #FD0000;
+}
+
+.categories_cards_parts .categories_photo{
+  min-width: 82px;
+}
+
+.categories_card_block .categories_photo{
+  text-align: center;
+  border-radius: 10px;
+  padding: 5px;
+  border: 1px solid red;
+  width: 70px;
+  height: 70px;
+  background-size: cover;
+  background-position: center;
+}
+
+.categories_name{
+  min-width: 170px;
+}
+
+.categories_name input{
+  width: 166px;
+  border: none;
+}
+
+.categories_photo img{
+  height: 60px;
+  width: 60px;
+}
+
+.categories_price{
+  min-width: 110px;
+}
+
+.categories_price input{
+  border: none;
+  width: 106px;
+}
+
+.categories_code{
+  min-width: 95px;
+}
+
+.categories_code input{
+  border: none;
+  width: 90px;
+}
+
+.categories_status{
+  min-width: 120px;
+}
+
+.categories_category{
+  min-width: 202px;
+}
+
+.categories_category input{
+  width: 198px;
+  border: none;
+}
+
+.categories_availability{
+  text-align: center;
+  min-width: 85px;
+}
+
+.categories_availability input{
+  height: 20px;
+  width: 20px;
+}
+
+.categories_edit{
+  min-width: 100px;
+}
+
+.categories_edit a{
+  padding: 5px 10px;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  background-color: #175145;
+}

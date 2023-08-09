@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+	<link rel="stylesheet" href="{% static 'css/categories_page.css' %}">
+	<link rel="stylesheet" href="{% static 'css/order.css' %}">
+	<link rel="stylesheet" href="{% static 'css/about_order.css' %}">
+	<link rel="stylesheet" href="{% static 'css/my_cart.css' %}">
+	<link rel="stylesheet" href="{% static 'css/mediaBaspa.css' %}">
+{% endblock %}
+
+
+{% block body %}
+	<div class="container">
+		<div class="go_back">
+			<a onclick="window.location.href = document.referrer"><img src="{% static 'imgs/arrow.png' %}"><span>Назад</span></a>
+		</div>
+	</div>
+
+	<div class="container main main_body">
+		<div class="filter">
+			<div class="categories filter_block">
+				{% for category in categories %}
+				<div class="category">
+					<a href="{% url 'products_page' %}?category_id={{ category.id }}">{{ category.name }}</a>
+				</div>
+				{% endfor %}
+			</div>
+
+			<hr>
+
+			<div class="contacts filter_block">
+				<div class="contact category">
+					<b>Наши контакты</b>
+				</div>
+
+				{% for contact in contacts %}
+				{% if contact.type != 'footer' %}
+					<div class="contact category">
+						<a target="_blank" href="{% if contact.link %}{{ contact.link }}{% else %}#{% endif %}"><img src="/static/imgs/{{ contact.type }}.png"><span>{{ contact.contact }}</span></a>
+					</div>
+				{% endif %}
+				{% endfor %}
+			</div>
+		</div>
+
+		<div class="main_block" style="margin-left: 40px">
+            {% autoescape off %}
+			{{ guarantee }}
+            {% endautoescape %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{% static 'js/pages/main_page/index.js' %}"></script>
+{% endblock %}

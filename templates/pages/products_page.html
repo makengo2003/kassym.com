@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/order.css' %}">
+<link rel="stylesheet" href="{% static 'css/categories_page.css' %}">
+<link rel="stylesheet" href="{% static 'css/checkbox.css' %}">
+<link rel="stylesheet" href="{% static 'css/mediaCategories.css' %}">
+
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+        <link rel="stylesheet" href="{% static 'css/mediaProduct.css' %}">
+        <link rel="stylesheet" href="{% static 'css/mediaCategories_page.css' %}">
+        <!--<link rel="stylesheet" href="{% static 'css/order.css' %}">-->
+        <link rel="stylesheet" href="{% static 'css/quill.snow.css' %}">
+        <link rel="stylesheet" href="{% static 'css/leave_comment.css' %}">
+        <style>
+                .ql-editor {
+                        padding-left: 0px;
+                        padding-top: 0;
+                }
+        </style>
+{% endblock %}
+
+
+{% block body %}
+<div class="container main main_body" id="div_closes_when_product_opens">
+	<div class="filters">
+	  <div class="back_to_main">
+		<a onclick="window.location.href = document.referrer">
+			<div>
+				<img src="{% static 'imgs/back.png' %}" alt=""><span> Назад</span>
+			</div>
+		</a>
+	  </div>
+
+	  <div class="filter" id="filter_app">
+		<div class="niches_list">
+			<details>
+				<summary><span>Ниши</span> <img src="{% static 'imgs/details.png' %}" class="details_img" alt=""></summary>
+				<div class="categories">
+					<div class="category cat_light" v-for="category in categories">
+						<input type="radio" :id="'category_' + category.id" name="printer_category" @change="get_category(category.id)" :checked="category.id == current_category.id">
+						<label :for="'category_' + category.id" v-cloak>${ category.name }</label>
+					</div>
+				</div>
+			</details>
+		</div>
+
+		<div class="filter_list">
+			<details open>
+				<summary><span>Фильтр</span> <img src="{% static 'imgs/details.png' %}" class="details_img" alt=""></summary>
+
+				<div class="wrapper">
+					<div class="order_by">
+						<b>Сортировка по</b>
+
+						<select v-model="order_by" @change="reset_then_get_products()">
+							<option value="-id">Новинка</option>
+							<option value="-price">Цена по убыванию</option>
+							<option value="price">Цена по возрастанию</option>
+						</select>
+					</div>
+					<div class="filter_prices">
+						<b>Цена</b>
+					</div>
+					<div class="values">
+						<div class="value min">
+							<span v-cloak>
+								${ price_filtration.min_price }
+							</span><span> ₽</span>
+						</div>
+						<div class="value max">
+							<span v-cloak>
+								${ price_filtration.max_price }
+							</span><span> ₽</span>
+						</div>
+					</div>
+					<div class="container_slider">
+						<div class="slider-track"></div>
+						<input type="range" :min="current_category.min_price" :max="current_category.max_price" :value="price_filtration.min_price" v-model="price_filtration.min_price" @input="slide_one()" @change="reset_then_get_products()">
+						<input type="range" :min="current_category.min_price" :max="current_category.max_price" :value="price_filtration.max_price" v-model="price_filtration.max_price" @input="slide_two()" @change="reset_then_get_products()">
+					</div>
+				</div>
+
+				<div class="filter_block" v-for="filtration in current_category.filtration" v-cloak>
+					<b v-cloak>${ filtration.name }</b>
+					<div class="brands_checkbox">
+						<div class="checkbox" v-for="value in filtration.values">
+							<label class="custom_checkbox" v-cloak>
+							  	<input type="checkbox" @change="get_products(filtration.name, value.value)" v-cloak>
+								<span v-cloak>${ value.value }</span>
+							</label>
+						</div>
+					</div>
+				</div>
+			</details>
+		</div>
+
+		<div class="filter_list_mob">
+			<details>
+				<summary><span>Фильтр</span> <img src="{% static 'imgs/details.png' %}" class="details_img" alt=""></summary>
+
+				<div class="wrapper">
+					<div class="order_by">
+						<b>Сортировка по</b>
+
+						<select v-model="order_by" @change="reset_then_get_products()">
+							<option value="-id">Новинка</option>
+							<option value="-price">Цена по убыванию</option>
+							<option value="price">Цена по возрастанию</option>
+						</select>
+					</div>
+					<div class="filter_prices">
+						<b>Цена</b>
+					</div>
+					<div class="values">
+						<div class="value min">
+							<span v-cloak>
+								${ price_filtration.min_price }
+							</span><span> ₽</span>
+						</div>
+						<div class="value max">
+							<span v-cloak>
+								${ price_filtration.max_price }
+							</span><span> ₽</span>
+						</div>
+					</div>
+					<div class="container_slider">
+						<div class="slider-track"></div>
+						<input type="range" :min="current_category.min_price" :max="current_category.max_price" :value="price_filtration.min_price" v-model="price_filtration.min_price" @input="slide_one()" @change="reset_then_get_products()">
+						<input type="range" :min="current_category.min_price" :max="current_category.max_price" :value="price_filtration.max_price" v-model="price_filtration.max_price" @input="slide_two()" @change="reset_then_get_products()">
+					</div>
+				</div>
+
+				<div class="filter_block" v-for="filtration in current_category.filtration">
+					<b v-cloak>${ filtration.name }</b>
+					<div class="brands_checkbox">
+						<div class="checkbox" v-for="value in filtration.values">
+							<label class="custom_checkbox">
+							  	<input type="checkbox" @change="get_products(filtration.name, value.value)">
+								<span v-cloak>${ value.value }</span>
+							</label>
+						</div>
+					</div>
+				</div>
+			</details>
+		</div>
+	  </div>
+	</div>
+
+	<div class="main_block">
+		{% include 'templates/products_app.html' %}
+	</div>
+</div>
+
+<div id="product_preview" style="display: none">
+        {% include "templates/product_app.html" %}
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/services/category_services.js' %}"></script>
+<script src="{% static 'js/pages/products_page/vue_apps.js' %}"></script>
+{% endblock %}
