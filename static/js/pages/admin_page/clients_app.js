@@ -6,6 +6,8 @@ var base_client_form_data = {
     company_name: "",
     created_at: "",
     expires_at: "",
+    device1: "",
+    device2: "",
     on_submit: false,
     errors: []
 }
@@ -116,6 +118,10 @@ clients_app = Vue.createApp({
                     })
                 }
             })
+        },
+        reset_devices() {
+            this.client_form["device1"] = ""
+            this.client_form["device2"] = ""
         }
     },
 })

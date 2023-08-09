@@ -15,7 +15,7 @@ class UserServices {
                         }
                     }
                 } else if (error.response.status == 403) {
-                    mounted_login_app.login_form_errors.push("Истек срок действия аккаунта")
+                    mounted_login_app.login_form_errors.push(error.response.data["detail"])
                 } else {
                     swal("Упс", "Что-то пошло не так!")
                 }

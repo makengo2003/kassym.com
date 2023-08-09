@@ -55,7 +55,7 @@ class ClientFormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
-        fields = ["fullname", "phone_number", "expires_at", "company_name"]
+        fields = ["fullname", "phone_number", "expires_at", "company_name", "device1", "device2"]
 
     def create(self, validated_data):
         if User.objects.filter(username=validated_data["phone_number"]).exists():
@@ -78,6 +78,8 @@ class ClientFormSerializer(serializers.ModelSerializer):
         client.fullname = validated_data.pop("fullname")
         client.expires_at = validated_data.pop("expires_at")
         client.company_name = validated_data.pop("company_name")
-        client.save(update_fields=["fullname", "expires_at", "company_name"])
+        client.device1 = validated_data.pop("device1")
+        client.device2 = validated_data.pop("device2")
+        client.save(update_fields=["fullname", "expires_at", "company_name", "device1", "device2"])
 
         return client

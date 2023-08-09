@@ -19,6 +19,8 @@ class Client(models.Model):
     company_name = models.CharField(max_length=255)
     created_at = models.DateField(default=datetime_now, editable=False)
     expires_at = models.DateField()
+    device1 = models.CharField(max_length=255, null=True, blank=True)
+    device2 = models.CharField(max_length=255, null=True, blank=True)
 
     @property
     def is_expired(self):

@@ -332,6 +332,17 @@
 							<b>Дата просрочки:</b>
 							<input type="date" required v-model="client_form['expires_at']">
 						</div>
+						<div v-if="client_form['id'] != 0" class="add_product block_css">
+							<b>Устройство 1:</b>
+							<input type="text" :value="client_form['device1']" disabled>
+						</div>
+						<div v-if="client_form['id'] != 0" class="add_product block_css">
+							<b>Устройство 2:</b>
+							<input type="text" :value="client_form['device2']" disabled>
+						</div>
+						<div v-if="client_form['id'] != 0" class="add_product block_css">
+							<span @click="reset_devices()" style="color: blue; text-decoration: underline;">Сброс устройств</span>
+						</div>
 
 						<ul style="padding-left: 20px">
 							<li style="color: red" v-for="error in client_form['errors']">${ error }</li>

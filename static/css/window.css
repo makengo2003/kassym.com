@@ -507,7 +507,7 @@ font-size: 17px;
 
  #client_form_window form {
     background-color: white;
-    width: 33.6vw;
+    width: fit-content;
     max-height: 80vh;
     overflow: auto;
     margin: 50px auto;
