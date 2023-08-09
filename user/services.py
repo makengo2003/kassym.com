@@ -53,7 +53,8 @@ def login(request: Request) -> None:
 
             if not device_verified:
                 email_subject = "Попытка входа в аккаунт с другим устройством"
-                email_content = f'Пользователь "{client.fullname}" ({user.username})'
+                email_content = (f'<b>Пользователь: </b>{client.fullname}<br><b>Номер телефона: </b>{user.username}<br>'
+                                 f'<b>ИП: </b>{client.company_name}')
                 recipient = Contact.objects.get(type="email").contact
                 send_mail(email_subject, email_content, EMAIL_HOST_USER, [recipient], fail_silently=False,
                           html_message=email_content)
