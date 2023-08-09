@@ -35,7 +35,7 @@
 				</div>
 
 				{% for contact in contacts %}
-				{% if contact.type != 'footer' and contact.type != 'order_manager' %}
+				{% if contact.type != 'footer' and contact.type != 'order_manager' and contact.type != 'phone_number' %}
 					<div class="contact category">
 						<a target="_blank" href="{% if contact.link %}{{ contact.link }}{% else %}#{% endif %}"><img src="/static/imgs/{{ contact.type }}.png"><span>{{ contact.contact }}</span></a>
 					</div>
