@@ -78,11 +78,14 @@ def ranged(file: IO[bytes], start: int = 0, end: int = None, block_size: int = 8
 
 
 def get_stream(request, lesson_id):
+    if not request.user.is_authenticated:
+        return HttpResponse("403 Forbidden")
+
     if not request.META.get("HTTP_REFERER", "").replace("http://", "") \
             .replace("https://", "").startswith(settings.SITE_DOMAIN):
         return HttpResponse("Скачать видео невозможно!")
 
-    print(request.META.get("HTTP_REFERER"), request.META.get("HTTP_USER_AGENT"))
+    print(request.META.get("HTTP_REFERER"))
 
     video = get_object_or_404(Lesson, id=lesson_id).video
 
