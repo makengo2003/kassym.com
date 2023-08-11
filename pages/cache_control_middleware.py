@@ -4,5 +4,5 @@ class CacheControlMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        response['Cache-Control'] = 'must-revalidate'
+        response['Cache-Control'] = 'no-cache'
         return response
