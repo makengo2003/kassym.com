@@ -7,4 +7,4 @@ function phone_number_on_input(event) {
     }
 }
 
-alert("hello")
+console.log("hello")
