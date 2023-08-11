@@ -26,11 +26,11 @@ SECRET_KEY = 'django-insecure-d0jc1^@a+2d0hy6+j@_as)l39x-d7z4k!q7p+fqgf-gu1n_uvi
 DEBUG = False
 
 if DEBUG:
-    SITE_DOMAIN = "127.0.0.1"
+    SITE_DOMAIN = "127.0.0.1:8000"
 else:
     SITE_DOMAIN = "kassym.com"
 
-ALLOWED_HOSTS = [SITE_DOMAIN]
+ALLOWED_HOSTS = [SITE_DOMAIN, "127.0.0.1"]
 
 
 # Application definition
