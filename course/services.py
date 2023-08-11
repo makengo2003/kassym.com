@@ -82,6 +82,8 @@ def get_stream(request, lesson_id):
             .replace("https://", "").startswith(settings.SITE_DOMAIN):
         return HttpResponse("Скачать видео невозможно!")
 
+    print(request.META.get("HTTP_REFERER"), request.META.get("HTTP_USER_AGENT"))
+
     video = get_object_or_404(Lesson, id=lesson_id).video
 
     path = Path(video.path)
