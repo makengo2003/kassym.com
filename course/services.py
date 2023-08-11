@@ -82,7 +82,7 @@ def get_stream(request, lesson_id):
         return HttpResponse("403 Forbidden")
 
     request_referer = request.META.get("HTTP_REFERER", "").replace("http://", "").replace("https://", "")
-    if not request_referer.startswith(settings.SITE_DOMAIN) or not request_referer.endswith(f"lesson/?id={lesson_id}"):
+    if request_referer != settings.SITE_DOMAIN + f"/lesson/?id={lesson_id}":
         return HttpResponse("Скачать видео невозможно!")
 
     video = get_object_or_404(Lesson, id=lesson_id).video
