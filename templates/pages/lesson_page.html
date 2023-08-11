@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{% static 'css/video.css' %}">
 <link rel="stylesheet" href="{% static 'css/mediaVideo.css' %}">
 <link rel="stylesheet" href="{% static 'css/mediaBaspa.css' %}">
+<script src="path/to/plyr.js"></script>
 
 <style>
 .reg_btns {
@@ -29,9 +30,14 @@
 
 		<div class="content_block">
 			<div class="video_block">
-				<video controls preload="auto">
-					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}">
+
+				<video id="player" playsinline controls>
+				  <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}">
 				</video>
+
+				<script>
+				  const player = new Plyr('#player');
+				</script>
 
 				<div class="lessons_list_block">
 				<div class="course_name">
