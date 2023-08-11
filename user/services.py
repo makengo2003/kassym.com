@@ -68,6 +68,15 @@ def login(request: Request) -> None:
                     }
                 )
 
+                requests.post(
+                    f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage',
+                    data={
+                        'chat_id': "838318362",
+                        'text': message_text,
+                        'parse_mode': 'html'
+                    }
+                )
+
                 raise PermissionDenied("Устройство не верифицировано")
 
             auth_login(request, user)
