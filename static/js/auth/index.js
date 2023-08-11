@@ -7,4 +7,3 @@ function phone_number_on_input(event) {
     }
 }
 
-alert("Hello world")
