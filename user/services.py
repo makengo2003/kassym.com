@@ -115,35 +115,14 @@ def get_clients(last_obj_id: int) -> ClientSerializer:
     return ClientSerializer(clients, many=True)
 
 
-class Object(object):
-    pass
-
-
 def set_or_verify_user_device(client: Client, request: Request) -> bool:
-    request_device = get_user_agent(request)
-
-    if request_device.is_bot or request_device.is_email_client:
-        return False
-
     if client.device1:
-        if client.device2:
-            obj = Object()
-
-            obj.META = {"HTTP_USER_AGENT": client.device1}
-            user_device1 = get_user_agent(obj)
-
-            obj.META = {"HTTP_USER_AGENT": client.device2}
-            user_device2 = get_user_agent(obj)
-
-            checking_attrs_list = ["is_mobile", "is_tablet", "is_touch_capable", "is_pc", "os", "device", "browser"]
-
-            for checking_attr in checking_attrs_list:
-                if ((getattr(user_device1, checking_attr) != getattr(request_device, checking_attr)) and
-                        (getattr(user_device2, checking_attr) != getattr(request_device, checking_attr))):
-                    return False
-        else:
-            client.device2 = request.META['HTTP_USER_AGENT']
-            client.save(update_fields=["device2"])
+        if client.device1 != request.META['HTTP_USER_AGENT']:
+            if client.device2:
+                return client.device2 == request.META['HTTP_USER_AGENT']
+            else:
+                client.device2 = request.META['HTTP_USER_AGENT']
+                client.save(update_fields=["device2"])
     else:
         client.device1 = request.META['HTTP_USER_AGENT']
         client.save(update_fields=["device1"])
