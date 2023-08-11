@@ -5,11 +5,15 @@
 <link rel="stylesheet" href="{% static 'css/video.css' %}">
 <link rel="stylesheet" href="{% static 'css/mediaVideo.css' %}">
 <link rel="stylesheet" href="{% static 'css/mediaBaspa.css' %}">
+<link rel="stylesheet" href="{% static 'css/plyr.css' %}">
 <script src="{% static 'js/packages/plyr.js' %}"></script>
 
 <style>
 .reg_btns {
     margin-right: 0;
+}
+.plyr--fullscreen-active video {
+max-height: 100% !important
 }
 </style>
 {% endblock %}
@@ -37,6 +41,7 @@
 
 				<script>
 				  const player = new Plyr('#player');
+					player.api("color2","#175145");
 				</script>
 
 				<div class="lessons_list_block">
