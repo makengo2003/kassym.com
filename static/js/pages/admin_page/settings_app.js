@@ -24,11 +24,13 @@ settings_app = Vue.createApp({
                 },
                 footer: {
                     contact: "",
+                },
+                telegram_chat_id: {
+                    contact: "",
                 }
             },
             guarantee_form: {
                 file: null,
-
             }
         }
     },

@@ -2,8 +2,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login, SESSION_KEY
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
-from django.core.mail import send_mail
-from django_user_agents.utils import get_user_agent
 
 from typing import Mapping, List
 
@@ -11,10 +9,12 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.request import Request
 
-from project.settings import EMAIL_HOST_USER
+from project.settings import BOT_TOKEN
 from site_settings.models import Contact
 from .models import FavouriteProduct, Client
 from .serializers import ChangePasswordSerializer, ClientSerializer, ClientFormSerializer
+
+import requests
 
 
 def change_password(request: Request, user: User, data: Mapping) -> None:
@@ -52,12 +52,22 @@ def login(request: Request) -> None:
             device_verified = set_or_verify_user_device(client, request)
 
             if not device_verified:
-                email_subject = "Попытка входа в аккаунт с другим устройством"
-                email_content = (f'<b>Пользователь: </b>{client.fullname}<br><b>Номер телефона: </b>{user.username}<br>'
-                                 f'<b>ИП: </b>{client.company_name}')
-                recipient = Contact.objects.get(type="email").contact
-                send_mail(email_subject, email_content, EMAIL_HOST_USER, [recipient], fail_silently=False,
-                          html_message=email_content)
+                message_subject = "Попытка входа в аккаунт с другим устройством"
+                message_content = (
+                    f'<b>Пользователь: </b>{client.fullname}\n<b>Номер телефона: </b>{user.username}\n'
+                    f'<b>ИП: </b>{client.company_name}')
+                message_text = f"<b><i>{message_subject}</i></b>\n\n{message_content}"
+                admin_telegram_chat_id = Contact.objects.get(type="telegram_chat_id").contact
+
+                requests.post(
+                    f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage',
+                    data={
+                        'chat_id': admin_telegram_chat_id,
+                        'text': message_text,
+                        'parse_mode': 'html'
+                    }
+                )
+
                 raise PermissionDenied("Устройство не верифицировано")
 
             auth_login(request, user)
@@ -112,6 +122,11 @@ def get_clients(last_obj_id: int) -> ClientSerializer:
     else:
         clients = Client.objects.filter(id__lt=int(last_obj_id)).order_by("-id")[:40]
 
+    return ClientSerializer(clients, many=True)
+
+
+def search_clients(clients_search_input: str) -> ClientSerializer:
+    clients = Client.objects.filter(account__username__icontains=clients_search_input).order_by("-id")
     return ClientSerializer(clients, many=True)
 
 

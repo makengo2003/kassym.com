@@ -268,9 +268,11 @@
 		<div style="display: none" id="clients">
 			<div class="main_container settings_container">
 				<div class="admin_btns">
-					<div class="all_users">
-						<a>Все пользователи</a>
-					</div>
+					<form @submit.prevent="search_clients()" class="add_category" style="margin-right: 50px">
+						<input type="text" placeholder="Номер телефона" v-model="clients_search_input" style="margin-right: 5px; height: 15px">
+						<a @click="search_clients()">Поиск</a>
+						<span v-if="admin_searched_clients" @click="cancel_searching" style="color: #175145; margin-left: 10px">Отменить поиск</span>
+					</form>
 					<div class="add_category">
 						<a @click="open_client_form()">Добавить пользователя</a>
 					</div>
@@ -544,6 +546,12 @@
 							<div class="contact" style="display: initial">
 								<p><b>Whatsapp</b></p>
 								<input type="text" v-model="contacts_form.whatsapp.contact" placeholder="Whatsapp" oninput="phone_number_on_input(event)">
+							</div>
+
+							<div class="contact" style="display: initial">
+								<p><b>Chat Id в Telegram-е для напоминания (получить chat id в боте <a style="display: inline" href="https://t.me/kassym_qazaq_bot">kassym.qazaq.bot</a>)</b></p>
+								<input type="text" v-model="contacts_form.telegram_chat_id.contact" placeholder="Chat Id">
+								<span style="color: red">* ВАЖНО. Не удаляйте чат с ботом</span>
 							</div>
 
 							<div class="contact" style="display: initial">

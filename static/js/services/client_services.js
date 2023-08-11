@@ -3,6 +3,10 @@ class ClientServices {
         return axios.get("/api/user/get_clients/", {params: {last_obj_id: last_obj_id}}).then(response => response)
     }
 
+    static search_clients(clients_search_input) {
+        return axios.get("/api/user/search_clients/", {params: {clients_search_input: clients_search_input}}).then(response => response)
+    }
+
     static get_client(client_id) {
         return axios.get("/api/user/get_client/", {params: {client_id: client_id}}).then(response => response)
     }

@@ -90,3 +90,10 @@ def get_client_view(request: Request) -> Response:
 def get_clients_view(request: Request) -> Response:
     clients = services.get_clients(request.query_params.get("last_obj_id", 0))
     return Response(clients.data)
+
+
+@api_view(["GET"])
+@permission_classes([IsAdminUser])
+def search_clients_view(request: Request) -> Response:
+    clients = services.search_clients(request.query_params.get("clients_search_input", ""))
+    return Response(clients.data)

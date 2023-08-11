@@ -8,6 +8,7 @@ CONTACT_TYPES = (
     ("instagram", "Instagram"),
     ("order_manager", "Номер менеджера по заказам"),
     ("footer", "Footer"),
+    ("telegram_chat_id", "Ваш Chat Id в Telegram")
 )
 
 

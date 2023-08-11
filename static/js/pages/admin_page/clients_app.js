@@ -21,6 +21,8 @@ clients_app = Vue.createApp({
             last_obj_id: 0,
             is_getting_clients: false,
             there_is_no_more_clients: false,
+            clients_search_input: "",
+            admin_searched_clients: false,
         }
     },
     methods: {
@@ -31,6 +33,7 @@ clients_app = Vue.createApp({
         },
         get_clients() {
             this.is_getting_clients = true
+
             ClientServices.get_clients(this.last_obj_id).then((response) => {
                 this.is_getting_clients = false
                 if (response["data"].length == 0) {
@@ -122,6 +125,27 @@ clients_app = Vue.createApp({
         reset_devices() {
             this.client_form["device1"] = ""
             this.client_form["device2"] = ""
+        },
+        search_clients() {
+            this.is_getting_clients = true
+
+            ClientServices.search_clients(this.clients_search_input).then((response) => {
+                this.admin_searched_clients = true
+                this.clients = []
+
+                for (var i = 0; i < response["data"].length; i++) {
+                    this.clients.push(response["data"][i])
+                }
+            })
+        },
+        cancel_searching() {
+            this.admin_searched_clients = false
+            this.is_getting_clients = false
+            this.last_obj_id = 0
+            this.there_is_no_more_clients = false
+            this.clients = []
+            this.clients_search_input = ""
+            this.get_clients()
         }
     },
 })
