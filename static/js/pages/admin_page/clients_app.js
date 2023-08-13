@@ -154,4 +154,4 @@ clients_app = Vue.createApp({
 clients_app.config.compilerOptions.delimiters = ["${", "}"];
 mounted_clients_app = clients_app.mount("#clients")
 
-
+alert("TEST")
