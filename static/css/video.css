@@ -60,7 +60,7 @@ a{
 .video_block video{
 	width: 100%;
 	border-radius: 8px;
-	max-width: 100%; // 900px
+	max-width: 900px; // 100%
 }
 
 .lessons_list_block{
