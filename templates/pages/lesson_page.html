@@ -39,11 +39,11 @@ max-height: 100% !important
 			<div class="video_block">
 
 				<video id="player" playsinline controls>
-				  <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}">
+				  <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/mp4">
 				</video>
 
 				<script>
-				  const player = new Plyr('#player');
+				  // const player = new Plyr('#player');
 				</script>
 
 				<div class="lessons_list_block">
