@@ -6,6 +6,7 @@ from django.contrib.sessions.models import Session
 from typing import Mapping, List
 
 from django.shortcuts import get_object_or_404
+from django_user_agents.utils import get_user_agent
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.request import Request
 
@@ -139,11 +140,21 @@ def search_clients(clients_search_input: str) -> ClientSerializer:
     return ClientSerializer(clients, many=True)
 
 
+class Obj:
+    def __init__(self, meta):
+        self.META = meta
+
+
 def set_or_verify_user_device(client: Client, request: Request) -> bool:
     if client.device1:
-        if client.device1 != request.META['HTTP_USER_AGENT']:
+        request_device = get_user_agent(request)
+        client_device1 = get_user_agent(Obj({"HTTP_USER_AGENT": client.device1}))
+
+        if client_device1.device != request_device.device and client_device1.os != request_device.os:
             if client.device2:
-                return client.device2 == request.META['HTTP_USER_AGENT']
+                client_device2 = get_user_agent(Obj({"HTTP_USER_AGENT": client.device2}))
+
+                return client_device2.device != request_device.device and client_device2.os != request_device.os
             else:
                 client.device2 = request.META['HTTP_USER_AGENT']
                 client.save(update_fields=["device2"])
