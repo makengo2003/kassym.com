@@ -13,7 +13,7 @@ class ProductsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", "name", "price", "code", "image", "is_favourite", "category_name", "is_available"]
+        fields = ["id", "name", "price", "code", "image", "is_favourite", "category_name", "is_available", "count"]
 
     def get_default_image(self, obj):
         if hasattr(obj, "image"):

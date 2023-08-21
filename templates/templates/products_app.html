@@ -19,7 +19,11 @@
 				</div>
 
 				<div class="printer_code" style="margin-top: 5px;">
-					<p v-if="product.is_available" v-cloak class="product_is_available_text">В наличии</p>
+					<div v-if="product.is_available" v-cloak style="display: flex">
+						<p class="product_is_available_text">В наличии</p>
+						<span class="product_count_span" v-if="product.category_name == 'Товары со склада'" v-cloak>${ product.count } шт</span>
+					</div>
+
 					<p v-else class="product_is_not_available_text">Нет в наличии</p>
 				</div>
 

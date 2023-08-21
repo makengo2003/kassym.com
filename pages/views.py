@@ -10,7 +10,7 @@ from course import services as course_services
 
 @never_cache
 def search_result_page_view(request):
-    return render(request, "pages/search_result_page.html", {"search_input": request.GET.get("search_input")})
+    return render(request, "pages/search_result_page.html", {"search_input": request.GET.get("search_input"), "MAIN_CATEGORY_ID": MAIN_CATEGORY_ID})
 
 
 @never_cache
@@ -22,7 +22,7 @@ def main_page_view(request):
 @check_account_expiration()
 def favourites_page_view(request):
     if request.user.is_authenticated:
-        return render(request, "pages/favourites_page.html")
+        return render(request, "pages/favourites_page.html", {"MAIN_CATEGORY_ID": MAIN_CATEGORY_ID})
     return redirect("/")
 
 
@@ -30,7 +30,7 @@ def favourites_page_view(request):
 @check_account_expiration()
 def products_page_view(request):
     if request.user.is_authenticated:
-        return render(request, "pages/products_page.html")
+        return render(request, "pages/products_page.html", {"MAIN_CATEGORY_ID": MAIN_CATEGORY_ID})
     return redirect("/")
 
 
@@ -38,7 +38,7 @@ def products_page_view(request):
 @check_account_expiration()
 def product_page_view(request):
     if request.user.is_authenticated:
-        return render(request, "pages/product_page.html")
+        return render(request, "pages/product_page.html", {"MAIN_CATEGORY_ID": MAIN_CATEGORY_ID})
     return redirect("/")
 
 

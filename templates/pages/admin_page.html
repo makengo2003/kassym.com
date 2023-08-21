@@ -216,6 +216,10 @@
 								<b>Цена продукта:</b>
 								<input type="number" placeholder="Цена продукта" required v-model="product_form['price']">
 							</div>
+							<div v-if="product_form['category_id'] == main_category_id" class="add_product block_css">
+								<b>Количество продукта:</b>
+								<input type="number" placeholder="Количество продукта" :required="product_form['category_id'] == main_category_id" v-model="product_form['count']">
+							</div>
 							<div class="add_product block_css">
 								<b>Высота:</b>
 								<input type="text" placeholder="Высота" v-model="product_form['height']">
