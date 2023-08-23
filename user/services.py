@@ -147,14 +147,9 @@ class Obj:
 
 def set_or_verify_user_device(client: Client, request: Request) -> bool:
     if client.device1:
-        request_device = get_user_agent(request)
-        client_device1 = get_user_agent(Obj({"HTTP_USER_AGENT": client.device1}))
-
-        if client_device1.device != request_device.device and client_device1.os != request_device.os:
+        if client.device1 != request.META['HTTP_USER_AGENT']:
             if client.device2:
-                client_device2 = get_user_agent(Obj({"HTTP_USER_AGENT": client.device2}))
-
-                return client_device2.device == request_device.device and client_device2.os == request_device.os
+                return client.device2 == request.META['HTTP_USER_AGENT']
             else:
                 client.device2 = request.META['HTTP_USER_AGENT']
                 client.save(update_fields=["device2"])
