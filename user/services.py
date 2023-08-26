@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django_user_agents.utils import get_user_agent
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.request import Request
+from user_agents.parsers import UserAgent
 
 from project.settings import BOT_TOKEN
 from site_settings.models import Contact
@@ -145,11 +146,23 @@ class Obj:
         self.META = meta
 
 
+def _verify_devices(verified_device: UserAgent, incoming_device: UserAgent) -> bool:
+    return verified_device.device.family == incoming_device.device.family and \
+        verified_device.device.model == incoming_device.device.model and \
+        verified_device.device.brand == incoming_device.device.brand and \
+        verified_device.browser.family == incoming_device.browser.family and \
+        verified_device.os.family == incoming_device.os.family
+
+
 def set_or_verify_user_device(client: Client, request: Request) -> bool:
     if client.device1:
-        if client.device1 != request.META['HTTP_USER_AGENT']:
+        request_device = get_user_agent(request)
+        client_device1 = get_user_agent(Obj({"HTTP_USER_AGENT": client.device1}))
+
+        if not _verify_devices(client_device1, request_device):
             if client.device2:
-                return client.device2 == request.META['HTTP_USER_AGENT']
+                client_device2 = get_user_agent(Obj({"HTTP_USER_AGENT": client.device2}))
+                return _verify_devices(client_device2, request_device)
             else:
                 client.device2 = request.META['HTTP_USER_AGENT']
                 client.save(update_fields=["device2"])
