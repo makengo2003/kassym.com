@@ -39,8 +39,18 @@ max-height: 100% !important
 			<div class="video_block">
 
 				<video id="player" playsinline controls>
-				  <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/mp4">
-				  <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/webm">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/mp4">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/webm">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/ogg">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/quicktime">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/x-msvideo">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/x-matroska">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/x-flv">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/x-ms-wmv">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/x-ms-asf">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/3gpp">
+					<source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/3gpp2">
+					Ваш браузер не поддерживает воспроизведение видео.
 				</video>
 
 				<script>
