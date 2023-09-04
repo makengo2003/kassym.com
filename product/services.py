@@ -64,10 +64,10 @@ def search_products(user: User, search_input: str, last_obj_id: Sequence) -> Pro
     for word in search_input.split():
         q_filter |= Q(name__icontains=word) | Q(code__icontains=word)
 
-    return _get_products(user, q_filter=q_filter, last_obj_id=last_obj_id)
+    return _get_products(user, q_filter=q_filter, last_obj_id=last_obj_id, searching=True)
 
 
-def _get_products(user: User, order_by: str = "-id", last_obj_id: Sequence = None, q_filter: Q = Q(), **filter_query):
+def _get_products(user: User, order_by: str = "-id", last_obj_id: Sequence = None, q_filter: Q = Q(), searching: bool = False, **filter_query):
     if user.is_authenticated:
         # one more way: is just use favourites__user__username = user.username
         favourite_subquery = FavouriteProduct.objects.filter(
@@ -104,6 +104,13 @@ def _get_products(user: User, order_by: str = "-id", last_obj_id: Sequence = Non
             is_favourite=is_favourite_case,
             category_name=F("category__name"),
         ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available")[index_starts_at:index_starts_at+40]
+    elif searching:
+        products = Product.objects.prefetch_related("images").filter(q_filter, **filter_query,
+                                                                     images__default=True).annotate(
+            image=F("images__image"),
+            is_favourite=is_favourite_case,
+            category_name=F("category__name"),
+        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available")
     else:
         products = Product.objects.prefetch_related("images").filter(q_filter, **filter_query, images__default=True).annotate(
             image=F("images__image"),

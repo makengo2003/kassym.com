@@ -62,6 +62,8 @@ products_app = Vue.createApp({
                 list: null,
             },
             is_getting_products: false,
+            admin_searched_products: false,
+            search_products_input: "",
         }
     },
     methods: {
@@ -618,6 +620,31 @@ products_app = Vue.createApp({
 
                 CategoryServices.save_categories_order(categories_order)
             }
+        },
+        search_products() {
+            this.is_getting_products = true
+
+            axios("/api/product/search_products/", {
+                params: {
+                    search_input: this.search_products_input,
+                }
+            }).then((response) => {
+                this.admin_searched_products = true
+                this.products = []
+
+                for (var i = 0; i < response["data"].length; i++) {
+                    this.products.push(response["data"][i])
+                }
+            })
+        },
+        cancel_searching() {
+            this.admin_searched_products = false
+            this.is_getting_products = false
+            this.last_obj_id = 0
+            this.there_is_no_more_products = false
+            this.products = []
+            this.search_products_input = ""
+            this.open_section()
         },
     },
     mounted() {
