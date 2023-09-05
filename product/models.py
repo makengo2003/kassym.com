@@ -16,6 +16,7 @@ class Product(models.Model):
     width = models.CharField(max_length=50, null=True, blank=True)
     length = models.CharField(max_length=50, null=True, blank=True)
     count = models.PositiveIntegerField(default=0)
+    currency = models.CharField(max_length=10, default="ru", choices=(("kz", "KZ"), ("ru", "RU")))
 
     def save(self, *args, **kwargs):
         self.name_lower = self.name.lower() if self.name else None

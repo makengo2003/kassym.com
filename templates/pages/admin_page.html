@@ -146,7 +146,7 @@
 							</div>
 
 							<div class="categories_price">
-								<input type="text" :value="product.price + ' ₽'" disabled>
+								<input type="text" :value="get_product_price_with_currency(product)" disabled>
 							</div>
 
 							<div class="categories_category">
@@ -220,6 +220,13 @@
 							<div class="add_product block_css">
 								<b>Цена продукта:</b>
 								<input type="number" placeholder="Цена продукта" required v-model="product_form['price']">
+							</div>
+							<div class="add_product block_css" v-if="product_form['category_id'] == main_category_id">
+								<b>Валюта:</b>
+								<select v-model="product_form['currency']" required>
+									<option value="kz">Тенге</option>
+									<option value="ru">Рубль</option>
+								</select>
 							</div>
 							<div v-if="product_form['category_id'] == main_category_id" class="add_product block_css">
 								<b>Количество продукта:</b>

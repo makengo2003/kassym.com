@@ -50,6 +50,7 @@ products_app = Vue.createApp({
                 is_available: false,
                 code: "",
                 vendor_number: "",
+                currency: "kz",
                 images: [{image: "", "default": true}, {image: "", "default": false}, {image: "", "default": false}, {image: "", "default": false}],
                 options: [],
                 on_submit: false,
@@ -193,7 +194,8 @@ products_app = Vue.createApp({
                         category_filtration: [],
                         height: data["height"],
                         width: data["width"],
-                        length: data["length"]
+                        length: data["length"],
+                        currency: data["currency"]
                     }
 
                     if (this.product_form_description_editor == null) {
@@ -236,6 +238,7 @@ products_app = Vue.createApp({
                         is_available: false,
                         code: "",
                         vendor_number: "",
+                        currency: "kz",
                         images: [{image: "", "default": true}, {image: "", "default": false}, {image: "", "default": false}, {image: "", "default": false}],
                         options: [],
                         on_submit: false,
@@ -314,6 +317,10 @@ products_app = Vue.createApp({
             }
         },
         product_form_submit() {
+            if (this.product_form["category_id"] != this.main_category_id) {
+                this.product_form["currency"] = "ru"
+            }
+
             for (var i = 0; i < this.product_form["options"].length; i++) {
                 if (this.get_option_values(this.product_form["options"][i]).length > 0 && this.product_form["options"][i]["values"].length == 0) {
                     alert("Выберите значения для характеристики " + this.product_form["options"][i]["name"])
@@ -354,6 +361,7 @@ products_app = Vue.createApp({
                                 is_available: false,
                                 code: "",
                                 vendor_number: "",
+                                currency: "kz",
                                 images: [{image: "", "default": true}, {image: "", "default": false}, {image: "", "default": false}, {image: "", "default": false}],
                                 options: [],
                                 on_submit: false,
@@ -390,6 +398,7 @@ products_app = Vue.createApp({
                                 is_available: false,
                                 code: "",
                                 vendor_number: "",
+                                currency: "kz",
                                 images: [{image: "", "default": true}, {image: "", "default": false}, {image: "", "default": false}, {image: "", "default": false}],
                                 options: [],
                                 on_submit: false,
@@ -536,6 +545,7 @@ products_app = Vue.createApp({
                             is_available: false,
                             code: "",
                             vendor_number: "",
+                            currency: "kz",
                             images: [{image: "", "default": true}, {image: "", "default": false}, {image: "", "default": false}, {image: "", "default": false}],
                             options: [],
                             on_submit: false,
@@ -646,6 +656,14 @@ products_app = Vue.createApp({
             this.search_products_input = ""
             this.open_section()
         },
+        get_product_price_with_currency(product) {
+            if (product.currency == "kz") {
+                var currency = "Тг"
+            } else {
+                var currency = "₽"
+            }
+            return product.price + " " + currency
+        }
     },
     mounted() {
         this.main_category_id = main_category_id
