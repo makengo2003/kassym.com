@@ -45,9 +45,9 @@ def product_page_view(request):
 @never_cache
 @check_account_expiration()
 def admin_page_view(request):
-    if request.user.is_superuser:
+    if request.user.is_staff or request.user.is_superuser:
         return render(request, "pages/admin_page.html", {"MAIN_CATEGORY_ID": MAIN_CATEGORY_ID})
-    return redirect("/")
+    return redirect("/profile/")
 
 
 @never_cache

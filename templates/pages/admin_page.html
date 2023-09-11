@@ -49,22 +49,28 @@
 					<label for="goods">Товары</label>
 				</div>
 
+				{% if request.user.is_superuser %}
 				<div class="admin_section">
 					<input type="radio" name="admin_section" id="users" value="clients" v-model="current_section" @change="open_section()">
 					<label for="users">Пользователи</label>
 				</div>
+				{% endif %}
 
+				{% if request.user.is_superuser %}
 				<div class="admin_section">
 					<input type="radio" name="admin_section" id="site_courses" value="courses" v-model="current_section" @change="open_section()">
 					<label for="site_courses">Курсы</label>
 				</div>
+				{% endif %}
 			</div>
 
 			<div class="admin_settings block">
+				{% if request.user.is_superuser %}
 				<div class="admin_section" name="admin_section">
 					<input type="radio" name="admin_section" id="settings_section" value="settings" v-model="current_section" @change="open_section()">
 					<label for="settings_section">Настройки</label>
 				</div>
+				{% endif %}
 
 				<div class="quit">
 					<a href="{% url 'logout' %}">Выйти</a>
@@ -280,6 +286,8 @@
 				</div>
 			</div>
 		</div>
+
+		{% if request.user.is_superuser %}
 
 		<div style="display: none" id="clients">
 			<div class="main_container settings_container">
@@ -630,6 +638,8 @@
 				</div>
 			</div>
 		</div>
+
+		{% endif %}
 
 		<div id="change_password_window">
 			<form @submit.prevent="change_password_request()">

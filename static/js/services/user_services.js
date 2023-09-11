@@ -5,7 +5,7 @@ class UserServices {
                 "X-CSRFToken": $cookies.get("csrftoken"),
             }
         }).then((response) => {
-            window.location.href = "/profile/"
+            window.location.href = "/admin/"
         }).catch((error) => {
             if (error.response) {
                 if (error.response.status == 400) {

@@ -8,6 +8,7 @@ from project.utils import request_schema_validation
 from product import schemas as product_schemas
 
 from . import services, schemas
+from .permission_classes import IsAdmin
 
 
 @api_view(["POST"])
@@ -55,14 +56,14 @@ def change_user_fullname_view(request):
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAdmin])
 def add_client_view(request: Request) -> Response:
     client_id = services.add_client(request.data)
     return Response({"success": True, "client_id": client_id})
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAdmin])
 @request_schema_validation("POST", schemas.ClientIdSchema)
 def edit_client_view(request: Request) -> Response:
     client_id = services.edit_client(request.data.get("client_id"), request.data)
@@ -70,7 +71,7 @@ def edit_client_view(request: Request) -> Response:
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAdmin])
 @request_schema_validation("POST", schemas.ClientIdSchema)
 def delete_client_view(request: Request) -> Response:
     services.delete_client(request.data.get("client_id"))
@@ -78,7 +79,7 @@ def delete_client_view(request: Request) -> Response:
 
 
 @api_view(["GET"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAdmin])
 @request_schema_validation("GET", schemas.ClientIdSchema)
 def get_client_view(request: Request) -> Response:
     client = services.get_client(request.query_params.get("client_id"))
@@ -86,14 +87,14 @@ def get_client_view(request: Request) -> Response:
 
 
 @api_view(["GET"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAdmin])
 def get_clients_view(request: Request) -> Response:
     clients = services.get_clients(request.query_params.get("last_obj_id", 0))
     return Response(clients.data)
 
 
 @api_view(["GET"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAdmin])
 def search_clients_view(request: Request) -> Response:
     clients = services.search_clients(request.query_params.get("clients_search_input", ""))
     return Response(clients.data)

@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 
 from project.utils import request_schema_validation
+from user.permission_classes import IsStaff
 from . import services, schemas
 
 
@@ -29,7 +30,7 @@ def get_product_view(request: Request) -> Response:
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsStaff])
 @parser_classes([MultiPartParser, FormParser])
 def add_product_view(request: Request) -> Response:
     product_id = services.add_product(request.data, request.FILES)
@@ -37,7 +38,7 @@ def add_product_view(request: Request) -> Response:
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsStaff])
 @request_schema_validation("POST", schemas.ProductIdSchema)
 def delete_product_view(request: Request) -> Response:
     services.delete_product(request.data.pop("product_id"))
@@ -45,7 +46,7 @@ def delete_product_view(request: Request) -> Response:
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsStaff])
 @parser_classes([MultiPartParser, FormParser])
 def edit_product_view(request: Request) -> Response:
     services.edit_product(request.data.get("product_id"), request.data, request.FILES)
@@ -62,7 +63,7 @@ def search_products_view(request: Request) -> Response:
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsStaff])
 @request_schema_validation("POST", schemas.ProductIdSchema)
 def change_product_is_available_status_view(request: Request) -> Response:
     services.change_product_is_available_status(request.data.get("product_id"))

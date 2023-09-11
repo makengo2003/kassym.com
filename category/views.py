@@ -1,10 +1,11 @@
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from project.utils import request_schema_validation
+from user.permission_classes import IsStaff
 from . import services
 from . import schemas
 
@@ -25,7 +26,7 @@ def get_category_view(request: Request) -> Response:
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsStaff])
 @parser_classes([MultiPartParser, FormParser])
 def add_category_view(request: Request) -> Response:
     services.add_category(request.user, request.data, request.FILES.getlist(next(iter(request.FILES)))[0])
@@ -33,7 +34,7 @@ def add_category_view(request: Request) -> Response:
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsStaff])
 @request_schema_validation("POST", schemas.CategoryIdSchema)
 def delete_category_view(request: Request) -> Response:
     services.delete_category(request.data.pop("category_id"))
@@ -41,7 +42,7 @@ def delete_category_view(request: Request) -> Response:
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsStaff])
 @parser_classes([MultiPartParser, FormParser])
 @request_schema_validation("POST", schemas.CategoryIdSchema)
 def edit_category_view(request: Request) -> Response:
@@ -50,7 +51,7 @@ def edit_category_view(request: Request) -> Response:
 
 
 @api_view(["POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsStaff])
 @request_schema_validation("POST", schemas.SaveCategoriesOrderRequestSchema)
 def save_categories_order_view(request: Request) -> Response:
     services.save_categories_order(request.data.get("categories_order"))
