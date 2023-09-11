@@ -64,7 +64,7 @@
 				<div class="buy_product_btn" style="display: flex; align-items: center;">
 					{% for contact in contacts %}
 						{% if contact.type == 'order_manager' %}
-							<a :href="'{{ contact.link }}?text=Я хотел купить товар ' + product.name" target="_blank">Заказать</a>
+							<!-- <a href="" target="_blank">Заказать</a> -->
 						{% endif %}
 					{% endfor %}
 					<h2 style="margin-left: 10px; color: #175145;" v-cloak>${ product.price }
