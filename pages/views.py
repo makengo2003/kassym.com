@@ -54,7 +54,7 @@ def admin_page_view(request):
 @check_account_expiration()
 def profile_page_view(request):
     if request.user.is_authenticated:
-        if request.user.is_superuser:
+        if request.user.is_superuser or request.user.is_staff:
             return redirect("/admin/")
         return render(request, "pages/profile_page.html")
     return redirect("/")

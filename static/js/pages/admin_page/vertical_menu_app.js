@@ -7,7 +7,8 @@ vertical_menu_app = Vue.createApp({
                 products: mounted_products_app,
                 clients: mounted_clients_app,
                 settings: mounted_settings_app,
-                courses: mounted_courses_app
+                courses: mounted_courses_app,
+                staffs: mounted_staffs_app
             }
         }
     },
