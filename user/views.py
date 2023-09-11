@@ -8,7 +8,7 @@ from project.utils import request_schema_validation
 from product import schemas as product_schemas
 
 from . import services, schemas
-from .permission_classes import IsAdmin
+from base_object_presenter.permission_classes import IsAdmin
 
 
 @api_view(["POST"])

@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes, parser_class
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from user.permission_classes import IsAdmin
+from base_object_presenter.permission_classes import IsAdmin
 from . import services
 
 

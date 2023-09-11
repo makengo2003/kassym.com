@@ -5,7 +5,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from project.utils import request_schema_validation
-from user.permission_classes import IsStaff
+from base_object_presenter.permission_classes import IsStaff
 from . import services
 from . import schemas
 
