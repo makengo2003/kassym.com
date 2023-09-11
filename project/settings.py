@@ -49,8 +49,10 @@ INSTALLED_APPS = [
     'product.apps.ProductConfig',
     'pages',
     'course.apps.CourseConfig',
-    'django_user_agents',
+    'staff',
 
+    'base_object_presenter',
+    'django_user_agents',
     'debug_toolbar',
     'rest_framework'
 ]

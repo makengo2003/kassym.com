@@ -155,7 +155,7 @@ def _verify_devices(verified_device: UserAgent, incoming_device: UserAgent) -> b
 
 
 def set_or_verify_user_device(client: Client, request: Request) -> bool:
-    if client.account.username in ["+77779185336"]:
+    if client.account.username in ["+77003223366", "+77003223355", "+77003223377"]:
         return True
 
     if client.device1:
