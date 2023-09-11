@@ -55,7 +55,8 @@ class ClientFormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
-        fields = ["fullname", "phone_number", "expires_at", "company_name", "device1", "device2"]
+        fields = ["fullname", "phone_number", "expires_at", "company_name", "device1", "device2",
+                  "ignore_device_verification"]
 
     def create(self, validated_data):
         if User.objects.filter(username=validated_data["phone_number"]).exists():
@@ -65,7 +66,8 @@ class ClientFormSerializer(serializers.ModelSerializer):
         account = User.objects.create_user(validated_data.pop("phone_number"), password=password)
         return Client.objects.create(account=account, fullname=validated_data.pop("fullname"), password=password,
                                      company_name=validated_data.pop("company_name"),
-                                     expires_at=validated_data.pop("expires_at"))
+                                     expires_at=validated_data.pop("expires_at"),
+                                     ignore_device_verification=validated_data.pop("ignore_device_verification"))
 
     def update(self, client, validated_data):
         if validated_data["phone_number"] != client.account.username:
@@ -80,6 +82,7 @@ class ClientFormSerializer(serializers.ModelSerializer):
         client.company_name = validated_data.pop("company_name")
         client.device1 = validated_data.pop("device1")
         client.device2 = validated_data.pop("device2")
-        client.save(update_fields=["fullname", "expires_at", "company_name", "device1", "device2"])
+        client.ignore_device_verification = validated_data.pop("ignore_device_verification")
+        client.save(update_fields=["fullname", "expires_at", "company_name", "device1", "device2", "ignore_device_verification"])
 
         return client

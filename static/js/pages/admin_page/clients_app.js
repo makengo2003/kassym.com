@@ -8,6 +8,7 @@ var base_client_form_data = {
     expires_at: "",
     device1: "",
     device2: "",
+    ignore_device_verification: false,
     on_submit: false,
     errors: []
 }

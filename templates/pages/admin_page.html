@@ -370,6 +370,10 @@
 							<b>Дата просрочки:</b>
 							<input type="date" required v-model="client_form['expires_at']">
 						</div>
+						<div class="add_product block_css" style="display: flex;">
+							<input type="checkbox" v-model="client_form['ignore_device_verification']">
+							<b>Не проверять устройство</b>
+						</div>
 						<div v-if="client_form['id'] != 0" class="add_product block_css">
 							<b>Устройство 1:</b>
 							<input type="text" :value="client_form['device1']" disabled>
