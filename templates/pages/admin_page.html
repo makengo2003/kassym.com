@@ -123,6 +123,10 @@
 								<span>Фото</span>
 							</div>
 
+							<div class="categories_name" style="margin-left: 10px;">
+								<span>Артикул</span>
+							</div>
+
 							<div class="categories_name">
 								<span>Наименование</span>
 							</div>
@@ -145,6 +149,10 @@
 
 						<div v-for="product in products" class="categories_card_block" :id="'product_card_' + product.id">
 							<div class="categories_photo" :style="{backgroundImage: 'url(' + product.image + ')'}">
+							</div>
+
+							<div class="categories_name" style="margin-left: 10px;">
+								<span>${ product.code }</span>
 							</div>
 
 							<div class="categories_name">
@@ -214,6 +222,10 @@
 								<select v-model="product_form['category_id']" @change="set_category_filtration()" required>
 									<option v-for="category in categories" :value="category.id" v-cloak>${ category.name }</option>
 								</select>
+							</div>
+							<div class="add_product block_css">
+								<b>Артикул:</b>
+								<input type="text" placeholder="Артикул" required v-model="product_form['code']">
 							</div>
 							<div class="add_product block_css">
 								<b>Название продукта:</b>
