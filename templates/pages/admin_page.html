@@ -54,6 +54,10 @@
 					<input type="radio" name="admin_section" id="users" value="clients" v-model="current_section" @change="open_section()">
 					<label for="users">Пользователи</label>
 				</div>
+				<div class="admin_section">
+					<input type="radio" name="admin_section" id="managers" value="staffs" v-model="current_section" @change="open_section()">
+					<label for="managers">Менеджеры</label>
+				</div>
 				{% endif %}
 
 				{% if request.user.is_superuser %}
@@ -65,12 +69,10 @@
 			</div>
 
 			<div class="admin_settings block">
-				{% if request.user.is_superuser %}
 				<div class="admin_section" name="admin_section">
 					<input type="radio" name="admin_section" id="settings_section" value="settings" v-model="current_section" @change="open_section()">
 					<label for="settings_section">Настройки</label>
 				</div>
-				{% endif %}
 
 				<div class="quit">
 					<a href="{% url 'logout' %}">Выйти</a>
@@ -448,6 +450,102 @@
 			</div>
 		</div>
 
+		<div style="display: none" id="staffs">
+			<div class="main_container settings_container">
+				<div class="admin_btns">
+					<div class="add_category">
+						<a @click="open_staff_form()">Добавить менеджера</a>
+					</div>
+				</div>
+				<div class="categories_cards_parts">
+					<div class="user_ID">
+						<span>№</span>
+					</div>
+
+					<div class="user_name">
+						<span>Имя</span>
+					</div>
+
+					<div class="user_name">
+						<span style="padding-left: 1px">Фамилия</span>
+					</div>
+
+					<div class="user_phone">
+						<span style="padding-left: 0;">Номер</span>
+					</div>
+
+					<div class="categories_edit">
+					</div>
+				</div>
+
+
+				<div id="staff_form_window" style="display: none">
+					<form id="staff_form" @submit.prevent="staff_form_submit()">
+						{% csrf_token %}
+						<div class="add_product block_css">
+							<b>Имя:</b>
+							<input type="text" placeholder="Имя" required v-model="staff_form['first_name']">
+						</div>
+						<div class="add_product block_css">
+							<b>Фамилия:</b>
+							<input type="text" placeholder="Фамилия" required v-model="staff_form['last_name']">
+						</div>
+						<div class="add_product block_css">
+							<b>Номер телефона:</b>
+							<input type="text" placeholder="Номер телефона" required v-model="staff_form['username']" oninput="phone_number_on_input(event)">
+						</div>
+
+						<ul style="padding-left: 20px">
+							<li style="color: red" v-for="error in staff_form['errors']">${ error }</li>
+						</ul>
+
+						<div class="add_product_block">
+							<div class="add_product btns">
+								<div v-if="staff_form['id'] == 0">
+									<button class="add_btn" type="submit">Сохранить</button>
+								</div>
+								<div v-else>
+									<button class="add_btn" type="submit">Сохранить</button>
+									<button class="delete_btn" type="button" @click="delete_staff()">Удалить</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="close">
+							<a onclick='document.getElementById("staff_form_window").style.display = "none"'><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+						</div>
+					</form>
+				</div>
+
+
+				<div v-for="(staff, index) in staffs" class="categories_card_block" :key="index">
+					<div class="status_circle green_circle">
+						<span>•</span>
+					</div>
+
+					<div class="user_ID">
+						<span>${ index + 1 }</span>
+					</div>
+
+					<div class="user_name">
+						<input type="text" :value="staff.first_name" disabled>
+					</div>
+
+					<div class="user_name">
+						<input type="text" :value="staff.last_name" disabled>
+					</div>
+
+					<div class="user_phone">
+						<input type="text" :value="staff.username" disabled style="width: 120px">
+					</div>
+
+					<div class="categories_edit">
+						<a @click="open_staff_form(staff)">Изменить</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div style="display: none" id="courses">
 			<div class="main_container settings_container">
 				<div class="add_category">
@@ -553,12 +651,16 @@
 			</div>
 		</div>
 
+		{% endif %}
+
 		<div style="display: none" id="settings">
 			<div class="main_container settings_container">
 				<div v-if="!settings_section_is_opened" class="set_menu">
 					<div class="set">
 						<a href="#change_password_window">Изменить пароль админа</a>
 					</div>
+
+					{% if request.user.is_superuser %}
 					<div class="set">
 						<a @click="open_contacts_form()">Изменить контакты</a>
 					</div>
@@ -568,8 +670,10 @@
 					<div class="set">
 						<a @click="open_guarantee_form()">Изменить текст "Договор - оферта"</a>
 					</div>
+					{% endif %}
 				</div>
 
+				{% if request.user.is_superuser %}
 				<div class="contacts_block" v-if="contacts_form_is_opened" id="contacts_settings">
 					<div class="go_back">
 						<a @click="contacts_form_is_opened = false">Назад</a>
@@ -652,10 +756,9 @@
 						</div>
 					</form>
 				</div>
+				{% endif %}
 			</div>
 		</div>
-
-		{% endif %}
 
 		<div id="change_password_window">
 			<form @submit.prevent="change_password_request()">
@@ -708,6 +811,7 @@
 	<script src="{% static 'js/pages/admin_page/products_app.js' %}"></script>
 	<script src="{% static 'js/pages/admin_page/settings_app.js' %}"></script>
 	<script src="{% static 'js/pages/admin_page/clients_app.js' %}"></script>
+	<script src="{% static 'js/pages/admin_page/staffs_app.js' %}"></script>
 	<script src="{% static 'js/pages/admin_page/courses_app.js' %}"></script>
 
 	<script src="{% static 'js/pages/admin_page/vertical_menu_app.js' %}"></script>
