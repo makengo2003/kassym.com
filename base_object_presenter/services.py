@@ -23,7 +23,7 @@ class BaseServicesPresenter:
         objects = (self.model_presenter.model.objects
                    .prefetch_related(*get_many_query["prefetch_related"])
                    .select_related(*get_many_query["select_related"])
-                   .filter(**get_many_request_schema.get("filtration", {}))
+                   .filter(**{**get_many_query.get("filtration"), **get_many_request_schema.get("filtration", {})})
                    .annotate(**get_many_query["annotate"])
                    .order_by(get_many_request_schema.get("order_by", "-id"))
                    .only(*get_many_query["only"])

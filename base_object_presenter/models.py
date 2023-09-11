@@ -11,6 +11,7 @@ class BaseModelPresenter:
             "select_related": [],
             "annotate": {},
             "only": [],
+            "filtration": {}
         }
 
     @staticmethod
