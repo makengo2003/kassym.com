@@ -65,6 +65,7 @@ class ProductFormSerializer(serializers.ModelSerializer):
         exclude = ["category"]
 
     def create(self, validated_data: MutableMapping) -> Product:
+        validated_data["currency"] = "ru"
         validated_images = validated_data.pop("images", [])
         validated_options = validated_data.pop("options", [])
         files = validated_data.pop("files", {})
@@ -105,6 +106,7 @@ class ProductFormSerializer(serializers.ModelSerializer):
         return product
 
     def update(self, product: Product, validated_data: MutableMapping) -> Product:
+        validated_data["currency"] = "ru"
         options = list()
         option_values = list()
         images = list()
