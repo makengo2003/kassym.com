@@ -229,7 +229,7 @@ a, button {
   border-radius: 10px;
   padding: 5px;
   border: 1px solid red;
-  width: 70px;
+  min-width: 70px;
   height: 70px;
   background-size: cover;
   background-position: center;
