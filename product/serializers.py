@@ -130,6 +130,7 @@ class ProductFormSerializer(serializers.ModelSerializer):
             image.pop("image")
             images.append(ProductImage(**image, product=product, image=img[0]))
 
+        validated_data["name_lower"] = validated_data["name"].lower()
         Product.objects.filter(id=product.pk).update(**validated_data)
 
         ProductImage.objects.filter(~Q(image__in=not_changed_images), product=product).delete()
