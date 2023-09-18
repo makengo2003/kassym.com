@@ -5,6 +5,7 @@ import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
 from base_object_presenter.services import BaseServicesPresenter
+from project import settings
 from .models import StaffModelPresenter
 
 
@@ -26,68 +27,23 @@ class StaffServicesPresenter(BaseServicesPresenter):
     def add_order(self, data):
         data["product"] = json.loads(data["product"])
 
-        self.orders_sheet_update(data)
-        self.company_names_sheet_update(data)
-
-    def orders_sheet_update(self, data):
-        new_product_code = data["product"]["name"]
-        new_product_count = data["count"]
-
-        # Получаем данные из таблицы
-        response = self.service.spreadsheets().values().get(
-            spreadsheetId=self.spreadsheet_id,
-            range='Заказы'  # Укажите имя листа, где находятся данные
-        ).execute()
-
-        values = response.get('values', [])
-
-        if not values:
-            print('Таблица пуста.')
-        else:
-            product_codes = [row[0] for row in values]  # Предполагается, что product_code находится в первом столбце
-
-            if new_product_code in product_codes:
-                # Если код продукта уже существует, обновляем значение product_count
-                row_index = product_codes.index(new_product_code)
-                print(values[row_index][1])
-                update_range = f'A{row_index + 1}:B{row_index + 1}'  # Обновляем только строку, где совпал код продукта
-                update_values = [[new_product_code, new_product_count + int(values[row_index][1])]]
-                request_body = {'values': update_values}
-
-                self.service.spreadsheets().values().update(
-                    spreadsheetId=self.spreadsheet_id,
-                    range=update_range,
-                    body=request_body,
-                    valueInputOption='RAW'
-                ).execute()
-            else:
-                # Если код продукта не существует, добавляем новую запись в конец таблицы
-                append_values = [[new_product_code, new_product_count]]
-
-                self.service.spreadsheets().values().append(
-                    spreadsheetId=self.spreadsheet_id,
-                    range='Заказы',  # Укажите имя листа, где добавлять данные
-                    body={'values': append_values},
-                    valueInputOption='RAW',
-                ).execute()
-
-    def company_names_sheet_update(self, data):
         company_name = data["company_name"]
-        new_product_code = data["product"]["name"]
-        new_product_count = data["count"]
+        product_count = data["count"]
+        product_name = data["product"]["name"]
+        product_code = data["product"]["code"]
+        product_image = f'= IMAGE("{settings.SITE_DOMAIN + data["product"]["image"]}"; 2)'
+        product_price = data["product"]["price"]
+        order_date = data["date"]
 
-        # Получаем данные из таблицы
         response = self.service.spreadsheets().values().get(
             spreadsheetId=self.spreadsheet_id,
-            range='ИП'  # Укажите имя листа, где находятся данные
+            range='Заказы'
         ).execute()
 
         values = response.get('values', [])
 
-        if not values:
-            print('Таблица пуста.')
-        else:
-            company_names = [row[0] for row in values]  # Предполагается, что company_name находится в первом столбце
+        if values:
+            company_names = [row[0] for row in values]
 
             if company_name in company_names:
                 index = company_names.index(company_name)
@@ -95,32 +51,48 @@ class StaffServicesPresenter(BaseServicesPresenter):
 
                 for i in range(index, len(company_names)):
                     if company_names[i] == company_name:
-                        if values[i][1] == new_product_code:
-                            values[i][2] = int(values[i][2]) + new_product_count
+                        if values[i][3] == product_code and values[i][6] == order_date:
+                            values[i][1] = int(values[i][1]) + product_count
                             updated = True
                             break
 
                 if not updated:
-                    values.append([company_name, new_product_code, new_product_count])
+                    values.append([
+                        company_name,
+                        product_count,
+                        product_name,
+                        product_code,
+                        product_image,
+                        product_price,
+                        order_date
+                    ])
 
                 for i in range(1, len(company_names)):
-                    values[i][2] = int(values[i][2])
+                    values[i][1] = int(values[i][1])
+                    values[i][5] = int(values[i][5])
 
-                update_range = 'ИП!A1'
+                update_range = 'Заказы!A1'
                 request_body = {'values': values}
 
                 self.service.spreadsheets().values().update(
                     spreadsheetId=self.spreadsheet_id,
                     range=update_range,
                     body=request_body,
-                    valueInputOption='RAW'
+                    valueInputOption='USER_ENTERED'
                 ).execute()
             else:
-                # Если company_name не существует, добавляем новую запись
-                append_values = [[company_name, new_product_code, new_product_count]]
+                append_values = [[
+                    company_name,
+                    product_count,
+                    product_name,
+                    product_code,
+                    product_image,
+                    product_price,
+                    order_date
+                ]]
                 self.service.spreadsheets().values().append(
                     spreadsheetId=self.spreadsheet_id,
-                    range='ИП',  # Укажите имя листа, где добавлять данные
+                    range='Заказы',
                     body={'values': append_values},
-                    valueInputOption='RAW',
+                    valueInputOption='USER_ENTERED',
                 ).execute()
