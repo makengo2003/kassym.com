@@ -54,25 +54,30 @@ class StaffServicesPresenter(BaseServicesPresenter):
                         if values[i][3] == product_code and values[i][6] == order_date:
                             values[i][1] = int(values[i][1]) + product_count
                             updated = True
+                            index = i
                             break
 
                 if not updated:
-                    values.append([
-                        company_name,
-                        product_count,
-                        product_name,
-                        product_code,
-                        product_image,
-                        product_price,
-                        order_date
-                    ])
+                    self.service.spreadsheets().values().append(
+                        spreadsheetId=self.spreadsheet_id,
+                        range='Заказы',
+                        body={'values': [
+                            [company_name,
+                            product_count,
+                            product_name,
+                            product_code,
+                            product_image,
+                            product_price,
+                            order_date]
+                        ]},
+                        valueInputOption='USER_ENTERED',
+                    ).execute()
+                    return
 
-                for i in range(1, len(company_names)):
-                    values[i][1] = int(values[i][1])
-                    values[i][5] = int(values[i][5])
-
-                update_range = 'Заказы!A1'
-                request_body = {'values': values}
+                update_range = f'Заказы!B{index + 1}'
+                request_body = {'values': [
+                    [values[index][1]]
+                ]}
 
                 self.service.spreadsheets().values().update(
                     spreadsheetId=self.spreadsheet_id,
