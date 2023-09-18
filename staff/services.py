@@ -35,9 +35,14 @@ class StaffServicesPresenter(BaseServicesPresenter):
         product_price = data["product"]["price"]
         order_date = data["date"]
 
+        if data["product"]["category_name"] == "Товары со склада":
+            sheetname = "Заказы (Китай)"
+        else:
+            sheetname = "Заказы (Базар)"
+
         response = self.service.spreadsheets().values().get(
             spreadsheetId=self.spreadsheet_id,
-            range='Заказы'
+            range=sheetname
         ).execute()
 
         values = response.get('values', [])
@@ -60,7 +65,7 @@ class StaffServicesPresenter(BaseServicesPresenter):
                 if not updated:
                     self.service.spreadsheets().values().append(
                         spreadsheetId=self.spreadsheet_id,
-                        range='Заказы',
+                        range=sheetname,
                         body={'values': [
                             [company_name,
                             product_count,
@@ -74,7 +79,7 @@ class StaffServicesPresenter(BaseServicesPresenter):
                     ).execute()
                     return
 
-                update_range = f'Заказы!B{index + 1}'
+                update_range = f'{sheetname}!B{index + 1}'
                 request_body = {'values': [
                     [values[index][1]]
                 ]}
@@ -97,7 +102,7 @@ class StaffServicesPresenter(BaseServicesPresenter):
                 ]]
                 self.service.spreadsheets().values().append(
                     spreadsheetId=self.spreadsheet_id,
-                    range='Заказы',
+                    range=sheetname,
                     body={'values': append_values},
                     valueInputOption='USER_ENTERED',
                 ).execute()
