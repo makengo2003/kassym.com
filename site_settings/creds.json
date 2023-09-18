@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "kassym-com",
+  "private_key_id": "ecbac57d9c89928264669e4da0a83d8ee187727e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC85TlJso9mA5IA\ndD7YMBYNLgGcXsxMkXmdsvAIN3ueTfYN5E/XrGF6LQoeLPN29qlcx2LTVlvQJjSO\nUMlm3t4ReIRdiw3hbzwm4C0y+53/Tn/0jL1MM9s+riWB9bOC1WRR9EG/g0VGPaei\naftrFKwwBanJa4SGo11lLLj/vH1TNZm8fGAIGOfLvvwAy6er0w+BXX+btQRdrlX3\nTWi172qCdp5XyEklVINLVvOIsgIE1QRWf0K2Bdo74/VaZFgetjCpW2zHjvRIkQ+v\nj1QcRCaOrVnnXUrBfnSlrVpqyoHwBOxnzOzf7sxCgqh4dBc+fXNPKj6xjbsW+Ztl\noxwbqoFDAgMBAAECggEAFm8k9CdEV6nR48LqmdNwMwWFRHSP0AIxDvUrA9bPFDiP\nIgw9HVDITPHfc0EEc1sNN0so5g+qHNkEweg/WzvZ5PpKwi9bKSyEWNukEpuGosVI\ndhtm+g9omROmub4cIUxFu2QGkP++sP5uk+ABb7DHWHa7uQPPfAwX8gWzPRA+VCzj\nxihG7xN9mD3BRLoVLOmFZcXMLILc+OLcYmg/BGb8kJjOWJeiJDjK74D9DY/Kfg6K\nRDPalBFd/JMO2q2ci0dzY5avyAtcegXf4IVKRzkrh7nETiB0wPZZpIJT837fpnYq\n/lHv5tt+W/BdfChAel1kAXsmF893wsOPtnfd32htbQKBgQDeMcS3YAXzg8tc4zuM\n1QBOVqi3bnsbp45LaoSYlDeJ0vIoP63lhjY3DFOO6SYkqbUG6I9ciFyJq0LYPga/\nsWvdyPv4wYrsrYh5tHYKiOdOBVWTbVDW3cvNwxZrL3WqnGr54j6rSgINE7/w9cg/\nQaTHXTr9Br5c5U30PrrvwLF5jQKBgQDZon7J8jX1yVA08mZJzm4I8JU9+pMCQkJF\nWT3KAl+3hVtI6BFaZpDl7oihAf3TuWMKzscsBeYo2iMhbZa8ESHpqOa3zWg+v+iB\nP0ILeox+yGqSKyc2dBT5LkVJQfsg7G5elR1vltUshylrK/tNPKyFXoQhjShZiE8R\nb3GC1LBqDwKBgQCB9153XIVeoRKM7KVihRy+tdXOJaOA04tZ9Z5FmTy7M1ZN0KGp\nBc4keONPTnTvMQ0gU1u35lMqe7CHyBAuhFrxyaQJJzxZoE+Z0MLS+q1BZ8FckK6e\nX/HcE2bDn2kWOJQiQgIiMxHsEEdPbJSK25zEuHXOluk2cTId0auKnY2x6QKBgQCy\n4LZpceUcEc0U169vNnaGboecG5o9HwytRz5cDTty8e8nq2an8Oljs30lKSfhn9xi\nA7b83hRgu3pofVSJW2OOU77ej7wA52dI5B96o81aX4wIe+ONBDhA3uEf51VrqCjH\nILTDBSxNnwJSDiJNR3NdY2Qi14y0mi6y2/BmYj5lzQKBgGhW+woo8hsCP8KenbYB\nq1E5qWHiUMduj0CGBkdb9pUplzmwcTjwS2S8ZEdwbmZ9QeJtzpCVCiANDXeNBjkl\nbLdMOr/WoE1J0Ygj4AdIHG7CSax7ooQjr5LLnFelyjufwRO1BdUooAfkAOteCYTk\nTC/ZpgGssfWpg1zHvK5L9U8l\n-----END PRIVATE KEY-----\n",
+  "client_email": "orders-google-sheet@kassym-com.iam.gserviceaccount.com",
+  "client_id": "101189192461794311923",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/orders-google-sheet%40kassym-com.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

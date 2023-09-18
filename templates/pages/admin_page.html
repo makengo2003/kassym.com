@@ -147,6 +147,9 @@
 
 							<div class="categories_edit">
 							</div>
+
+							<div class="categories_edit">
+							</div>
 						</div>
 
 						<div v-for="product in products" class="categories_card_block" :id="'product_card_' + product.id">
@@ -175,6 +178,10 @@
 
 							<div class="categories_edit">
 								<a @click="open_product_form(product)">Изменить</a>
+							</div>
+
+							<div class="categories_edit">
+								<a @click="open_order_form(product)">Заказать</a>
 							</div>
 						</div>
 					</div>
@@ -295,6 +302,42 @@
 
 						<div class="close">
 							<a onclick='document.getElementById("product_form_window").style.display = "none"'><img src="{% static 'imgs/cross.png' %}" alt=""></a>
+						</div>
+					</form>
+				</div>
+
+				<div id="order_form_window">
+					<form id="order_form" @submit.prevent="order_form_submit()">
+						{% csrf_token %}
+						<div class="add_product_block">
+							<div class="add_product block_css">
+								<b>Товар:</b>
+								<input type="text" disabled required :value="order_form['product']['code'] + ' ' + order_form['product']['name']">
+							</div>
+							<div class="add_product block_css">
+								<b>Дата:</b>
+								<input type="date" required v-model="order_form['date']">
+							</div>
+							<div class="add_product block_css" style="display: flex; gap: 10px">
+								<b>Количество:</b>
+								<div style="display: flex; gap: 5px">
+									<button type="button" @click="order_form['count'] - 1 >= 1 ? order_form['count'] = order_form['count'] - 1 : Number(1)">-</button>
+									<span>${ order_form['count'] }</span>
+									<button type="button" @click="order_form['count'] += 1">+</button>
+								</div>
+							</div>
+							<div class="add_product block_css">
+								<b>ИП:</b>
+								<input type="text" placeholder="ИП" required v-model="order_form['company_name']">
+							</div>
+
+							<div class="add_product btns">
+								<button :disabled="order_form_is_submitting" class="add_btn" type="submit">Заказать</button>
+							</div>
+						</div>
+
+						<div class="close">
+							<a onclick='document.getElementById("order_form_window").style.display = "none"'><img src="{% static 'imgs/cross.png' %}" alt=""></a>
 						</div>
 					</form>
 				</div>

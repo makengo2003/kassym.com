@@ -65,6 +65,13 @@ products_app = Vue.createApp({
             is_getting_products: false,
             admin_searched_products: false,
             search_products_input: "",
+            order_form: {
+                product: {},
+                date: "",
+                count: 1,
+                company_name: ""
+            },
+            order_form_is_submitting: false
         }
     },
     methods: {
@@ -663,6 +670,35 @@ products_app = Vue.createApp({
                 var currency = "₽"
             }
             return product.price + " " + currency
+        },
+        open_order_form(product) {
+            var currentDate = new Date();
+
+            var year = currentDate.getFullYear();
+            var month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed, so add 1
+            var day = String(currentDate.getDate()).padStart(2, '0');
+
+            var formattedDate = `${year}-${month}-${day}`;
+
+            this.order_form = {
+                product: product,
+                date: formattedDate,
+                count: 1,
+                company_name: ""
+            }
+
+            document.getElementById("order_form_window").style.display = "block"
+        },
+        order_form_submit() {
+            this.order_form["product"] = JSON.stringify(this.order_form["product"])
+            axios.post("/api/staff/add_order/", this.order_form, {
+                headers: {
+                    "X-CSRFToken": $cookies.get("csrftoken")
+                }
+            }).finally(() => {
+                alert("Заказ добавлен в Google Sheet")
+                document.getElementById("order_form_window").style.display = "none"
+            })
         }
     },
     mounted() {
