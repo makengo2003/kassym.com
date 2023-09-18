@@ -15,7 +15,7 @@ class StaffServicesPresenter(BaseServicesPresenter):
         super().__init__()
 
         self.CREDENTIALS_FILE = 'site_settings/creds.json'
-        self.spreadsheet_id = '1PXHIvivknTpSZhnaL0DavX8RFmlu0FRvHh1wxres2HA'
+        self.spreadsheet_id = '1phdFtzmKHjXv0yxwD39b9kVFVRLstsdiReuK8Fa_tPk'
 
         self.credentials = ServiceAccountCredentials.from_json_keyfile_name(
             self.CREDENTIALS_FILE,
@@ -31,7 +31,7 @@ class StaffServicesPresenter(BaseServicesPresenter):
         product_count = data["count"]
         product_name = data["product"]["name"]
         product_code = data["product"]["code"]
-        product_image = f'= IMAGE("{settings.SITE_DOMAIN + data["product"]["image"]}"; 2)'
+        product_image = f'= IMAGE("http://{settings.SITE_DOMAIN + data["product"]["image"]}"; 2)'
         product_price = data["product"]["price"]
         order_date = data["date"]
 
