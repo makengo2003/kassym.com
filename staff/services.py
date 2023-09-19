@@ -48,7 +48,13 @@ class StaffServicesPresenter(BaseServicesPresenter):
         values = response.get('values', [])
 
         if values:
-            company_names = [row[0] for row in values]
+            company_names = []
+
+            for row in values:
+                try:
+                    company_names.append(row[0])
+                except:
+                    pass
 
             if company_name in company_names:
                 index = company_names.index(company_name)
