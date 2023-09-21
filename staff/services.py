@@ -60,13 +60,14 @@ class StaffServicesPresenter(BaseServicesPresenter):
                 index = company_names.index(company_name)
                 updated = False
 
-                for i in range(index, len(company_names)):
-                    if company_names[i] == company_name:
-                        if values[i][3] == product_code and values[i][6] == order_date:
-                            values[i][1] = int(values[i][1]) + product_count
-                            updated = True
-                            index = i
-                            break
+                if product_code:
+                    for i in range(index, len(company_names)):
+                        if company_names[i] == company_name:
+                            if values[i][3] == product_code and values[i][6] == order_date:
+                                values[i][1] = int(values[i][1]) + product_count
+                                updated = True
+                                index = i
+                                break
 
                 if not updated:
                     self.service.spreadsheets().values().append(

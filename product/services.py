@@ -65,7 +65,7 @@ def search_products(user: User, search_input: str, last_obj_id: Sequence) -> Pro
     q_filter = Q(name_lower__icontains=search_input.lower())
 
     for word in search_input.split():
-        q_filter |= Q(code__icontains=word.lower())
+        q_filter |= Q(code_lower__icontains=word.lower())
 
     return _get_products(user, q_filter=q_filter, last_obj_id=last_obj_id, searching=True)
 
@@ -96,7 +96,7 @@ def _get_products(user: User, order_by: str = "-id", last_obj_id: Sequence = Non
     search_input = filter_query.get("search_input")
     if search_input:
         words = search_input.split()
-        icontains_filters = [Q(code__icontains=query.lower()) for query in words]
+        icontains_filters = [Q(code_lower__icontains=query.lower()) for query in words]
         combined_filter = functools.reduce(lambda a, b: a | b, icontains_filters)
         combined_filter |= Q(name_lower__icontains=search_input.lower())
         q_filter = q_filter & combined_filter

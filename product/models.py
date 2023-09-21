@@ -7,6 +7,7 @@ class Product(models.Model):
     category = models.ForeignKey("category.Category", on_delete=models.CASCADE, related_name="products")
     name = models.CharField(max_length=500)
     name_lower = models.CharField(max_length=500, null=True, editable=False, blank=True)
+    code_lower = models.CharField(max_length=500, null=True, editable=False, blank=True)
     description = models.TextField()
     price = models.PositiveIntegerField()
     is_available = models.BooleanField(default=False)
@@ -20,6 +21,7 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
         self.name_lower = self.name.lower() if self.name else None
+        self.code_lower = self.code.lower() if self.name else None
         return super().save(*args, **kwargs)
 
 
