@@ -118,36 +118,36 @@ class StaffServicesPresenter(BaseServicesPresenter):
                     valueInputOption='USER_ENTERED',
                 ).execute()
 
-    def get_products_in_excel(self):
+    def get_products_in_excel(self, start, end):
         wb = Workbook()
 
         sheet = wb.active
         sheet.append(
-            ["Категория", "Названия", "Описания", "Цена", "В наличии", "Артикул", "Номер поставщика", "Высота", "Ширина", "Длина", "Количество", "Фото"]
+            ["ID", "Категория", "Названия", "Описания", "Цена", "В наличии", "Артикул", "Номер поставщика", "Высота", "Ширина", "Длина", "Количество", "Фото"]
         )
 
-        products = Product.objects.prefetch_related("images", "category").all()
+        products = Product.objects.prefetch_related("images", "category").order_by("-id").all()[int(start):int(end)]
 
         for product in products:
-            sheet.append([product.category.name, product.name, product.description, product.price, product.is_available, product.code, product.vendor_number, product.height, product.width, product.length, product.count])  # Insert data into cells
+            sheet.append([product.id, product.category.name, product.name, product.description, product.price, product.is_available, product.code, product.vendor_number, product.height, product.width, product.length, product.count])
 
             try:
-                img = Image(product.images.filter(default=True).first().image.path)
-                sheet.add_image(img, f"L{sheet.max_row}")  # Insert image in the corresponding row
+                image_url = product.images.first().image.url
+                #image_path = product.images.filter(default=True).first().image.path
+                sheet[f"M{sheet.max_row}"].value = 'https://kassym.com' + image_url
+                sheet[f"M{sheet.max_row}"].hyperlink = 'https://kassym.com' + image_url
+                continue
 
-                cell = sheet[f"L{sheet.max_row}"]
+                if '.webp' in image_path:
+                    sheet[f"M{sheet.max_row}"] = "https://kassym.com" + image_url
+                else:
+                    img = Image(image_path)
+                    img.width = 100
+                    img.height = 100
 
-                img_width = cell.width
-                img_height = cell.height
-
-                img.width = img_width
-                img.height = img_height
-
-                img.left = cell.left
-                img.top = cell.top
+                    sheet.add_image(img, f"M{sheet.max_row}")
             except Exception as e:
-                print(e)
+                pass
 
-        # Save the workbook
         wb.save("output.xlsx")
         return "output.xlsx"

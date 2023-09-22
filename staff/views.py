@@ -21,6 +21,6 @@ class StaffViewsPresenter(BaseViewsPresenter):
 
     def get_products_in_excel_view(self, request):
         if request.user.is_superuser:
-            file_path = self.services.get_products_in_excel()
+            file_path = self.services.get_products_in_excel(request.GET.get("start", 0), request.GET.get("end", 100))
             return FileResponse(open(file_path, 'rb'))
         return redirect("/")
