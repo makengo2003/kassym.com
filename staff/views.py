@@ -1,3 +1,5 @@
+from django.http import FileResponse, HttpResponse
+from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
@@ -16,3 +18,9 @@ class StaffViewsPresenter(BaseViewsPresenter):
     def add_order_view(self, request: Request) -> Response:
         self.services.add_order(request.data)
         return Response({"success": True})
+
+    def get_products_in_excel_view(self, request):
+        if request.user.is_superuser:
+            file_path = self.services.get_products_in_excel()
+            return FileResponse(open(file_path, 'rb'))
+        return redirect("/")
