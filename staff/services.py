@@ -106,7 +106,8 @@ class StaffServicesPresenter(BaseServicesPresenter):
             ).execute()
 
             for row in response.get('values', []):
-                writer.writerow(row)
+                if len(row) > 0:
+                    writer.writerow(row)
 
         os.system(f'rm "sheets/{sheetname}-{today - relativedelta(days=3)}.csv"')
 
