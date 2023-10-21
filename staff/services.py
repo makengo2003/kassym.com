@@ -116,7 +116,13 @@ class StaffServicesPresenter(BaseServicesPresenter):
                     valueInputOption='USER_ENTERED',
                 ).execute()
 
-        Product.objects.filter(id=data["product"]["id"]).update(count=F('count') - data["count"])
+        product = Product.objects.filter(id=data["product"]["id"]).only("count").first()
+
+        count = product.count - data["count"]
+        if count < 0:
+            count = 0
+
+        Product.objects.filter(id=data["product"]["id"]).update(count=count)
 
     # def get_products_in_excel(self, start, end):
     #     wb = Workbook()
