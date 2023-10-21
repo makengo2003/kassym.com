@@ -36,59 +36,35 @@ class StaffServicesPresenter(BaseServicesPresenter):
         product_count = data["count"]
         product_name = data["product"]["name"]
         product_code = data["product"]["code"]
-        product_image = f'= IMAGE("http://{settings.SITE_DOMAIN + data["product"]["image"]}"; 2)'
+        product_image = f'= IMAGE("https://kassym.com/{data["product"]["image"]}"; 2)'
         product_price = data["product"]["price"]
         order_date = data["date"]
 
         if data["product"]["category_name"] == "Товары со склада":
-            sheetname = "Заказы (Китай)"
+            if settings.DEBUG:
+                sheetname = "Заказы (Китай) (копия)"
+            else:
+                sheetname = "Заказы (Китай)"
         else:
-            sheetname = "Заказы (Базар)"
+            if settings.DEBUG:
+                sheetname = "Заказы (Базар) (копия)"
+            else:
+                sheetname = "Заказы (Базар)"
 
-        response = self.service.spreadsheets().values().get(
+        self.service.spreadsheets().values().append(
             spreadsheetId=self.spreadsheet_id,
-            range=sheetname
+            range=sheetname,
+            body={'values': [[
+                company_name,
+                product_count,
+                product_name,
+                product_code,
+                product_image,
+                product_price,
+                order_date
+            ]]},
+            valueInputOption='USER_ENTERED',
         ).execute()
-
-        values = response.get('values', [])
-        updated = False
-        index = 0
-
-        for i in range(len(values)):
-            try:
-                if values[i][0] == company_name:
-                    if values[i][3] == product_code and values[i][6] == order_date:
-                        values[i][1] = int(values[i][1]) + product_count
-                        updated = True
-                        index = i
-                        break
-            except:
-                pass
-
-        if not updated:
-            self.service.spreadsheets().values().append(
-                spreadsheetId=self.spreadsheet_id,
-                range=sheetname,
-                body={'values': [[
-                    company_name,
-                    product_count,
-                    product_name,
-                    product_code,
-                    product_image,
-                    product_price,
-                    order_date
-                ]]},
-                valueInputOption='USER_ENTERED',
-            ).execute()
-        else:
-            self.service.spreadsheets().values().update(
-                spreadsheetId=self.spreadsheet_id,
-                range=f'{sheetname}!B{index + 1}',
-                body={'values': [
-                    [values[index][1]]
-                ]},
-                valueInputOption='USER_ENTERED'
-            ).execute()
 
         self.update_product_count(data["product"]["id"], data["count"])
         self.save_backup(sheetname)
@@ -102,12 +78,12 @@ class StaffServicesPresenter(BaseServicesPresenter):
 
             response = self.service.spreadsheets().values().get(
                 spreadsheetId=self.spreadsheet_id,
-                range=sheetname
+                range=sheetname,
+                valueRenderOption='FORMULA'
             ).execute()
 
             for row in response.get('values', []):
-                if len(row) > 0:
-                    writer.writerow(row)
+                writer.writerow(row)
 
         os.system(f'rm "sheets/{sheetname}-{today - relativedelta(days=3)}.csv"')
 
