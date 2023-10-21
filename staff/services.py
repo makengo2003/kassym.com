@@ -2,15 +2,13 @@ import json
 
 import httplib2
 import apiclient.discovery
+from django.db.models import F
 from oauth2client.service_account import ServiceAccountCredentials
 
 from base_object_presenter.services import BaseServicesPresenter
 from product.models import Product
 from project import settings
 from .models import StaffModelPresenter
-
-from openpyxl import Workbook
-from openpyxl.drawing.image import Image
 
 
 class StaffServicesPresenter(BaseServicesPresenter):
@@ -118,36 +116,38 @@ class StaffServicesPresenter(BaseServicesPresenter):
                     valueInputOption='USER_ENTERED',
                 ).execute()
 
-    def get_products_in_excel(self, start, end):
-        wb = Workbook()
+        Product.objects.filter(id=data["product"]["id"]).update(count=F('count') - data["count"])
 
-        sheet = wb.active
-        sheet.append(
-            ["ID", "Категория", "Названия", "Описания", "Цена", "В наличии", "Артикул", "Номер поставщика", "Высота", "Ширина", "Длина", "Количество", "Фото"]
-        )
-
-        products = Product.objects.prefetch_related("images", "category").order_by("-id").all()[int(start):int(end)]
-
-        for product in products:
-            sheet.append([product.id, product.category.name, product.name, product.description, product.price, product.is_available, product.code, product.vendor_number, product.height, product.width, product.length, product.count])
-
-            try:
-                image_url = product.images.first().image.url
-                #image_path = product.images.filter(default=True).first().image.path
-                sheet[f"M{sheet.max_row}"].value = 'https://kassym.com' + image_url
-                sheet[f"M{sheet.max_row}"].hyperlink = 'https://kassym.com' + image_url
-                continue
-
-                if '.webp' in image_path:
-                    sheet[f"M{sheet.max_row}"] = "https://kassym.com" + image_url
-                else:
-                    img = Image(image_path)
-                    img.width = 100
-                    img.height = 100
-
-                    sheet.add_image(img, f"M{sheet.max_row}")
-            except Exception as e:
-                pass
-
-        wb.save("output.xlsx")
-        return "output.xlsx"
+    # def get_products_in_excel(self, start, end):
+    #     wb = Workbook()
+    #
+    #     sheet = wb.active
+    #     sheet.append(
+    #         ["ID", "Категория", "Названия", "Описания", "Цена", "В наличии", "Артикул", "Номер поставщика", "Высота", "Ширина", "Длина", "Количество", "Фото"]
+    #     )
+    #
+    #     products = Product.objects.prefetch_related("images", "category").order_by("-id").all()[int(start):int(end)]
+    #
+    #     for product in products:
+    #         sheet.append([product.id, product.category.name, product.name, product.description, product.price, product.is_available, product.code, product.vendor_number, product.height, product.width, product.length, product.count])
+    #
+    #         try:
+    #             image_url = product.images.first().image.url
+    #             #image_path = product.images.filter(default=True).first().image.path
+    #             sheet[f"M{sheet.max_row}"].value = 'https://kassym.com' + image_url
+    #             sheet[f"M{sheet.max_row}"].hyperlink = 'https://kassym.com' + image_url
+    #             continue
+    #
+    #             if '.webp' in image_path:
+    #                 sheet[f"M{sheet.max_row}"] = "https://kassym.com" + image_url
+    #             else:
+    #                 img = Image(image_path)
+    #                 img.width = 100
+    #                 img.height = 100
+    #
+    #                 sheet.add_image(img, f"M{sheet.max_row}")
+    #         except Exception as e:
+    #             pass
+    #
+    #     wb.save("output.xlsx")
+    #     return "output.xlsx"
