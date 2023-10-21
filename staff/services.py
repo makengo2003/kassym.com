@@ -1,13 +1,16 @@
+import csv
 import json
+import os
 
 import httplib2
 import apiclient.discovery
-from django.db.models import F
+from dateutil.relativedelta import relativedelta
 from oauth2client.service_account import ServiceAccountCredentials
 
 from base_object_presenter.services import BaseServicesPresenter
 from product.models import Product
 from project import settings
+from project.utils import datetime_now
 from .models import StaffModelPresenter
 
 
@@ -48,59 +51,25 @@ class StaffServicesPresenter(BaseServicesPresenter):
         ).execute()
 
         values = response.get('values', [])
+        updated = False
+        index = 0
 
-        if values:
-            company_names = []
+        for i in range(len(values)):
+            try:
+                if values[i][0] == company_name:
+                    if values[i][3] == product_code and values[i][6] == order_date:
+                        values[i][1] = int(values[i][1]) + product_count
+                        updated = True
+                        index = i
+                        break
+            except:
+                pass
 
-            for row in values:
-                try:
-                    company_names.append(row[0])
-                except:
-                    pass
-
-            if company_name in company_names:
-                index = company_names.index(company_name)
-                updated = False
-
-                if product_code:
-                    for i in range(index, len(company_names)):
-                        if company_names[i] == company_name:
-                            if values[i][3] == product_code and values[i][6] == order_date:
-                                values[i][1] = int(values[i][1]) + product_count
-                                updated = True
-                                index = i
-                                break
-
-                if not updated:
-                    self.service.spreadsheets().values().append(
-                        spreadsheetId=self.spreadsheet_id,
-                        range=sheetname,
-                        body={'values': [
-                            [company_name,
-                            product_count,
-                            product_name,
-                            product_code,
-                            product_image,
-                            product_price,
-                            order_date]
-                        ]},
-                        valueInputOption='USER_ENTERED',
-                    ).execute()
-                    return
-
-                update_range = f'{sheetname}!B{index + 1}'
-                request_body = {'values': [
-                    [values[index][1]]
-                ]}
-
-                self.service.spreadsheets().values().update(
-                    spreadsheetId=self.spreadsheet_id,
-                    range=update_range,
-                    body=request_body,
-                    valueInputOption='USER_ENTERED'
-                ).execute()
-            else:
-                append_values = [[
+        if not updated:
+            self.service.spreadsheets().values().append(
+                spreadsheetId=self.spreadsheet_id,
+                range=sheetname,
+                body={'values': [[
                     company_name,
                     product_count,
                     product_name,
@@ -108,52 +77,44 @@ class StaffServicesPresenter(BaseServicesPresenter):
                     product_image,
                     product_price,
                     order_date
-                ]]
-                self.service.spreadsheets().values().append(
-                    spreadsheetId=self.spreadsheet_id,
-                    range=sheetname,
-                    body={'values': append_values},
-                    valueInputOption='USER_ENTERED',
-                ).execute()
+                ]]},
+                valueInputOption='USER_ENTERED',
+            ).execute()
+        else:
+            self.service.spreadsheets().values().update(
+                spreadsheetId=self.spreadsheet_id,
+                range=f'{sheetname}!B{index + 1}',
+                body={'values': [
+                    [values[index][1]]
+                ]},
+                valueInputOption='USER_ENTERED'
+            ).execute()
 
-        product = Product.objects.filter(id=data["product"]["id"]).only("count").first()
+        self.update_product_count(data["product"]["id"], data["count"])
+        self.save_backup(sheetname)
 
-        count = product.count - data["count"]
+    def save_backup(self, sheetname):
+        today = datetime_now().date()
+        csv_file = f"sheets/{sheetname}-{today}.csv"
+
+        with open(csv_file, mode='w', newline='') as file:
+            writer = csv.writer(file)
+
+            response = self.service.spreadsheets().values().get(
+                spreadsheetId=self.spreadsheet_id,
+                range=sheetname
+            ).execute()
+
+            for row in response.get('values', []):
+                writer.writerow(row)
+
+        os.system(f'rm "sheets/{sheetname}-{today - relativedelta(days=3)}.csv"')
+
+    def update_product_count(self, product_id, count):
+        product = Product.objects.filter(id=product_id).only("count").first()
+
+        count = product.count - count
         if count < 0:
             count = 0
 
-        Product.objects.filter(id=data["product"]["id"]).update(count=count)
-
-    # def get_products_in_excel(self, start, end):
-    #     wb = Workbook()
-    #
-    #     sheet = wb.active
-    #     sheet.append(
-    #         ["ID", "Категория", "Названия", "Описания", "Цена", "В наличии", "Артикул", "Номер поставщика", "Высота", "Ширина", "Длина", "Количество", "Фото"]
-    #     )
-    #
-    #     products = Product.objects.prefetch_related("images", "category").order_by("-id").all()[int(start):int(end)]
-    #
-    #     for product in products:
-    #         sheet.append([product.id, product.category.name, product.name, product.description, product.price, product.is_available, product.code, product.vendor_number, product.height, product.width, product.length, product.count])
-    #
-    #         try:
-    #             image_url = product.images.first().image.url
-    #             #image_path = product.images.filter(default=True).first().image.path
-    #             sheet[f"M{sheet.max_row}"].value = 'https://kassym.com' + image_url
-    #             sheet[f"M{sheet.max_row}"].hyperlink = 'https://kassym.com' + image_url
-    #             continue
-    #
-    #             if '.webp' in image_path:
-    #                 sheet[f"M{sheet.max_row}"] = "https://kassym.com" + image_url
-    #             else:
-    #                 img = Image(image_path)
-    #                 img.width = 100
-    #                 img.height = 100
-    #
-    #                 sheet.add_image(img, f"M{sheet.max_row}")
-    #         except Exception as e:
-    #             pass
-    #
-    #     wb.save("output.xlsx")
-    #     return "output.xlsx"
+        Product.objects.filter(id=product_id).update(count=count)
