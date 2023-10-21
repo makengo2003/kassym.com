@@ -37,7 +37,7 @@ class StaffServicesPresenter(BaseServicesPresenter):
         product_name = data["product"]["name"]
         product_code = data["product"]["code"]
         product_image = f'= IMAGE("https://kassym.com/{data["product"]["image"]}"; 2)'
-        product_price = data["product"]["price"]
+        product_price = str(data["product"]["price"])
         order_date = data["date"]
 
         if data["product"]["category_name"] == "Товары со склада":
