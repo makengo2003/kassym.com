@@ -334,6 +334,10 @@
 							<div class="add_product btns">
 								<button :disabled="order_form_is_submitting" class="add_btn" type="submit">Заказать</button>
 							</div>
+
+							<div class="add_product btns" v-if="order_form['error']" style="color: red;">
+								<h3>ОШИБКА!!!</h3>
+							</div>
 						</div>
 
 						<div class="close">

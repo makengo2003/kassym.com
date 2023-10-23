@@ -691,13 +691,17 @@ products_app = Vue.createApp({
         },
         order_form_submit() {
             this.order_form["product"] = JSON.stringify(this.order_form["product"])
+            this.order_form["error"] = false
             axios.post("/api/staff/add_order/", this.order_form, {
                 headers: {
                     "X-CSRFToken": $cookies.get("csrftoken")
                 }
-            }).finally(() => {
+            }).then((response) => {
                 alert("Заказ добавлен в Google Sheet")
                 document.getElementById("order_form_window").style.display = "none"
+            }).catch((error) => {
+                alert('ОШИБКА!!!');
+                this.order_form["error"] = true
             })
         }
     },
