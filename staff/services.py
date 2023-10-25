@@ -61,7 +61,8 @@ class StaffServicesPresenter(BaseServicesPresenter):
                 product_code,
                 product_image,
                 product_price,
-                order_date
+                order_date,
+                "."
             ]]},
             valueInputOption='USER_ENTERED',
         ).execute()
