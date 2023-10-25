@@ -192,6 +192,6 @@ def leave_request(data):
     service.spreadsheets().values().append(
         spreadsheetId=spreadsheet_id,
         range="Анкеты",
-        body={'values': [[user_request.fullname, user_request.phone_number, user_request.created_at]]},
+        body={'values': [[str(user_request.fullname), str(user_request.phone_number), str(user_request.created_at)]]},
         valueInputOption='USER_ENTERED',
     ).execute()
