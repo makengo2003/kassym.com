@@ -5,3 +5,7 @@ var flkty = new Flickity('.slides', {
     selectedAttraction: 0.015,
     friction: 0.3,
 });
+
+flkty.on('pointerUp', function (event, pointer) {
+    flkty.player.play();
+});

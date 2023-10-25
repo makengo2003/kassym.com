@@ -9,42 +9,44 @@ function phone_number_on_input(event) {
 
 function login(event) {
     event.preventDefault()
-
     var form = event.target
-    form.disabled = true
 
-    var phone_number = document.getElementById("login_form_phone_number").value
-    var password = document.getElementById("login_form_password").value
+    if (!form.disabled) {
+        form.disabled = true
 
-    document.getElementById("login_error").innerText = ""
+        var phone_number = document.getElementById("login_form_phone_number").value
+        var password = document.getElementById("login_form_password").value
 
-    axios.post("/api/user/login/", {
-        username: phone_number,
-        password: password
-    }, {
-        headers: {
-            "X-CSRFToken": $cookies.get("csrftoken"),
-        }
-    }).then((response) => {
-        window.location.href = "/admin/"
-    }).catch((error) => {
-        if (error.response) {
-            if (error.response.status == 400) {
-                for (var key in error.response.data) {
-                    for (var err in error.response.data[key]) {
-                        document.getElementById("login_error").innerText = error.response.data[key][err]
-                        break
-                    }
-                }
-            } else if (error.response.status == 403) {
-                document.getElementById("login_error").innerText = error.response.data["detail"]
-            } else {
-                swal("Упс", "Что-то пошло не так!")
+        document.getElementById("login_error").innerText = ""
+
+        axios.post("/api/user/login/", {
+            username: phone_number,
+            password: password
+        }, {
+            headers: {
+                "X-CSRFToken": $cookies.get("csrftoken"),
             }
-        }
-    }).finally(() => {
-        form.disabled = false
-    })
+        }).then((response) => {
+            window.location.href = "/admin/"
+        }).catch((error) => {
+            if (error.response) {
+                if (error.response.status == 400) {
+                    for (var key in error.response.data) {
+                        for (var err in error.response.data[key]) {
+                            document.getElementById("login_error").innerText = error.response.data[key][err]
+                            break
+                        }
+                    }
+                } else if (error.response.status == 403) {
+                    document.getElementById("login_error").innerText = error.response.data["detail"]
+                } else {
+                    swal("Упс", "Что-то пошло не так!")
+                }
+            }
+        }).finally(() => {
+            form.disabled = false
+        })
+    }
 }
 
 function open_login_form() {
@@ -95,26 +97,28 @@ if (!user_is_authenticated) {
 
 function leave_request(event) {
     event.preventDefault()
-
     var form = event.target
-    form.disabled = true
 
-    var phone_number = document.getElementById("leave_request_phone_number").value
-    var fullname = document.getElementById("leave_request_fullname").value
+    if (!form.disabled) {
+        form.disabled = true
 
-    axios.post("/api/user/leave_request/", {
-        phone_number: phone_number,
-        fullname: fullname
-    }, {
-        headers: {
-            "X-CSRFToken": $cookies.get("csrftoken"),
-        }
-    }).then((response) => {
-        document.getElementById('watch_instruction_form_window').style.display = 'none'
-        document.getElementById('watch_instruction_window').style.display = 'flex'
-        localStorage.setItem("already_left_request", true);
-        form.disabled = false
-    })
+        var phone_number = document.getElementById("leave_request_phone_number").value
+        var fullname = document.getElementById("leave_request_fullname").value
+
+        axios.post("/api/user/leave_request/", {
+            phone_number: phone_number,
+            fullname: fullname
+        }, {
+            headers: {
+                "X-CSRFToken": $cookies.get("csrftoken"),
+            }
+        }).then((response) => {
+            document.getElementById('watch_instruction_form_window').style.display = 'none'
+            document.getElementById('watch_instruction_window').style.display = 'flex'
+            localStorage.setItem("already_left_request", true);
+            form.disabled = false
+        })
+    }
 }
 
 function open_instruction_window() {
