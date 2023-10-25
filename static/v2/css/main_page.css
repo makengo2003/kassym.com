@@ -309,6 +309,6 @@ html {
     font-size: 13px;
     font-family: Gilroy-Medium;
 
-    height: 36.24px;
+    height: unset;
     width: 100px;
 }
