@@ -13,6 +13,7 @@ function login(event) {
 
     if (!form.disabled) {
         form.disabled = true
+        form.querySelectorAll("button[type='submit']")[0].style.opacity = "0.5"
 
         var phone_number = document.getElementById("login_form_phone_number").value
         var password = document.getElementById("login_form_password").value
@@ -45,6 +46,7 @@ function login(event) {
             }
         }).finally(() => {
             form.disabled = false
+            form.querySelectorAll("button[type='submit']")[0].style.opacity = "1"
         })
     }
 }
@@ -100,6 +102,7 @@ function leave_request(event) {
     var form = event.target
 
     if (!form.disabled) {
+        form.querySelectorAll("button[type='submit']")[0].style.opacity = "0.5"
         form.disabled = true
 
         var phone_number = document.getElementById("leave_request_phone_number").value
@@ -117,6 +120,7 @@ function leave_request(event) {
             document.getElementById('watch_instruction_window').style.display = 'flex'
             localStorage.setItem("already_left_request", true);
             form.disabled = false
+            form.querySelectorAll("button[type='submit']")[0].style.opacity = "1"
         })
     }
 }
