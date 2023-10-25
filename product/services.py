@@ -153,7 +153,7 @@ def get_top_5_products_of_each_category(user):
     for category in categories:
         for product in category.products.annotate(
             is_fav=is_favourite_case
-        ).all()[:3]:
+        ).filter(~Q(poster=None) & ~Q(poster=''))[:3]:
             products.append({
                 "id": product.id,
                 "name": product.name,
