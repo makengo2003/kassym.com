@@ -98,3 +98,9 @@ def get_clients_view(request: Request) -> Response:
 def search_clients_view(request: Request) -> Response:
     clients = services.search_clients(request.query_params.get("clients_search_input", ""))
     return Response(clients.data)
+
+
+@api_view(["POST"])
+def leave_request_view(request: Request):
+    services.leave_request(request.data)
+    return Response({"success": True})

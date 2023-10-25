@@ -6,6 +6,8 @@ settings_app = Vue.createApp({
             about_us_form_is_opened: false,
             about_us_quill: null,
             footer_contact_quill: null,
+            slides: [],
+            slides_form_is_opened: false,
             contacts_form: {
                 phone_number: {
                     contact: "+7",
@@ -118,10 +120,55 @@ settings_app = Vue.createApp({
             SiteSettingsServices.save_contacts({contacts: contacts_form})
             this.contacts_form_is_opened = false
         },
+        add_slide() {
+            this.slides.push({image: "", link: ""})
+
+        },
+        delete_slide(key) {
+            this.slides.splice(key, 1)
+
+        },
+        open_slides_form() {
+            this.slides_form_is_opened = true
+            axios("/api/site_settings/get_slides/").then((response) => {
+                this.slides = response.data
+            })
+            this.uploaded_slides = {}
+        },
+        slides_form_submit() {
+            var form_data = new FormData()
+            this.uploaded_slides['slides'] = JSON.stringify(this.slides)
+
+            for (var key in this.uploaded_slides) {
+                form_data.append(key, this.uploaded_slides[key]);
+            }
+
+            return axios.post("/api/site_settings/save_slides/", form_data, {
+                headers: {
+                "X-CSRFToken": $cookies.get("csrftoken"),
+                }
+            }).then((response) => {
+                this.slides = []
+                this.slides_form_is_opened = false
+                this.uploaded_slides = {}
+                this.open()
+            })
+        },
+        slide_is_uploaded_to_input(slide) {
+            return !(slide.image.startsWith("slide_images/"))
+
+        },
+        handle_file_upload(slide, event) {
+            var file = event.target.files[0]
+            if (file) {
+                slide["image"] = file.name
+                this.uploaded_slides["image: " + file.name] = file
+            }
+        },
     },
     computed: {
         settings_section_is_opened() {
-            return (this.contacts_form_is_opened || this.about_us_form_is_opened || this.guarantee_form_is_opened)
+            return (this.contacts_form_is_opened || this.slides_form_is_opened || this.about_us_form_is_opened || this.guarantee_form_is_opened)
         }
     }
 })

@@ -40,3 +40,18 @@ def save_about_us_text_view(request):
 def save_guarantee_text_view(request):
     services.save_guarantee_text(request.FILES)
     return Response({"success": True})
+
+
+@api_view(["GET"])
+@permission_classes([IsAdmin])
+def get_slides_view(request):
+    slides = services.get_slides()
+    return Response(slides)
+
+
+@api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])
+@permission_classes([IsAdmin])
+def save_slides_view(request):
+    services.save_slides(request.data, request.FILES)
+    return Response({"success": True})

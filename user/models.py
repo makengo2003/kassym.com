@@ -8,9 +8,6 @@ class FavouriteProduct(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favourites")
     product = models.ForeignKey("product.Product", on_delete=models.CASCADE, related_name="favourites")
 
-    class Meta:
-        unique_together = [["user", "product"]]
-
 
 class Client(models.Model):
     account = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, related_name="client")
@@ -31,3 +28,8 @@ class Client(models.Model):
         except Exception as e:
             print(e)
             return False
+
+
+class UserRequest(models.Model):
+    fullname = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=255)

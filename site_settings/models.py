@@ -16,3 +16,8 @@ class Contact(models.Model):
     contact = models.CharField(max_length=500)
     link = models.CharField(max_length=500, default="")
     type = models.CharField(max_length=100, choices=CONTACT_TYPES, unique=True)
+
+
+class Slide(models.Model):
+    image = models.ImageField(upload_to="slide_images/")
+    link = models.CharField(max_length=500, default="/")

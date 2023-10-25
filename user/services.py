@@ -13,7 +13,7 @@ from user_agents.parsers import UserAgent
 
 from project.settings import BOT_TOKEN
 from site_settings.models import Contact
-from .models import FavouriteProduct, Client
+from .models import FavouriteProduct, Client, UserRequest
 from .serializers import ChangePasswordSerializer, ClientSerializer, ClientFormSerializer
 
 import requests
@@ -27,8 +27,8 @@ def change_password(request: Request, user: User, data: Mapping) -> None:
 
 
 def add_products_to_favourites(user: User, products_ids: List[int]) -> None:
-    FavouriteProduct.objects.bulk_create([FavouriteProduct(user=user, product_id=product_id)
-                                          for product_id in products_ids], ignore_conflicts=True)
+    product_id = products_ids[0]
+    FavouriteProduct.objects.get_or_create(user=user, product_id=product_id)
 
 
 def remove_product_from_favourites(user: User, product_id: int) -> None:
@@ -93,9 +93,6 @@ def login(request: Request) -> None:
                         break
         else:
             auth_login(request, user)
-
-        if request.data["favourite_products"]:
-            add_products_to_favourites(user, request.data["favourite_products"])
     else:
         raise ValidationError(dict(form.errors))
 
@@ -174,3 +171,7 @@ def set_or_verify_user_device(client: Client, request: Request) -> bool:
         client.save(update_fields=["device1"])
 
     return True
+
+
+def leave_request(data):
+    UserRequest.objects.create(**data)

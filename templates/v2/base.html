@@ -1,0 +1,223 @@
+{% load category_tags %}
+{% load site_settings_tags %}
+{% load static %}
+
+{% get_categories as categories %}
+{% get_contacts as contacts %}
+{% get_slides as slides %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/static/imgs/icon.png">
+
+	<title>{% block title %}kassym.qazaq{% endblock %}</title>
+
+	<link rel="stylesheet" href="{% static 'v2/css/base.css' %}">
+	<link rel="stylesheet" href="{% static 'v2/css/media_base.css' %}">
+
+    {% block styles %}
+    {% endblock %}
+
+	<script src="{% static 'js/packages/vue.global.prod.js' %}"></script>
+	<script src="{% static 'js/packages/axios.min.js' %}"></script>
+	<script src="{% static 'js/packages/sweetalert.min.js' %}"></script>
+	<script src="{% static 'js/packages/vue-cookies.js' %}"></script>
+</head>
+<body>
+	<div class="main_content">
+		<div class="block navbar-top-block">
+			<div class="container navbar-top-container">
+				<div class="left-side">
+					{% for contact in contacts %}
+					{% if contact.type == 'whatsapp' %}
+					<p>Тех. поддержка: {{ contact.contact }}</p>
+					{% endif %}
+					{% endfor %}
+				</div>
+
+				<div class="right-side">
+<!--					<p><a href="#">Как купить?</a></p>-->
+					<p><a href="/#how_to_use_catalog">Как пользоваться системой?</a></p>
+					<p><a href="/agreement/">Договор-офферта</a></p>
+				</div>
+			</div>
+		</div>
+
+		<div class="block navbar-block">
+			<div class="container navbar-container">
+				<h2><a href="/">kassym <br> qazaq</a></h2>
+
+				<form class="search" action="/search_result/">
+					<input type="text" placeholder="Наименование или артикул" name="search_input">
+					<button>Поиск</button>
+				</form>
+
+				{% if request.user.is_authenticated %}
+				<div class="pages">
+					<p><a href="/courses/">Курсы</a></p>
+					<p><a href="/favourites/">Избранные</a></p>
+				</div>
+				{% endif %}
+
+				<div class="authentication">
+					{% if not request.user.is_authenticated %}
+					<button class="signup_btn" onclick="document.getElementById('login_form_window').style.display = 'block'">Войти</button>
+					{% else %}
+					<button class="signup_btn" onclick="window.location.href = '/profile/'">Профиль</button>
+					{% endif %}
+				</div>
+
+				<div class="hamburger-menu" onclick="open_burger()">
+					<div class="bar"></div>
+					<div class="bar"></div>
+					<div class="bar"></div>
+				</div>
+
+				<div class="burger">
+					<div class="burger-container">
+						<div class="burger-content">
+							<a href="/">Главная</a>
+							<a onclick="open_categories_burger()">Ниши</a>
+
+							{% if request.user.is_authenticated %}
+							<a href="/favourites/">Избранные</a>
+							<a href="/courses/">Курсы</a>
+							{% endif %}
+
+							<a href="/agreement/">Договор-офферта</a>
+							<a onclick="open_instruction_window()">Как пользоваться системой?</a>
+
+							<div class="authentication">
+								{% if not request.user.is_authenticated %}
+								<button class="login_btn" onclick="document.getElementById('login_form_window').style.display = 'block'">Войти</button>
+								{% else %}
+								<button class="login_btn" onclick="window.location.href = '/profile/'">Профиль</button>
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="categories-burger-content">
+							<a onclick="close_categories_burger()" class="go_back_to_burger">
+								<div class="bars">
+									<div class="bar"></div>
+									<div class="bar"></div>
+								</div>
+								<span>Назад</span>
+							</a>
+							<hr>
+
+							<div class="categories">
+								{% for category in categories %}
+								<a href="/products/?category_id={{ category.id }}">{{ category.name }}</a>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{% block body %}
+		{% endblock %}
+	</div>
+
+	<div class="block footer-block">
+		<div class="container footer-container">
+			<div class="information">
+				<h2>Информация</h2>
+
+<!--				<p><a href="#">Как купить?</a></p>-->
+				<p><a href="/#how_to_use_catalog">Как пользоваться системой?</a></p>
+				<p><a href="/agreement/">Договор-офферта</a></p>
+			</div>
+
+			<div class="navigation">
+				<h2>Навигация</h2>
+
+				<p><a href="/">Главная</a></p>
+
+				{% if request.user.is_authenticated %}
+				<p><a href="/profile/">Профиль</a></p>
+				<p><a href="/products/?category_id=7">Ниши</a></p>
+				{% else %}
+				<p><a onclick="document.getElementById('login_form_window').style.display = 'block'">Профиль</a></p>
+				<p><a onclick="document.getElementById('login_form_window').style.display = 'block'">Ниши</a></p>
+				{% endif %}
+			</div>
+
+			<div class="contacts">
+				<h2>Контакты</h2>
+
+				{% for contact in contacts %}
+				{% if contact.type == 'whatsapp' %}
+				<p>whatsapp: {{ contact.contact }}</p>
+				{% elif contact.type == 'instagram' %}
+				<p>instagram: {{ contact.contact }}</p>
+				{% endif %}
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+
+	<div id="login_form_window">
+		<form class="login_form" onsubmit="login(event)">
+			{% csrf_token %}
+			<h3>Вход</h3>
+
+			<input type="text" id="login_form_phone_number" placeholder="Номер телефона" oninput="phone_number_on_input(event)">
+			<input type="password" id="login_form_password" placeholder="Пароль">
+
+			<p id="login_error" style="color: red; font-size: 12px;"></p>
+
+			<button type="submit">Войти</button>
+			<img src="{% static 'v2/imgs/close_form.png' %}" alt="" onclick="document.getElementById('login_form_window').style.display = 'none'">
+		</form>
+	</div>
+
+	<div id="watch_instruction_form_window">
+		<form class="watch_instruction_form" onsubmit="leave_request(event)">
+			<h3>Анкета</h3>
+
+			<input type="text" name="fullname" placeholder="ФИО" id="leave_request_fullname">
+			<input type="text" name="phone_number" placeholder="Номер телефона" oninput="phone_number_on_input(event)" id="leave_request_phone_number">
+
+			<button type="submit">Оставить анкету</button>
+			<img src="{% static 'v2/imgs/close_form.png' %}" alt="" onclick="document.getElementById('watch_instruction_form_window').style.display = 'none'">
+		</form>
+	</div>
+
+	<div id="watch_instruction_window">
+		<div class="window">
+			<video id="instruction_video" playsinline controls>
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/mp4">
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/webm">
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/ogg">
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/quicktime">
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/x-msvideo">
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/x-matroska">
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/x-flv">
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/x-ms-wmv">
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/x-ms-asf">
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/3gpp">
+				<source src="{% static 'v2/instruction.mp4' %}" type="video/3gpp2">
+				Ваш браузер не поддерживает воспроизведение видео.
+			</video>
+			<img src="{% static 'v2/imgs/close_form.png' %}" alt="" onclick="close_instruction_video()">
+		</div>
+	</div>
+
+	<script>
+	{% if not request.user.is_authenticated %}
+		let user_is_authenticated = false
+	{% else %}
+		let user_is_authenticated = true
+	{% endif %}
+	</script>
+	<script src="{% static 'v2/js/base.js' %}"></script>
+	{% block scripts %}
+    {% endblock %}
+</body>
+</html>

@@ -18,6 +18,7 @@ class Product(models.Model):
     length = models.CharField(max_length=50, null=True, blank=True)
     count = models.PositiveIntegerField(default=0)
     currency = models.CharField(max_length=10, default="ru", choices=(("kz", "KZ"), ("ru", "RU")))
+    poster = models.ImageField(upload_to="products_posters/", null=True, editable=False, blank=True)
 
     def save(self, *args, **kwargs):
         self.name_lower = self.name.lower() if self.name else None

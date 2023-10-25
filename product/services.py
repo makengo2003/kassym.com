@@ -1,9 +1,11 @@
+import random
 from typing import Optional, Mapping, TypeVar, Sequence
 
 from django.contrib.auth.models import User
 from django.db.models import Q, When, Case, F, Value, BooleanField, OuterRef, Exists
 from django.db.models.functions import Coalesce
 
+from category.models import Category
 from user.models import FavouriteProduct
 from .models import Product
 from .serializers import ProductsSerializer, ProductSerializer, ProductFormSerializer
@@ -103,24 +105,23 @@ def _get_products(user: User, order_by: str = "-id", last_obj_id: Sequence = Non
         del filter_query["search_input"]
 
     if user.is_superuser:
-        products = Product.objects.prefetch_related("images").filter(q_filter, **filter_query, images__default=True).annotate(
-            image=F("images__image"),
+        products = Product.objects.filter(q_filter, **filter_query).annotate(
+            image=F("poster"),
             is_favourite=is_favourite_case,
             category_name=F("category__name"),
-        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available")[index_starts_at:index_starts_at+40]
+        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster")[index_starts_at:index_starts_at+40]
     elif searching:
-        products = Product.objects.prefetch_related("images").filter(q_filter, **filter_query,
-                                                                     images__default=True).annotate(
-            image=F("images__image"),
+        products = Product.objects.filter(q_filter, **filter_query).annotate(
+            image=F("poster"),
             is_favourite=is_favourite_case,
             category_name=F("category__name"),
-        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available")
+        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster")
     else:
-        products = Product.objects.prefetch_related("images").filter(q_filter, **filter_query, images__default=True).annotate(
-            image=F("images__image"),
+        products = Product.objects.filter(q_filter, **filter_query).annotate(
+            image=F("poster"),
             is_favourite=is_favourite_case,
             category_name=F("category__name"),
-        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available")[index_starts_at:index_starts_at+40]
+        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster")[index_starts_at:index_starts_at+40]
 
     products = ProductsSerializer(data=products, many=True)
     products.is_valid()
@@ -132,3 +133,38 @@ def change_product_is_available_status(product_id: int) -> None:
         When(is_available=True, then=False),
         When(is_available=False, then=True)
     ))
+
+
+def get_top_5_products_of_each_category(user):
+    products = []
+    if user.is_authenticated:
+        # one more way: is just use favourites__user__username = user.username
+        favourite_subquery = FavouriteProduct.objects.filter(
+            user_id=user.pk, product_id=OuterRef('id')
+        ).values('user_id')
+
+        is_favourite_case = Coalesce(
+            Exists(favourite_subquery), Value(False), output_field=BooleanField()
+        )
+    else:
+        is_favourite_case = Case(When(id__gt=0, then=False))
+
+    categories = Category.objects.prefetch_related("products", "products__category").all()
+    for category in categories:
+        for product in category.products.annotate(
+            is_fav=is_favourite_case
+        ).all()[:3]:
+            products.append({
+                "id": product.id,
+                "name": product.name,
+                "category": product.category.name,
+                "price": product.price,
+                "image": product.poster,
+                "is_available": product.is_available,
+                "count": product.count,
+                "category_id": product.category.id,
+                "is_fav": product.is_fav
+            })
+
+    random.shuffle(products)
+    return products

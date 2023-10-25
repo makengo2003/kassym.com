@@ -21,6 +21,7 @@
 	<link rel="stylesheet" href="{% static 'css/adminka_add_product.css' %}">
 	<link rel="stylesheet" href="{% static 'css/quill.snow.css' %}">
 	<link rel="stylesheet" href="{% static 'css/default.min.css' %}">
+	<link rel="stylesheet" href="{% static 'v2/css/admin.css' %}">
 
 	<script src="{% static 'js/packages/highlight.min.js' %}"></script>
 	<script src="{% static 'js/packages/axios.min.js' %}"></script>
@@ -717,6 +718,9 @@
 					<div class="set">
 						<a @click="open_guarantee_form()">Изменить текст "Договор - оферта"</a>
 					</div>
+					<div class="set">
+						<a @click="open_slides_form()">Изменить карусель</a>
+					</div>
 					{% endif %}
 				</div>
 
@@ -800,6 +804,32 @@
 
 						<div class="edit_btns" style="margin-top: 20px">
 							<button type="submit" class="save" :disabled="!guarantee_form_is_opened">Сохранить</button>
+						</div>
+					</form>
+				</div>
+
+				<div v-if="slides_form_is_opened">
+					<div class="go_back">
+						<a @click="slides_form_is_opened = false">Назад</a>
+					</div>
+
+					<form @submit.prevent="slides_form_submit()">
+						{% csrf_token %}
+						<div v-for="(slide, key) in slides" :key="key" class="slide_input_block">
+							<input placeholder="Ссылка" type="text" v-model="slide.link">
+							<label :for="'file_input_' + key" style="width: 350px" v-if="slide.image == '' || !slide_is_uploaded_to_input(slide)">Выбрать файл</label>
+							<label :for="'file_input_' + key" style="width: 350px" v-else="">Выбран: ${ slide.image }</label>
+							<input :id="'file_input_' + key" style="display: none" type="file" @change="handle_file_upload(slide, $event)" :required="slide.image == ''">
+							<span v-if="slide.image != null && !slide_is_uploaded_to_input(slide)" style="width: 600px">Текущий: <a :href="'/media/' + slide.image" v-cloak>${ slide.image }</a></span>
+							<img style="margin-left: auto" src="{% static 'v2/imgs/delete.png' %}" @click="delete_slide(key)">
+						</div>
+
+						<div class="add_img">
+							<a @click="add_slide()">Добавить фото</a>
+						</div>
+
+						<div class="edit_btns">
+							<button type="submit" class="save" :disabled="!slides_form_is_opened">Сохранить</button>
 						</div>
 					</form>
 				</div>

@@ -1,0 +1,72 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/flickity_3.0.0_flickity.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="block">
+    <div class="container main-page-top-container">
+        <div class="categories">
+            <div class="summary">
+                <img src="{% static 'v2/imgs/categories.png' %}" alt="" style="width: 15px;">
+                <h4>Категорий</h4>
+            </div>
+
+            <div class="categories_list">
+                {% for category in categories %}
+                <a href="/products/?category_id={{ category.id }}" class="category">
+                    <div class="category_name_block">
+                        <span>{{ category.name }}</span>
+                    </div>
+                    <img src="{% static 'v2/imgs/go_to_vector.png' %}" alt="">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="slides">
+            {% for slide in slides %}
+            <div class="slides-cell" style="background-image: url(/media/{{ slide.image }}); cursor: pointer" onclick="window.location.href = '{{ slide.link }}'"></div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="container main-page-search-form-block">
+        <form class="search" action="/search_result/">
+            <input type="text" placeholder="Наименование или артикул" name="search_input">
+            <button>Поиск</button>
+        </form>
+    </div>
+
+    <div class="container main-page-products">
+        <h2>Хит продажи</h2>
+
+        {% include 'v2/products.html' %}
+
+        <div class="see_more_products_btn_block">
+            <button onclick="window.location.href = '/products/?category_id=7'">Показать ещё</button>
+        </div>
+    </div>
+
+    <div class="container main-page-usage-instruction" id="how_to_use_catalog">
+        <div class="kassym_img"></div>
+
+        <div class="text">
+            <h1>Как работать с каталогом?</h1>
+            <p>Специально для вас мы подготовили бесплатный видео-урок, где вы научитесь пользоваться нашим каталогом.</p>
+            <p><i>Наш каталог товаров облегчает работу с маркетплейсами и при этом увеличивая ваш доход.</i></p>
+            <button onclick="open_instruction_window()">Посмотреть видео-урок</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'v2/js/packages/flickity.pkgd.min.js' %}"></script>
+<script src="{% static 'v2/js/main_page.js' %}"></script>
+<script src="{% static 'v2/js/products.js' %}"></script>
+{% endblock %}

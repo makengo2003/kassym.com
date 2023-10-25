@@ -1,0 +1,58 @@
+.slide_input_block{
+  margin: 10px 0;
+  border: 1px solid rgba(0, 0, 0, .5);
+  padding: 10px 10px;
+  border-radius: 5px;
+  width: 1000px;
+  display: flex;
+  align-items: center;
+}
+
+.slide_input_block input{
+  margin-right: 5px;
+}
+
+.slide_input_block button{
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.slide_input_block img{
+    height: 20px;
+    width: 20px;
+    height: 25px;
+}
+
+.edit_btns button{
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  padding: 5px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.save{
+  background-color: green;
+  margin-right: 15px;
+}
+
+.back{
+  background-color: red;
+}
+
+.add_img{
+  margin: 10px 0;
+}
+
+.add_img a{
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #BE274C;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}

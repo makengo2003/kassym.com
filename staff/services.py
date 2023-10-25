@@ -71,7 +71,7 @@ class StaffServicesPresenter(BaseServicesPresenter):
 
     def save_backup(self, sheetname):
         today = datetime_now().date()
-        csv_file = f"sheets/{sheetname}-{today}.csv"
+        csv_file = f"../sheets/{sheetname}-{today}.csv"
 
         with open(csv_file, mode='w', newline='') as file:
             writer = csv.writer(file)
@@ -85,7 +85,7 @@ class StaffServicesPresenter(BaseServicesPresenter):
             for row in response.get('values', []):
                 writer.writerow(row)
 
-        os.system(f'rm "sheets/{sheetname}-{today - relativedelta(days=3)}.csv"')
+        os.system(f'rm "../sheets/{sheetname}-{today - relativedelta(days=3)}.csv"')
 
     def update_product_count(self, product_id, count):
         product = Product.objects.filter(id=product_id).only("count").first()

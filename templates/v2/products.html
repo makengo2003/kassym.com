@@ -1,0 +1,38 @@
+{% load static %}
+
+<div class="products_list">
+    {% for product in products %}
+    <a href="/product/?product_id={{ product.id }}" class="product_card">
+        <div class="product_img" style="background-image: url(/media/{{ product.image }});"></div>
+
+        <div class="text">
+			<span class="product_price">{{ product.price }} Р</span>
+
+            <div class="product_name_block">
+                <span class="product_name">{{ product.name }}</span>
+            </div>
+
+            <div class="product_category_block">
+                <span class="product_category">{{ product.category }}</span>
+            </div>
+
+            <div class="availability">
+                {% if product.is_available %}
+                <span class="product_is_available">В наличии</span>
+                    {% if product.category_id == 7 %}
+                    <span class="product_count">{{ product.count }} шт</span>
+                    {% endif %}
+                {% else %}
+                <span class="product_is_not_available">Нет в наличии</span>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if product.is_fav %}
+        <img src="{% static 'v2/imgs/heart.png' %}" alt="" class="add_wishlist_btn" onclick="add_wishlist(event)" data-value="true" data-id="{{ product.id }}">
+        {% else %}
+        <img src="{% static 'v2/imgs/empty_heart.png' %}" alt="" class="add_wishlist_btn" onclick="add_wishlist(event)" data-value="false" data-id="{{ product.id }}">
+        {% endif %}
+    </a>
+    {% endfor %}
+</div>

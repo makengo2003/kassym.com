@@ -6,6 +6,8 @@ from site_settings import services as site_settings_services
 from django.views.decorators.cache import never_cache
 from project.settings import MAIN_CATEGORY_ID
 from course import services as course_services
+from product import services as product_services
+import random
 
 
 @never_cache
@@ -15,7 +17,9 @@ def search_result_page_view(request):
 
 @never_cache
 def main_page_view(request):
-    return render(request, "pages/main_page.html")
+    products = product_services.get_top_5_products_of_each_category(request.user)
+    random.shuffle(products)
+    return render(request, "v2/main_page.html", {"products": products})
 
 
 @never_cache

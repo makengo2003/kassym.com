@@ -1,6 +1,7 @@
+import json
 from typing import Sequence
 
-from .models import Contact
+from .models import Contact, Slide
 from .serializers import ContactSerializer
 
 
@@ -44,3 +45,25 @@ def save_guarantee_text(files: Sequence = None) -> None:
 
         with open("site_settings/guarantee.txt", "w") as file:
             file.write(file_path)
+
+
+def get_slides():
+    return Slide.objects.all().values()
+
+
+def save_slides(form_data, files):
+    slides = []
+
+    for slide in json.loads(form_data["slides"]):
+        slide_image = slide.get("image")
+        if slide_image:
+            img = files.get("image: " + slide_image, False)
+
+            if not img:
+                img = slide["image"].replace("/media/", "")
+
+            slide.pop("image")
+            slides.append(Slide(**slide, image=img))
+
+    Slide.objects.all().delete()
+    Slide.objects.bulk_create(slides)

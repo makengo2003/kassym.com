@@ -16,11 +16,8 @@ class ProductsSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "price", "code", "image", "is_favourite", "category_name", "is_available", "count", "currency"]
 
     def get_default_image(self, obj):
-        if hasattr(obj, "image"):
-            return "/media/" + obj.image
-        obj_image = obj.images.filter(default=True).first()
-        if obj_image:
-            return obj_image.image.url
+        if obj.poster:
+            return obj.poster.url
         return None
 
 
@@ -83,9 +80,15 @@ class ProductFormSerializer(serializers.ModelSerializer):
                 option_values.append(ProductOptionValue(product_option=product_option, value=value["value"]))
             options.append(product_option)
 
+        i = 0
         for image in validated_images:
             img = image.pop("image")
             img = files.get("image: " + img, img)
+
+            if i == 0:
+                product.poster = img
+                i += 1
+
             images.append(ProductImage(**image, product=product, image=img))
 
         product.save()
@@ -119,15 +122,22 @@ class ProductFormSerializer(serializers.ModelSerializer):
                 option_values.append(ProductOptionValue(product_option=product_option, value=value["value"]))
             options.append(product_option)
 
+        i = 0
         not_changed_images = []
         for image in validated_data.pop("images", []):
             img = files.pop("image: " + image["image"], False)
 
             if not img:
                 not_changed_images.append(urllib.parse.unquote(image['image'].replace("/media/", "").replace("%25", "%"), encoding='utf-8'))
+                i += 1
                 continue
 
             image.pop("image")
+
+            if i == 0:
+                validated_data["poster"] = img[0]
+                i += 1
+
             images.append(ProductImage(**image, product=product, image=img[0]))
 
         validated_data["name_lower"] = validated_data["name"].lower()

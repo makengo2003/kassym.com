@@ -1,0 +1,311 @@
+html {
+	scroll-behavior: smooth;
+}
+
+.main-page-top-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.main-page-products, .main-page-search-form-block {
+    margin-top: 20px;
+}
+
+.main-page-products h2 {
+    font-family: Gilroy-Bold;
+    margin-bottom: 10px;
+}
+
+.main-page-top-container * {
+    margin: 0;
+}
+
+.main-page-top-container .categories {
+    min-width: 210px;
+    box-shadow: 0px 0px 3px 0px #b6b6b6;
+    border-radius: 5px;
+}
+
+.main-page-top-container .categories .summary, .main-page-top-container .categories .category {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #ebebeb;
+    margin: 0 20px;
+    padding: 12px 0;
+    color: black;
+    text-decoration: none;
+}
+
+.main-page-top-container .categories .categories_list {
+    height: 356px;
+    overflow-y: scroll;
+}
+
+.main-page-top-container .categories .categories_list::-webkit-scrollbar {
+    display: none;
+}
+
+.main-page-top-container .categories .categories_list::-webkit-scrollbar-thumb {
+    display: none;
+}
+
+.main-page-top-container .categories .categories_list::-webkit-scrollbar-track {
+    display: none;
+}
+
+.main-page-top-container .categories .categories_list::-webkit-scrollbar-button {
+    display: none;
+}
+
+.main-page-top-container .categories .summary {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.main-page-top-container .categories .summary h4 {
+    font-family: Gilroy-Bold;
+}
+
+.main-page-top-container .categories .category {
+    font-size: 14px;
+}
+
+.main-page-top-container .categories .category .category_name_block {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    min-height: min-content;
+}
+
+.main-page-top-container .categories .category img {
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.main-page-top-container .categories .category:last-child {
+    border-bottom: none;
+}
+
+.main-page-top-container .slides {
+    width: 100%;
+    height: 400px;
+    box-shadow: 0px 0px 3px 0px #b6b6b6;
+    border-radius: 5px;
+}
+
+.main-page-top-container .slides .slides-cell {
+    width: 100%;
+    height: 400px;
+    margin: 0 5px;
+
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    border-radius: 5px;
+}
+
+.flickity-page-dots {
+    bottom: 5%;
+}
+
+.flickity-page-dots .dot {
+    background-color: white;
+    opacity: 1;
+}
+
+.flickity-page-dots .dot.is-selected {
+    background-color: #007671;
+}
+
+.products_list {
+    display: flex;
+    gap: 15px;
+    row-gap: 20px;
+    flex-wrap: wrap;
+}
+
+.products_list .product_card {
+    text-decoration: none;
+    color: black;
+    width: 170.8px;
+    position: relative;
+}
+
+.products_list .product_card .product_img {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    height: 226.36px;
+    border-radius: 8px;
+}
+
+.products_list .product_card .text {
+    padding-top: 10px;
+    font-size: 13px;
+}
+
+.products_list .product_card .text .product_price {
+    font-family: Gilroy-Bold;
+    font-size: 15px;
+}
+
+.products_list .product_card .text .product_category {
+    color: #818181;
+    font-size: 12px;
+}
+
+.products_list .product_card .text .product_name_block {
+    margin-top: 3px;
+}
+
+.products_list .product_card .text .product_name_block, .products_list .product_card .text .product_category_block {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    min-height: min-content;
+}
+
+.see_more_products_btn_block {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.see_more_products_btn_block button {
+    width: 150px;
+    height: 37px;
+    font-size: 16px;
+
+    background-color: #007671;
+    color: white;
+
+    border: none;
+    border-radius: 5px;
+}
+
+.products_list .product_card .add_wishlist_btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+}
+
+.products_list .product_card .text .availability {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+}
+
+.products_list .product_card .text .availability .product_is_available, .products_list .product_card .text .availability .product_is_not_available {
+    background-color: #26c126;
+    color: white;
+
+    width: fit-content;
+    padding: 3px 10px;
+    margin-top: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.products_list .product_card .text .availability .product_is_not_available {
+    background-color: #f66161;
+}
+
+.main-page-usage-instruction {
+    display: flex;
+    align-items: top;
+    gap: 50px;
+}
+
+.main-page-usage-instruction .kassym_img {
+    background-image: url(/static/v2/imgs/kassym_img.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top;
+    min-width: 277px;
+    height: 350px;
+}
+
+.main-page-usage-instruction .text h1 {
+    font-family: Gilroy-Bold;
+    font-size: 45px;
+    margin-bottom: 10px;
+}
+
+.main-page-usage-instruction .text p {
+    font-size: 22px;
+    width: 80%;
+    margin-top: 10px;
+}
+
+.main-page-usage-instruction .text p i {
+    color: #929292;
+}
+
+.main-page-usage-instruction .text button {
+    margin-top: 10px;
+    font-size: 16px;
+
+    width: 239px;
+    height: 40px;
+
+    border: none;
+    border-radius: 5px;
+
+    color: white;
+    background-color: #007671;
+}
+
+.main-page-search-form-block {
+    display: none;
+}
+
+.main-page-search-form-block .search {
+    display: flex;
+}
+
+.main-page-search-form-block .search input {
+    width: 100%;
+    height: 30px;
+
+    border: 2px solid #007671;
+    border-radius: 4px;
+
+    outline: #007671;
+    padding-left: 15px;
+    padding-left: 10px;
+
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.main-page-search-form-block .search input, .main-page-search-form-block .search input::placeholder {
+	color: #007671;
+	font-size: 15px;
+    font-family: Gilroy-Medium;
+}
+
+.main-page-search-form-block .search button {
+    background-color: #007671;
+    color: white;
+
+    width: 80px;
+    border: none;
+
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+
+    font-size: 13px;
+    font-family: Gilroy-Medium;
+}

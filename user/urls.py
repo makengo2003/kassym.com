@@ -16,5 +16,6 @@ urlpatterns = [
     path("delete_client/", delete_client_view, name="delete_client"),
     path("get_client/", get_client_view, name="get_client"),
     path("get_clients/", get_clients_view, name="get_clients"),
-    path("search_clients/", search_clients_view, name="search_clients")
+    path("search_clients/", search_clients_view, name="search_clients"),
+    path("leave_request/", leave_request_view, name="leave_request")
 ]
