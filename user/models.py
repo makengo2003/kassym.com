@@ -33,3 +33,4 @@ class Client(models.Model):
 class UserRequest(models.Model):
     fullname = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
+    created_at = models.DateField(default=datetime_now, editable=False)

@@ -1,3 +1,5 @@
+import apiclient
+import httplib2
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login, SESSION_KEY
 from django.contrib.auth.models import User
@@ -15,6 +17,7 @@ from project.settings import BOT_TOKEN
 from site_settings.models import Contact
 from .models import FavouriteProduct, Client, UserRequest
 from .serializers import ChangePasswordSerializer, ClientSerializer, ClientFormSerializer
+from oauth2client.service_account import ServiceAccountCredentials
 
 import requests
 
@@ -174,4 +177,21 @@ def set_or_verify_user_device(client: Client, request: Request) -> bool:
 
 
 def leave_request(data):
-    UserRequest.objects.create(**data)
+    user_request = UserRequest.objects.create(**data)
+
+    CREDENTIALS_FILE = 'site_settings/creds.json'
+    spreadsheet_id = '1KHtjlugjZQ-8Hdx5y5M_pGv5fsy-Qy-iT-Av0Cv1yNI'
+
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        CREDENTIALS_FILE,
+        ['https://www.googleapis.com/auth/spreadsheets',
+         'https://www.googleapis.com/auth/drive'])
+    httpAuth = credentials.authorize(httplib2.Http())
+    service = apiclient.discovery.build('sheets', 'v4', http=httpAuth)
+
+    service.spreadsheets().values().append(
+        spreadsheetId=spreadsheet_id,
+        range="Анкеты",
+        body={'values': [[user_request.fullname, user_request.phone_number, user_request.created_at]]},
+        valueInputOption='USER_ENTERED',
+    ).execute()
