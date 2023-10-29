@@ -21,13 +21,14 @@
 }
 
 #product_template .product_info .images .images_list .image, #product_template .product_info .images .current_image {
-    background-size: cover;
+    background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
     width: 55px;
     height: 82px;
     border-radius: 5px;
     cursor: pointer;
+    box-shadow: 0px 0px 3px 0px #d0d0d0;
 }
 
 #product_template .product_info .images .images_list .image:hover, #product_template .product_info .images .current_image:hover {
