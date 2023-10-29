@@ -42,7 +42,28 @@ def products_page_view(request):
 @check_account_expiration()
 def product_page_view(request):
     if request.user.is_authenticated:
-        return render(request, "pages/product_page.html", {"MAIN_CATEGORY_ID": MAIN_CATEGORY_ID})
+        product = product_services.get_product(request.user, request.GET.get("product_id", 0)).data
+        products = product_services.get_products(request.user, products_filtration={"category_id": product["category_id"]}, products_order_by="-id").data
+
+        if "favourites" in request.META.get("HTTP_REFERER", ""):
+            label = "Избранные"
+            url = request.META["HTTP_REFERER"]
+        elif "search_result" in request.META.get("HTTP_REFERER", ""):
+            label = "Результаты поиска"
+            url = request.META["HTTP_REFERER"]
+        else:
+            label = product["category_name"]
+            url = "/products/?category_id=" + str(product["category_id"])
+
+        go_back = {
+            "label": label,
+            "url": url
+        }
+        context = {"product": product, "products": products, "go_back": go_back}
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return render(request, "v2/product.html", context)
+        return render(request, "v2/product_page.html", context)
     return redirect("/")
 
 

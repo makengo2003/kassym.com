@@ -46,6 +46,7 @@ class ProductSerializer(serializers.ModelSerializer):
     options = ProductOptionSerializer(many=True, required=False)
     images = ProductImageSerializer(many=True, required=False)
     category_id = serializers.IntegerField()
+    category_name = serializers.CharField(max_length=500)
 
     class Meta:
         model = Product

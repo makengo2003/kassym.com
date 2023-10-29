@@ -1,0 +1,20 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/product_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_product_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}">
+{% endblock %}
+
+
+{% block body %}
+{% include 'v2/product.html' %}
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'v2/js/product_page.js' %}"></script>
+<script src="{% static 'v2/js/products.js' %}"></script>
+{% endblock %}

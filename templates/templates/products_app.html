@@ -1,7 +1,7 @@
 {% load static %}
 <div class="cards_block" id="products_app">
 	<a v-for="product in products" :href="'/product/?product_id=' + product.id" class="product_card" style="color: black;">
-		<div class="card" @click="open_product_page($event, product)"> <!-- @click="open_product_page(product)" -->
+		<div class="card">
 			<div class="card_img" :style='{ backgroundImage: "url(" + product.image + ")", }'>
 			</div>
 

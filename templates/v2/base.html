@@ -126,38 +126,57 @@
 
 	<div class="block footer-block">
 		<div class="container footer-container">
-			<div class="information">
-				<h2>Информация</h2>
+			<div class="top">
+				<div class="information">
+					<h2>Информация</h2>
 
-<!--				<p><a href="#">Как купить?</a></p>-->
-				<p><a href="/#how_to_use_catalog">Как пользоваться системой?</a></p>
-				<p><a href="/agreement/">Договор-офферта</a></p>
+	<!--				<p><a href="#">Как купить?</a></p>-->
+					<p><a href="/#how_to_use_catalog">Как пользоваться системой?</a></p>
+					<p><a href="/agreement/">Договор-офферта</a></p>
+				</div>
+
+				<div class="navigation">
+					<h2>Магазин</h2>
+
+					<p><a href="/">Главная</a></p>
+
+					{% if request.user.is_authenticated %}
+					<p><a href="/products/?category_id=7">Ниши</a></p>
+					<p><a href="/profile/">Профиль</a></p>
+					<p><a href="/favourites/">Избранные</a></p>
+					{% else %}
+					<p><a onclick="document.getElementById('login_form_window').style.display = 'block'">Ниши</a></p>
+					<p><a onclick="document.getElementById('login_form_window').style.display = 'block'">Профиль</a></p>
+					<p><a onclick="document.getElementById('login_form_window').style.display = 'block'">Избранные</a></p>
+					{% endif %}
+				</div>
+
+				<div class="contacts">
+					<h2>Контакты</h2>
+
+					{% for contact in contacts %}
+						{% if contact.type == 'footer' %}
+							{% autoescape off %}
+								{{ contact.contact }}
+							{% endautoescape %}
+						{% endif %}
+					{% endfor %}
+				</div>
 			</div>
 
-			<div class="navigation">
-				<h2>Навигация</h2>
+			<hr>
 
-				<p><a href="/">Главная</a></p>
-
-				{% if request.user.is_authenticated %}
-				<p><a href="/profile/">Профиль</a></p>
-				<p><a href="/products/?category_id=7">Ниши</a></p>
-				{% else %}
-				<p><a onclick="document.getElementById('login_form_window').style.display = 'block'">Профиль</a></p>
-				<p><a onclick="document.getElementById('login_form_window').style.display = 'block'">Ниши</a></p>
-				{% endif %}
-			</div>
-
-			<div class="contacts">
-				<h2>Контакты</h2>
-
+			<div class="bottom">
+				<p>© kassym.com 2023 Copyright</p>
+				<div class="social_media">
 				{% for contact in contacts %}
-				{% if contact.type == 'whatsapp' %}
-				<p>whatsapp: {{ contact.contact }}</p>
-				{% elif contact.type == 'instagram' %}
-				<p>instagram: {{ contact.contact }}</p>
-				{% endif %}
+					{% if contact.type == 'instagram' %}
+						<a target="_blank" href="{{ contact.link }}"><img src="{% static 'imgs/footer_instagram.png' %}" alt=""></a>
+					{% elif contact.type == 'whatsapp' %}
+						<a target="_blank" href="{{ contact.link }}"><img src="{% static 'imgs/footer_whatsapp.png' %}" alt=""></a>
+					{% endif %}
 				{% endfor %}
+				</div>
 			</div>
 		</div>
 	</div>

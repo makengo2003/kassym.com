@@ -171,6 +171,7 @@ html {
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     min-height: min-content;
+    line-break: anywhere;
 }
 
 .see_more_products_btn_block {

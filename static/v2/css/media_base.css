@@ -12,10 +12,6 @@
         width: 250px;
     }
 
-    .footer-block {
-        height: 315px;
-    }
-
     .navbar-container .pages, .navbar-container .authentication {
         display: none;
     }
@@ -47,17 +43,9 @@
         display: none;
     }
 
-	.footer-container {
+	.footer-container .top {
 		gap: 70px;
 		row-gap: 45px;
-	}
-
-	.footer-container * {
-		margin-bottom: 0px;
-	}
-
-	.footer-block {
-		height: fit-content;
 	}
 
 	.footer-container p, .footer-container * {
@@ -66,10 +54,6 @@
 
 	.footer-container h2 {
 	    font-size: 20px;
-	}
-
-	.footer-container .contacts {
-	    margin-bottom: 20px;
 	}
 
 	.burger {
@@ -106,6 +90,12 @@
 
 	.burger {
         width: 85%;
+	}
+
+    .footer-container .bottom {
+        flex-direction: column-reverse;
+        align-items: baseline;
+        gap: 15px;
 	}
 }
 

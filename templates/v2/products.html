@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        {% if product.is_fav %}
+        {% if product.is_favourite %}
         <img src="{% static 'v2/imgs/heart.png' %}" alt="" class="add_wishlist_btn" onclick="add_wishlist(event)" data-value="true" data-id="{{ product.id }}">
         {% else %}
         <img src="{% static 'v2/imgs/empty_heart.png' %}" alt="" class="add_wishlist_btn" onclick="add_wishlist(event)" data-value="false" data-id="{{ product.id }}">

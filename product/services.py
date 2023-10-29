@@ -33,13 +33,19 @@ def get_products(user: User, products_options_filtration: Optional[Mapping] = No
 
 def get_product(user: User, product_id: int) -> ProductSerializer:
     if user.is_authenticated:
-        is_favourite_case = Case(When(favourites__user__username=user.username, then=True), default=False)
+        favourite_subquery = FavouriteProduct.objects.filter(
+            user_id=user.pk, product_id=OuterRef('id')
+        ).values('user_id')
+
+        is_favourite_case = Coalesce(
+            Exists(favourite_subquery), Value(False), output_field=BooleanField()
+        )
     else:
         is_favourite_case = Case(When(id__gt=0, then=False))
 
     try:
         product = Product.objects.filter(id=product_id).prefetch_related("options__values", "images").annotate(
-            is_favourite=is_favourite_case).distinct()[0]
+            is_favourite=is_favourite_case, category_name=F("category__name")).distinct()[0]
     except:
         return ProductSerializer()
 
@@ -152,8 +158,8 @@ def get_top_5_products_of_each_category(user):
     categories = Category.objects.prefetch_related("products", "products__category").all()
     for category in categories:
         for product in category.products.annotate(
-            is_fav=is_favourite_case
-        ).filter(~Q(poster=None) & ~Q(poster=''))[:3]:
+            is_favourite=is_favourite_case
+        ).filter(~Q(poster=None) & ~Q(poster='')).order_by("-id")[:3]:
             products.append({
                 "id": product.id,
                 "name": product.name,
@@ -163,7 +169,7 @@ def get_top_5_products_of_each_category(user):
                 "is_available": product.is_available,
                 "count": product.count,
                 "category_id": product.category.id,
-                "is_fav": product.is_fav
+                "is_favourite": product.is_favourite
             })
 
     random.shuffle(products)

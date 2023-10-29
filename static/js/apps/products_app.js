@@ -18,18 +18,6 @@ products_app = Vue.createApp({
                 UserServices.remove_product_from_favourites(product.id)
             }
         },
-        open_product_page(event, product) {
-            if (!this.actionable_element_is_in_action) {
-		event.preventDefault()
-                this.scroll_position = window.scrollY
-                this.div_display_style = document.getElementById("div_closes_when_product_opens").getAttribute('style')
-		document.getElementById("div_closes_when_product_opens").style.display = "none"
-		document.getElementById("product_preview").style.display = "initial"
-		mounted_product_app.product["id"] = Number(product.id)
-		mounted_product_app.get_product()
-		window.scrollTo(0, 0)
-            }
-        },
         actionable_element_mouse_over() {
             this.actionable_element_is_in_action = true
 

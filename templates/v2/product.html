@@ -1,0 +1,148 @@
+{% load static %}
+
+<div id="myModal" class="modal" style="display: none;">
+    <span class="close" onclick="document.getElementById('myModal').style.display = 'none'">×</span>
+
+
+    <button class="prev_btn" onclick="show_prev_img()">
+        <div class="bar-btt"></div>
+        <div class="bar-ttb"></div>
+    </button>
+
+    <img class="modal-content" id="modal_image" src="">
+
+
+    <button class="next_btn" onclick="show_next_img()">
+        <div class="bar-ttb"></div>
+        <div class="bar-btt"></div>
+    </button>
+</div>
+
+<div class="block" id="product_template">
+    <div class="container">
+        <div class="path">
+            <button class="go_back_btn" onclick="window.history.go(-1)">
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </button>
+            <a href="/">Главная</a>
+            <span>/</span>
+            <a onclick="go_back('{{ go_back.url }}')">{{ go_back.label }}</a>
+            <span>/</span>
+            <a>{{ product.name }}</a>
+        </div>
+
+        <div class="product_title">
+            <h2>{{ product.name }}</h2>
+            <p>Арт. {{ product.code }}</p>
+        </div>
+
+        <div class="product_info">
+            <div class="images">
+                <div class="images_list">
+                    {% for image in product.images %}
+                    <div class="image" style="background-image: url({{ image.image }})" onclick="set_current_image('{{ image.image }}')" data-src="{{ image.image }}"></div><!--  -->
+                    {% endfor %}
+                </div>
+
+                <div class="current_image" style="background-image: url({{ product.images.0.image }})" onclick="open_image('{{ product.images.0.image }}')"></div> <!--  -->
+            </div>
+
+            <div class="text">
+                <h5>Характеристика</h5>
+                <ul>
+                    <li>Высота: {{ product.height }}</li>
+                    <li>Ширина: {{ product.width }}</li>
+                    <li>Длина: {{ product.length }}</li>
+                </ul>
+
+                <h5 style="margin-top: 15px;">Описание</h5>
+                <div class="quill_description">
+                    {% autoescape off %}
+                    {{ product.description }}
+                    {% endautoescape %}
+                </div>
+            </div>
+
+            <div class="actions">
+                <div class="product_action">
+                    <div class="price_and_wishlist_btn">
+                        <h2>{{ product.price }} Р</h2>
+                        {% if product.is_favourite %}
+                        <img src="{% static 'v2/imgs/heart.png' %}" alt="" onclick="add_wishlist(event)" data-value="true" data-id="{{ product.id }}">
+                        {% else %}
+                        <img src="{% static 'v2/imgs/empty_heart.png' %}" alt="" onclick="add_wishlist(event)" data-value="false" data-id="{{ product.id }}">
+                        {% endif %}
+                    </div>
+
+                    <div class="availability">
+                        {% if product.is_available %}
+                        <p class="is_available">В наличии</p>
+                        {% if product.category_id == 7 %}
+                        <p class="count">{{ product.count }} шт</p>
+                        {% endif %}
+                        {% else %}
+                        <p class="is_not_available">Нет в наличии</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="add_to_cart_block">
+                        <button>Добавить в корзину</button>
+                        <p class="function_is_not_ready">Функция пока не доступна</p>
+
+                        <div class="availability">
+                            {% if product.is_available %}
+                            <p class="is_available">В наличии</p>
+                            {% if product.category_id == 7 %}
+                            <p class="count">{{ product.count }} шт</p>
+                            {% endif %}
+                            {% else %}
+                            <p class="is_not_available">Нет в наличии</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="download_images">
+                    {% for image in product.images %}
+                    <a href="{{ image.image }}" download="" class="download_image">
+                        <img src="{% static 'v2/imgs/download.png' %}" alt="">
+                        <hr>
+                        <p>Скачать #{{ forloop.counter }} фото</p>
+                    </a>
+
+                    {% if not forloop.last %}
+                    <hr>
+                    {% endif %}
+                    {% endfor %}
+
+                    <hr class="vertical_bar">
+                    <hr class="horizontal_bar">
+                </div>
+            </div>
+        </div>
+
+        <div class="text mobile">
+            <h5>Характеристика</h5>
+            <ul>
+                <li>Высота: {{ product.height }}</li>
+                <li>Ширина: {{ product.width }}</li>
+                <li>Длина: {{ product.length }}</li>
+            </ul>
+
+            <h5 style="margin-top: 15px;">Описание</h5>
+            <div class="quill_description">
+                {% autoescape off %}
+                {{ product.description }}
+                {% endautoescape %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="block" id="other_products">
+    <div class="container">
+        <h3>Товары в этой категории</h3>
+        {% include 'v2/products.html' %}
+    </div>
+</div>
