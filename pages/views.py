@@ -34,7 +34,20 @@ def favourites_page_view(request):
 @check_account_expiration()
 def products_page_view(request):
     if request.user.is_authenticated:
-        return render(request, "pages/products_page.html", {"MAIN_CATEGORY_ID": MAIN_CATEGORY_ID})
+        selected_category_id = int(request.GET.get("category_id"))
+        category_info = product_services.get_category_info(selected_category_id)
+
+        return render(request, "v2/products_page.html", {
+            "min_price": category_info["min_price"],
+            "max_price": category_info["max_price"],
+            "count": category_info["count"],
+
+            "selected_category_id": selected_category_id,
+            "selected_ordering": request.GET.get("ordering", "-id"),
+            "selected_min_price": request.GET.get("min_price", category_info["min_price"]),
+            "selected_max_price": request.GET.get("max_price", category_info["max_price"]),
+            "selected_page": request.GET.get("page", 1)
+        })
     return redirect("/")
 
 

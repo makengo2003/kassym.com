@@ -1,0 +1,79 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/product_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_product_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/products_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_products_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/pagination.css' %}">
+{% endblock %}
+
+
+{% block body %}
+<div class="block products_page">
+    <div class="container products_info">
+        <details class="filter_details open_details" data-open="true" open>
+            <input type="hidden" name="count" value="{{ count }}" id="total_count_of_products">
+            <summary><span>Фильтр</span><img src="/static/imgs/details.png" alt=""></summary>
+
+            <div class="content">
+                <hr>
+
+                <div class="category">
+                    <b>Категория</b>
+
+                    <select onchange="open_category()" id="category_select">
+                        {% for category in categories %}
+                        <option value="{{ category.id }}"{% if category.id == selected_category_id %} selected{% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="order_by">
+                    <b>Сортировка по</b>
+
+                    <select onchange="pagination_el.pagination(1)" id="ordering_select">
+                        <option value="-id"{% if selected_ordering == "-id" %} selected{% endif %}>Новинка</option>
+                        <option value="-price"{% if selected_ordering == "-price" %} selected{% endif %}>Цена по убыванию</option>
+                        <option value="price"{% if selected_ordering == "price" %} selected{% endif %}>Цена по возрастанию</option>
+                    </select>
+                </div>
+
+                <div class="price_range" style="margin-bottom: 20px;">
+                    <b>Цена</b>
+
+                    <div class="prices">
+                        <p id="min_price_text" style="margin-right: auto">{{ selected_min_price }} Р</p>
+                        <p id="max_price_text">{{ selected_max_price }} Р</p>
+                    </div>
+
+                    <div class="price_range_slider">
+                        <hr>
+                        <input id="min_price_input" type="range" min="{{ min_price }}" max="{{ max_price }}" value="{{ selected_min_price }}" oninput="slide_min_price()" onchange="pagination_el.pagination(1)">
+                        <input id="max_price_input" type="range" min="{{ min_price }}" max="{{ max_price }}" value="{{ selected_max_price }}" oninput="slide_max_price()" onchange="pagination_el.pagination(1)">
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            {% include "v2/products.html" %}
+
+            <div id="pagination" style="margin-top: 50px;"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'v2/js/packages/jquery.min.js' %}"></script>
+<script src="{% static 'v2/js/packages/axios.min.js' %}"></script>
+<script src="{% static 'v2/js/packages/pagination.js' %}"></script>
+<script src="{% static 'v2/js/product_page.js' %}"></script>
+<script src="{% static 'v2/js/products_page.js' %}"></script>
+<script src="{% static 'v2/js/products.js' %}"></script>
+{% endblock %}

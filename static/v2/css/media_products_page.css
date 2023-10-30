@@ -1,0 +1,15 @@
+@media(max-width: 1150px) {
+    .products_page .products_info details {
+        min-width: 261px;
+    }
+
+    .products_page .products_info {
+        gap: 45px;
+    }
+}
+
+@media(max-width: 900px) {
+    .products_page .products_info {
+        flex-direction: column;
+    }
+}

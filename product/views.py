@@ -68,3 +68,10 @@ def search_products_view(request: Request) -> Response:
 def change_product_is_available_status_view(request: Request) -> Response:
     services.change_product_is_available_status(request.data.get("product_id"))
     return Response({"success": True})
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_many_view(request):
+    data = services.get_many(request.user, request.query_params)
+    return Response(data)

@@ -10,5 +10,6 @@ urlpatterns = [
     path("delete_product/", delete_product_view, name="delete_product"),
     path("edit_product/", edit_product_view, name="edit_product"),
     path("change_product_is_available_status/", change_product_is_available_status_view,
-         name="change_product_is_available_status")
+         name="change_product_is_available_status"),
+    path("get_many/", get_many_view, name="get_many")
 ]

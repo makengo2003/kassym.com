@@ -342,6 +342,7 @@
     background-color: white;
     margin: 7px 0;
     transform: rotate(-45deg) translate(3px, 4px);
+    box-shadow: 0 0 10px black;
 }
 
 #myModal .bar-ttb {

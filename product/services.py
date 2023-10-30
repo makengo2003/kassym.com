@@ -1,9 +1,11 @@
+import json
 import random
 from typing import Optional, Mapping, TypeVar, Sequence
 
 from django.contrib.auth.models import User
-from django.db.models import Q, When, Case, F, Value, BooleanField, OuterRef, Exists
+from django.db.models import Q, When, Case, F, Value, BooleanField, OuterRef, Exists, Min, Max, Count
 from django.db.models.functions import Coalesce
+from django.template.loader import render_to_string
 
 from category.models import Category
 from user.models import FavouriteProduct
@@ -174,3 +176,64 @@ def get_top_5_products_of_each_category(user):
 
     random.shuffle(products)
     return products
+
+
+def get_category_info(selected_category_id):
+    category_info = Product.objects.filter(category_id=selected_category_id).aggregate(
+        min_price=Min("price"),
+        max_price=Max("price"),
+        count=Count("id")
+    )
+
+    return category_info
+
+
+def get_many(user, get_many_request_schema):
+    ordering = get_many_request_schema.get("ordering", [])
+    if type(ordering) == str:
+        ordering = json.loads(get_many_request_schema.get("ordering", "[]"))
+
+    filtration = get_many_request_schema.get("filtration", {})
+    if type(filtration) == str:
+        filtration = json.loads(get_many_request_schema.get("filtration", "{}"))
+
+    searching = get_many_request_schema.get("searching", {})
+    if type(searching) == str:
+        searching = json.loads(get_many_request_schema.get("searching", "{}"))
+
+    offset = int(get_many_request_schema.get("offset", 0))
+    limit = int(get_many_request_schema.get("limit", 12))
+
+    words = searching.get("text", "").split()
+    searching_filters = []
+
+    for searching_field in searching.get("searching_fields", []):
+        if searching_field.get("with__icontains"):
+            for query in words:
+                searching_filters.append(Q(**{f"{searching_field['field_name']}__icontains": query.lower()}))
+        else:
+            searching_filters.append(Q(**{searching_field["field_name"]: searching["text"].lower()}))
+
+    if len(searching_filters) > 0:
+        searching_filtration = functools.reduce(lambda a, b: a | b, searching_filters)
+    else:
+        searching_filtration = Q()
+
+    favourite_subquery = FavouriteProduct.objects.filter(
+        user_id=user.pk, product_id=OuterRef('id')
+    ).values('user_id')
+    is_favourite_case = Coalesce(
+        Exists(favourite_subquery), Value(False), output_field=BooleanField()
+    )
+
+    count = Product.objects.filter(**filtration).count()
+    products = Product.objects.filter(**filtration).annotate(
+        is_favourite=is_favourite_case,
+        image=F("poster"),
+        category_name=F("category__name"),
+    ).order_by(*ordering).distinct().only("id", "name", "price", "code", "is_available", "count", "currency", "poster")[offset:offset+limit]
+
+    return {
+        "count": count,
+        "html": render_to_string("v2/products.html", {"products": ProductsSerializer(products, many=True).data})
+    }

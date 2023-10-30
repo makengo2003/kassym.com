@@ -1,0 +1,224 @@
+.products_page .products_info {
+    display: flex;
+    gap: 41.8px;
+}
+
+.products_page .products_info details {
+    border-radius: 5px;
+    box-shadow: 0px 0px 7px 0px #e4e4e4;
+
+    padding: 15px 20px;
+    min-width: 290px;
+
+    height: 20px;
+    overflow: hidden;
+
+    transition: height 0.5s ease-in-out;
+}
+
+.products_page .products_info details.open_details {
+    height: 340px;
+    max-height: 525px;
+}
+
+.products_page .products_info details.open_details summary img {
+    rotate: 0deg;
+}
+
+.products_page .products_info details summary {
+	cursor: pointer;
+	list-style: none;
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.products_page .products_info details summary span {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: Gilroy-Bold;
+    margin-right: auto;
+}
+
+.products_page .products_info details summary img {
+    rotate: 180deg;
+    transition: rotate 0.5s;
+}
+
+.products_page .products_info details hr {
+    margin-top: 15px;
+    border: none;
+    height: 2px;
+    background-color: #007671; /* #53C0A9 */
+    margin-bottom: 20px;
+}
+
+.products_page .products_info details .category, .products_page .products_info details .order_by, .products_page .products_info details .price_range, .products_page .products_info details .brands {
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.products_page .products_info details .brands {
+    margin-bottom: 0;
+}
+
+.products_page .products_info details select {
+    appearance: none;
+
+    height: 2em;
+    padding: 0 10px;
+    padding-right: 2.5em;
+
+    border: 1px solid #bbbbbb;
+    border-radius: 0.1em;
+    cursor: pointer;
+
+    font-size: 16px;
+    background: url(https://upload.wikimedia.org/wikipedia/commons/9/9d/Caret_down_font_awesome_whitevariation.svg) no-repeat right 0.6em center / 1.4em, linear-gradient(to left, #007671 2.5em, rgb(255 255 255) 2.5em); /* #42b8a0 */
+}
+
+.products_page .products_info details .price_range .prices {
+    display: flex;
+    flex-direction: row;
+}
+
+.products_page .products_info details .price_range .prices p {
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-size: 15px;
+    border: 1.2px solid #007671; /* #42b8a0 */
+    color: #007671; /* #42b8a0 */
+    font-weight: bold;
+    font-family: 'Gilroy-Medium';
+    margin: 0;
+}
+
+.products_page .products_info details .price_range .price_range_slider hr {
+    margin: 0;
+    margin-top: 10px;
+}
+
+.products_page .products_info details .price_range .price_range_slider input {
+    appearance: none;
+    width: 100%;
+    position: absolute;
+    margin: auto;
+    bottom: 0px;
+    background-color: transparent;
+    pointer-events: none;
+}
+
+.products_page .products_info details .price_range .price_range_slider input::-webkit-slider-runnable-track{
+    -webkit-appearance: none;
+    height: 5px;
+}
+
+.products_page .products_info details .price_range .price_range_slider input::-moz-range-track{
+    -moz-appearance: none;
+    height: 5px;
+}
+
+.products_page .products_info details .price_range .price_range_slider input::-ms-track{
+    appearance: none;
+    height: 5px;
+}
+
+.products_page .products_info details .price_range .price_range_slider input::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    background-color: white;
+    border: 5px solid #007671; /* #42b8a0 */
+    cursor: pointer;
+    margin-top: -7.5px;
+    pointer-events: auto;
+    border-radius: 50%;
+}
+
+.products_page .products_info details .price_range .price_range_slider input::-moz-range-thumb{
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: white;
+    border: 5px solid #007671; /* #42b8a0 */
+    pointer-events: auto;
+}
+
+.products_page .products_info details .price_range .price_range_slider input::-ms-thumb{
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    border: 5px solid #007671; /* #42b8a0 */
+    border-radius: 50%;
+    background-color: white;
+    pointer-events: auto;
+}
+
+.products_page .products_info details .price_range .price_range_slider input:active::-webkit-slider-thumb{
+    background-color: white;
+    border: 3px solid #007671; /* #42b8a0 */
+}
+
+.products_page .products_info details .brands .brands_checkbox {
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+    max-height: 160px;
+}
+
+.products_page .products_info details .brands .brands_checkbox label {
+    cursor: pointer;
+    margin: 5px 0;
+}
+
+.products_page .products_info details .brands .brands_checkbox input {
+    display: none;
+}
+
+.products_page .products_info details .brands .brands_checkbox span {
+    display: flex;
+}
+
+/* Optionally, you can style the scrollbar further */
+.products_page .products_info details .brands .brands_checkbox::-webkit-scrollbar {
+  width: 8px; /* Adjust the width of the scrollbar (for WebKit browsers) */
+}
+
+.products_page .products_info details .brands .brands_checkbox::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background-color: darkgray; /* Customize the thumb color (for WebKit browsers) */
+}
+
+.products_page .products_info details .brands .brands_checkbox::-webkit-scrollbar-thumb:hover {
+  background-color: gray; /* Customize the thumb color on hover (for WebKit browsers) */
+}
+
+
+.products_page .products_info details .brands .brands_checkbox label > span::before {
+    content: '';
+    width: 15px;
+    height: 15px;
+    border: 1px solid #007671; /* #42b8a0 */
+    border-radius: 2px;
+    margin-right: 5px;
+}
+
+.products_page .products_info details .brands .brands_checkbox label > input:checked+span::before {
+    background-color: #007671; /* #42b8a0 */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+}
+
+.products_page .products_info #pagination a {
+    font-size: 20px;
+}
+
+.products_page .products_info #pagination .active a {
+    background: #007671; /* #42b8a0 */
+    color: white;
+}
