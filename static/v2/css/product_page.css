@@ -60,7 +60,7 @@
 
 }
 
-#product_template .text ul li, #product_template .text .quill_description * {
+#product_template .text ul li, #product_template .text .quill_description *, #product_template .text p {
     font-size: 13px;
     letter-spacing: 0px;
 }
