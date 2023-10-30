@@ -202,7 +202,7 @@ def get_many(user, get_many_request_schema):
         searching = json.loads(get_many_request_schema.get("searching", "{}"))
 
     offset = int(get_many_request_schema.get("offset", 0))
-    limit = int(get_many_request_schema.get("limit", 12))
+    limit = int(get_many_request_schema.get("limit", 24))
 
     words = searching.get("text", "").split()
     searching_filters = []

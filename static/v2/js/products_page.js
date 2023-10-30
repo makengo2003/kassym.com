@@ -27,7 +27,7 @@ set_values_of_get_many_request_params()
 var price_range_minimum_difference = max_price_input.value * 0.1
 
 let total_products_count = parseInt(document.getElementById("total_count_of_products").value)
-let pageSize = 12
+let pageSize = 24
 let pageNumber = Math.ceil(total_products_count / pageSize)
 let pagination_el = $('#pagination')
 
