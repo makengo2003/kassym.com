@@ -727,6 +727,7 @@ products_app = Vue.createApp({
             }
 
             console.log(count)
+            console.log("count")
             return count
         }
     },
