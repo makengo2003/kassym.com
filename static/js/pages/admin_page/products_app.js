@@ -726,6 +726,7 @@ products_app = Vue.createApp({
                 count += this.categories[i]["products_count"]
             }
 
+            console.log(count)
             return count
         }
     },
