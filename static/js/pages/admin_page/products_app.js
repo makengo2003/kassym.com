@@ -730,7 +730,6 @@ products_app = Vue.createApp({
         }
     },
     mounted() {
-        alert("Test. Skip this!")
         this.main_category_id = main_category_id
     }
 })
