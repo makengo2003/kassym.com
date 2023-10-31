@@ -7,6 +7,7 @@ from django.views.decorators.cache import never_cache
 from project.settings import MAIN_CATEGORY_ID
 from course import services as course_services
 from product import services as product_services
+from user import services as user_services
 import random
 
 
@@ -26,7 +27,8 @@ def main_page_view(request):
 @check_account_expiration()
 def favourites_page_view(request):
     if request.user.is_authenticated:
-        return render(request, "pages/favourites_page.html", {"MAIN_CATEGORY_ID": MAIN_CATEGORY_ID})
+        products = user_services.get_favourite_products(request.user)
+        return render(request, "v2/wishlist_page.html", {"products": products})
     return redirect("/")
 
 

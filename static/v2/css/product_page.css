@@ -431,3 +431,7 @@
     -webkit-box-orient: vertical;
     min-height: 25px;
 }
+
+#other_products .products_list .product_card .text .product_category_block .product_category {
+    display: none;
+}

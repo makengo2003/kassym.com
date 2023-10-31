@@ -7,12 +7,15 @@ from django.contrib.sessions.models import Session
 
 from typing import Mapping, List
 
+from django.db.models import F, Case, When
 from django.shortcuts import get_object_or_404
 from django_user_agents.utils import get_user_agent
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.request import Request
 from user_agents.parsers import UserAgent
 
+from product.models import Product
+from product.serializers import ProductsSerializer
 from project.settings import BOT_TOKEN
 from site_settings.models import Contact
 from .models import FavouriteProduct, Client, UserRequest
@@ -195,3 +198,12 @@ def leave_request(data):
         body={'values': [[str(user_request.fullname), str(user_request.phone_number), str(user_request.created_at)]]},
         valueInputOption='USER_ENTERED',
     ).execute()
+
+
+def get_favourite_products(user):
+    products = Product.objects.filter(favourites__user__username=user.username).annotate(
+        is_favourite=Case(When(id__gt=0, then=True)),
+        image=F("poster"),
+        category_name=F("category__name"),
+    ).order_by("-favourites__id").distinct().only("id", "name", "price", "code", "is_available", "count", "currency", "poster")
+    return ProductsSerializer(products, many=True).data

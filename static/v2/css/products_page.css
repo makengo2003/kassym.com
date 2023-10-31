@@ -222,3 +222,7 @@
     background: #007671; /* #42b8a0 */
     color: white;
 }
+
+.products_page .products_info .products_list .product_card .text .product_category_block .product_category {
+    display: none;
+}

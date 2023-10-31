@@ -165,7 +165,7 @@ def get_top_5_products_of_each_category(user):
             products.append({
                 "id": product.id,
                 "name": product.name,
-                "category": product.category.name,
+                "category_name": product.category.name,
                 "price": product.price,
                 "image": "/media/" + str(product.poster),
                 "is_available": product.is_available,

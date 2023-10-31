@@ -1,0 +1,42 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/wishlist_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}">
+{% endblock %}
+
+
+{% block body %}
+<div class="block" id="wishlist_page">
+    <div class="container">
+        <div class="path">
+            <button class="go_back_btn" onclick="window.history.go(-1)">
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </button>
+            <a href="/">Главная</a>
+            <span>/</span>
+            <a>Избранные</a>
+        </div>
+
+        <div class="product_title">
+            <h2>Мои избранные</h2>
+            {% if products|length > 0 %}
+            <p onclick="clear_wishlist(event)">Очистить всё</p>
+            {% endif %}
+        </div>
+
+        <h5 id="there_is_no_favourite_product_text" style="margin-top: 0;{% if products|length > 0 %} display: none{% endif %}">Избранных нет</h5>
+
+        {% include 'v2/products.html' %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'v2/js/wishlist_page.js' %}"></script>
+<script src="{% static 'v2/js/products.js' %}"></script>
+{% endblock %}
