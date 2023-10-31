@@ -358,6 +358,13 @@ products_app = Vue.createApp({
                             this.products.unshift(response["data"][0])
                             this.products.splice(this.products.length - 1, 1)
 
+                            for (var i = 0; i < this.categories.length; i++) {
+                                if (this.categories[i]["id"] == parseInt(this.product_form["category_id"])) {
+                                    this.categories[i]["products_count"] += 1
+                                    break
+                                }
+                            }
+
                             this.product_form = {
                                 product_id: 0,
                                 category_id: 0,
@@ -542,6 +549,14 @@ products_app = Vue.createApp({
                                 break
                             }
                         }
+
+                        for (var i = 0; i < this.categories.length; i++) {
+                            if (this.categories[i]["id"] == parseInt(this.product_form["category_id"])) {
+                                this.categories[i]["products_count"] -= 1
+                                break
+                            }
+                        }
+
                         this.product_form = {
                             product_id: 0,
                             category_id: 0,
@@ -703,6 +718,15 @@ products_app = Vue.createApp({
                 alert('ОШИБКА!!!');
                 this.order_form["error"] = true
             })
+        },
+        get_total_count_of_products() {
+            count = 0
+
+            for (var i = 0; i < this.categories.length; i++) {
+                count += this.categories[i]["products_count"]
+            }
+
+            return count
         }
     },
     mounted() {

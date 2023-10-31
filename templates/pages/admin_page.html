@@ -101,7 +101,10 @@
 								<input class="category_select_radio" type="radio" name="category" :id="'category_' + category.id" :value="category" v-model="current_category" @change="get_category_products()">
 								<label :for="'category_' + category.id" v-cloak>
 									<img src="{% static 'imgs/drag.png' %}" alt="">
-									${ category.name }
+									<div style="display: flex; flex-direction: column; gap: 5px">
+										<p style="margin: 0">${ category.name }</p>
+										<p style="margin: 0; font-size: 15px; color: gray;">${ category.products_count } шт</p>
+									</div>
 								</label>
 
 								<a v-if="category.id != main_category_id" @click="open_category_form(category)"><img src="{% static 'imgs/edit.png' %}"></a>
@@ -120,6 +123,7 @@
 								<span v-if="admin_searched_products" @click="cancel_searching" style="color: #175145; margin-left: 10px">Отменить поиск</span>
 							</div>
 							<a @click="open_product_form()">Добавить товар</a>
+							<span v-if="current_section != 'categories'" style="display: flex; align-items: center;">${ get_total_count_of_products() } шт</span>
 						</div>
 						<div class="categories_cards_parts">
 							<div class="categories_photo">

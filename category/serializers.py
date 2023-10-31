@@ -22,10 +22,11 @@ class CategorySerializer(serializers.ModelSerializer):
     filtration = CategoryFiltrationSerializer(many=True, required=False)
     min_price = serializers.IntegerField(required=False)
     max_price = serializers.IntegerField(required=False)
+    products_count = serializers.IntegerField(required=False)
 
     class Meta:
         model = Category
-        fields = ("id", "is_available", "name", "poster", "filtration", "min_price", "max_price")
+        fields = ("id", "is_available", "name", "poster", "filtration", "min_price", "max_price", "products_count")
 
 
 class CategoryFormSerializer(serializers.ModelSerializer):
