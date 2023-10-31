@@ -7,5 +7,4 @@ class CacheControlMiddleware:
         response['Cache-Control'] = 'no-cache, must-revalidate'
         response['Pragma'] = 'no-cache'
         response['Expires'] = '0'
-        response['Vary'] = 'Cookie'
         return response
