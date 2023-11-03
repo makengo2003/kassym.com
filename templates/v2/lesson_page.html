@@ -1,0 +1,48 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/lesson_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_lesson_page.css' %}">
+{% endblock %}
+
+
+{% block body %}
+<div class="block">
+    <div class="container lesson_page_container">
+        <h2 style="font-size: 20px;">{{ lesson.name }}</h2>
+
+        <div class="content_block">
+            <video id="player" controls>
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/mp4">
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/webm">
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/ogg">
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/quicktime">
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/x-msvideo">
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/x-matroska">
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/x-flv">
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/x-ms-wmv">
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/x-ms-asf">
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/3gpp">
+                <source src="/api/course/video_stream/?lesson_id={{ lesson.id }}" type="video/3gpp2">
+                Ваш браузер не поддерживает воспроизведение видео.
+            </video>
+
+            <div class="lessons_list_block">
+                <div class="course_name">
+                    <b style="margin: 0">{{ course.name }}</b>
+                </div>
+
+                {% for lesson_i in lessons %}
+                <button onclick="window.location.href = '/lesson/?id={{ lesson_i.id }}'">
+                    <div class="lesson_name{% if lesson_i.id == lesson.id %} active{% endif %}" style="{% if forloop.last %}border-bottom: none;{% endif %}">
+                        <img src="{% static 'imgs/play.png' %}" alt="">
+                        <span>{{ lesson_i.name }}</span>
+                    </div>
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+.courses_page_container {
+    margin-top: 20px;
+}
+
+.lang-1 {
+	display: flex;
+	align-items: center;
+	border-radius: 5px;
+	box-shadow: 0 0 3px 2px rgba(0, 0, 0, .1);
+	width: fit-content;
+	padding: 0 10px;
+	margin: 20px 0;
+}
+
+.lang-1 label{
+	margin: 0 5px;
+}
+
+.courses_cards{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+.courses_card{
+	width: 333.3px;
+    padding: 10px;
+    box-shadow: 0 0 3px 2px rgba(0, 0, 0, .1);
+    border-radius: 10px;
+}
+
+.courses_img{
+	width: 100%;
+	height: 210px;
+	border-radius: 5px;
+
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.courses_card * {
+    margin: 0;
+}
+
+.courses_card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: baseline;
+}
+
+.courses_card button {
+    padding: 8px 20px;
+    background-color: #175145;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    font-size: 15px;
+}
+
+.checkbox{
+    display: flex;
+    --width: 50px;
+    --height: 25px;
+    --offset: 1px;
+    --duration: 0.3s;
+    cursor: pointer;
+}
+
+.checkbox:hover{
+    filter: brightness(1.2);
+}
+
+.checkbox_div{
+    position: relative;
+    width: var(--width);
+    height: var(--height);
+    border-radius: var(--width);
+    border:0.7px solid;
+    border-color: black;
+    background-image: url(/static/imgs/kaz1.jpg);
+    background-size: contain;
+    transition: var(--duration);
+}
+
+.checkbox_input {
+    display: none;
+}
+
+.checkbox_input:checked ~ .checkbox_div {
+    background-image: url(/static/imgs/rus1.jpg);
+    background-size: contain;
+}
+
+.checkbox_input:checked ~ .checkbox_div::before {
+    background-image: url(/static/imgs/rus2.jpg);
+    background-size: contain;
+    border-color: black;
+    left: calc(var(--width) - var(--height) + var(--offset));
+}
+
+.checkbox_div::before {
+    content: '';
+    position: absolute;
+    top: var(--offset);
+    left: var(--offset);
+    width: calc(var(--height) - 2 * var(--offset));
+    height: calc(var(--height) - 2 * var(--offset));
+    background-image: url(/static/imgs/kaz2.jpg);
+    background-size: contain;
+    border:0,7px solid;
+    border-color: black;
+    border-radius: 50%;
+    transition: var(--duration);
+}
+
+.courses_name {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    min-height: min-content;
+    line-break: anywhere;
+}

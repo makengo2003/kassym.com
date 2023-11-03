@@ -12,8 +12,9 @@ import random
 
 
 @never_cache
-def search_result_page_view(request):
-    return render(request, "pages/search_result_page.html", {"search_input": request.GET.get("search_input"), "MAIN_CATEGORY_ID": MAIN_CATEGORY_ID})
+def search_page_view(request):
+    products_count = product_services.get_many(request.user, request.GET)["count"]
+    return render(request, "v2/search_page.html", {"count": products_count})
 
 
 @never_cache
@@ -116,7 +117,7 @@ def courses_page_view(request):
     if request.user.is_authenticated:
         language = request.GET.get("lang", "kz")
         courses = course_services.get_courses_page(language)
-        return render(request, "pages/courses_page.html", {"courses": courses})
+        return render(request, "v2/courses_page.html", {"courses": courses})
     return redirect("/")
 
 
@@ -126,5 +127,5 @@ def lesson_page_view(request):
     if request.user.is_authenticated:
         lesson_id = request.GET.get("id", 0)
         course, lessons, lesson = course_services.get_lesson_page(lesson_id)
-        return render(request, "pages/lesson_page.html", {"course": course, "lessons": lessons, "lesson": lesson})
+        return render(request, "v2/lesson_page.html", {"course": course, "lessons": lessons, "lesson": lesson})
     return redirect("/")

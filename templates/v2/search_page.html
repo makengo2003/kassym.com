@@ -1,0 +1,40 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/pagination.css' %}">
+<style>
+    #pagination .active a {
+        background: #007671;
+        color: white;
+    }
+
+    #pagination a {
+        font-size: 20px;
+    }
+</style>
+{% endblock %}
+
+
+{% block body %}
+<div class="block">
+    <div class="container">
+        <input type="hidden" name="count" value="{{ count }}" id="total_count_of_products">
+
+        {% include "v2/products.html" %}
+
+        <div id="pagination" style="margin-top: 50px; display: flex; justify-content: center;"></div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'v2/js/packages/jquery.min.js' %}"></script>
+<script src="{% static 'v2/js/packages/axios.min.js' %}"></script>
+<script src="{% static 'v2/js/packages/pagination.js' %}"></script>
+<script src="{% static 'v2/js/search_page.js' %}"></script>
+<script src="{% static 'v2/js/products.js' %}"></script>
+{% endblock %}

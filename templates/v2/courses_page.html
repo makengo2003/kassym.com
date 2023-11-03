@@ -1,0 +1,76 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/courses_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_courses_page.css' %}">
+{% endblock %}
+
+
+{% block body %}
+<div class="block">
+    <div class="container courses_page_container">
+        <div class="courses_block">
+            <h1>Курсы</h1>
+
+            <div class="lang-1">
+                <p>Қаз</p>
+                <label class="checkbox">
+                    <input type="checkbox" class="checkbox_input" onchange="change_courses_language()" id="set_courses_lang_checkbox">
+                    <div class="checkbox_div"></div>
+                </label>
+                <p>Рус</p>
+            </div>
+
+            <div class="courses_cards">
+                {% for course in courses %}
+                <div class="courses_card">
+                    <div class="courses_img" style="background-image: url('/static/v2/imgs/product.png')"></div>
+
+                    <div class="courses_name">
+                        <p>{{ course.name }}</p>
+                    </div>
+
+                    <button onclick="window.location.href = '/lesson/?id={{ course.lessons.first.id }}'">Начать обучение</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+var url_params = new URLSearchParams(window.location.search);
+var lang = url_params.get('lang')
+
+if (!lang) {
+	lang = "kz"
+
+	if (history.pushState) {
+		var params = new URLSearchParams(window.location.search)
+		params.set("lang", lang)
+
+		var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params.toString();
+		window.history.pushState({path: new_url},'',new_url);
+	}
+}
+
+if (lang == "ru") {
+	document.getElementById("set_courses_lang_checkbox").checked = true
+}
+
+function change_courses_language() {
+	if (lang == "ru") {
+		var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname + '?lang=kz';
+	} else {
+		var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname + '?lang=ru';
+	}
+
+	window.history.pushState({path: new_url},'',new_url);
+	window.location.reload()
+}
+</script>
+{% endblock %}

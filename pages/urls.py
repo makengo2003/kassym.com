@@ -11,7 +11,7 @@ urlpatterns = [
     path("profile/", profile_page_view, name="profile_page"),
     path("courses/", courses_page_view, name="courses_page"),
     path("lesson/", lesson_page_view, name="lesson_page"),
-    path("search_result/", search_result_page_view, name="search_result"),
+    path("search_result/", search_page_view, name="search_result"),
 
     path("about_us/", about_us_view, name="about_us"),
     path("agreement/", guarantee_view, name="guarantee"),

@@ -197,27 +197,17 @@ def get_many(user, get_many_request_schema):
     if type(filtration) == str:
         filtration = json.loads(get_many_request_schema.get("filtration", "{}"))
 
-    searching = get_many_request_schema.get("searching", {})
-    if type(searching) == str:
-        searching = json.loads(get_many_request_schema.get("searching", "{}"))
-
     offset = int(get_many_request_schema.get("offset", 0))
     limit = int(get_many_request_schema.get("limit", 24))
 
-    words = searching.get("text", "").split()
-    searching_filters = []
+    search_input = get_many_request_schema.get("search_input", "")
+    words = search_input.split()
+    q_filter = Q()
 
-    for searching_field in searching.get("searching_fields", []):
-        if searching_field.get("with__icontains"):
-            for query in words:
-                searching_filters.append(Q(**{f"{searching_field['field_name']}__icontains": query.lower()}))
-        else:
-            searching_filters.append(Q(**{searching_field["field_name"]: searching["text"].lower()}))
-
-    if len(searching_filters) > 0:
-        searching_filtration = functools.reduce(lambda a, b: a | b, searching_filters)
-    else:
-        searching_filtration = Q()
+    if words:
+        icontains_filters = [Q(code_lower__icontains=query.lower()) for query in words]
+        q_filter = functools.reduce(lambda a, b: a | b, icontains_filters)
+        q_filter |= Q(name_lower__icontains=search_input.lower())
 
     favourite_subquery = FavouriteProduct.objects.filter(
         user_id=user.pk, product_id=OuterRef('id')
@@ -226,8 +216,8 @@ def get_many(user, get_many_request_schema):
         Exists(favourite_subquery), Value(False), output_field=BooleanField()
     )
 
-    count = Product.objects.filter(**filtration).count()
-    products = Product.objects.filter(**filtration).annotate(
+    count = Product.objects.filter(q_filter, **filtration).count()
+    products = Product.objects.filter(q_filter, **filtration).annotate(
         is_favourite=is_favourite_case,
         image=F("poster"),
         category_name=F("category__name"),

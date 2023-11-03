@@ -1,0 +1,36 @@
+@media(max-width: 1150px) {
+    .courses_card {
+        width: 250px;
+    }
+
+    .courses_card .courses_img {
+        height: 160px;
+    }
+}
+
+@media(max-width: 900px) {
+    .courses_card {
+        width: 270px;
+    }
+
+    .courses_card .courses_img {
+        height: 170px;
+    }
+}
+
+@media(max-width: 630px) {
+    .courses_card {
+        width: 100%;
+    }
+
+    .courses_card .courses_img {
+        height: 270px;
+    }
+}
+
+@media(max-width: 500px) {
+    .courses_card .courses_img {
+        height: 200px;
+    }
+}
+
