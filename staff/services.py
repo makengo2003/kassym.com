@@ -34,7 +34,7 @@ class StaffServicesPresenter(BaseServicesPresenter):
 
         company_name = data["company_name"]
         product_count = data["count"]
-        product_comments = data["comments"]
+        product_comments = data.get("comments", "-")
         product_name = data["product"]["name"]
         product_code = data["product"]["code"]
         product_image = f'= IMAGE("https://kassym.com/{data["product"]["image"]}"; 2)'
