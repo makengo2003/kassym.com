@@ -44,6 +44,8 @@ class StaffServicesPresenter(BaseServicesPresenter):
         vendor_number = Product.objects.filter(id=data["product"]["id"]).first().vendor_number
         if not vendor_number:
             vendor_number = "-"
+        else:
+            vendor_number = f'"{vendor_number}"'
 
         if data["product"]["category_name"] == "Товары со склада":
             if settings.DEBUG:
