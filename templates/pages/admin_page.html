@@ -335,6 +335,10 @@
 								<b>ИП:</b>
 								<input type="text" placeholder="ИП" required v-model="order_form['company_name']">
 							</div>
+							<div class="add_product" style="align-items: baseline; flex-direction: column;">
+								<b>Комментарий:</b>
+								<textarea cols="30" rows="10" v-model="order_form['comments']" style="max-width: 98.6%; height: 75px; width: 98.6%;"></textarea>
+							</div>
 
 							<div class="add_product btns">
 								<button :disabled="order_form_is_submitting" class="add_btn" type="submit">Заказать</button>

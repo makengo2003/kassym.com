@@ -34,11 +34,14 @@ class StaffServicesPresenter(BaseServicesPresenter):
 
         company_name = data["company_name"]
         product_count = data["count"]
+        product_comments = data["comments"]
         product_name = data["product"]["name"]
         product_code = data["product"]["code"]
         product_image = f'= IMAGE("https://kassym.com/{data["product"]["image"]}"; 2)'
         product_price = str(data["product"]["price"])
         order_date = data["date"]
+
+        vendor_number = Product.objects.filter(id=data["product"]["id"]).first().vendor_number
 
         if data["product"]["category_name"] == "Товары со склада":
             if settings.DEBUG:
@@ -62,7 +65,8 @@ class StaffServicesPresenter(BaseServicesPresenter):
                 product_image,
                 product_price,
                 order_date,
-                "."
+                vendor_number,
+                product_comments,
             ]]},
             valueInputOption='USER_ENTERED',
         ).execute()
