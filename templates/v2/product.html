@@ -27,7 +27,7 @@
             </button>
             <a href="/">Главная</a>
             <span>/</span>
-            <a onclick="go_back('{{ go_back.url }}')">{{ go_back.label }}</a>
+            <a href="{{ go_back.url }}" onclick="event.preventDefault(); go_back('{{ go_back.url }}')">{{ go_back.label }}</a>
             <span>/</span>
             <a>{{ product.name }}</a>
         </div>

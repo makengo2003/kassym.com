@@ -54,7 +54,7 @@ function show_next_img() {
 }
 
 function go_back(url) {
-    if (document.referrer.includes("/products/?category_id=")) {
+    if (document.referrer.includes(url)) {
         window.history.go(-1)
     } else {
         window.location.href = url

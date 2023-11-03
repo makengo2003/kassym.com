@@ -67,6 +67,9 @@ def product_page_view(request):
         elif "search_result" in request.META.get("HTTP_REFERER", ""):
             label = "Результаты поиска"
             url = request.META["HTTP_REFERER"]
+        elif "products" in request.META.get("HTTP_REFERER", ""):
+            label = product["category_name"]
+            url = request.META["HTTP_REFERER"]
         else:
             label = product["category_name"]
             url = "/products/?category_id=" + str(product["category_id"])

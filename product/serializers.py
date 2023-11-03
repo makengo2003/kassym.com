@@ -113,7 +113,7 @@ class ProductFormSerializer(serializers.ModelSerializer):
         validated_data["currency"] = "ru"
         options = list()
         option_values = list()
-        images = list()
+        images = validated_data.pop("images", [])
         files = validated_data.pop("files", {})
 
         for option in validated_data.pop("options", []):
@@ -124,29 +124,33 @@ class ProductFormSerializer(serializers.ModelSerializer):
             options.append(product_option)
 
         i = 0
-        not_changed_images = []
-        for image in validated_data.pop("images", []):
-            img = files.pop("image: " + image["image"], False)
+        new_images = []
+        poster_changed = False
+
+        for image in images:
+            img = files.pop("image: " + image['image'], False)
 
             if not img:
-                not_changed_images.append(urllib.parse.unquote(image['image'].replace("/media/", "").replace("%25", "%"), encoding='utf-8'))
-                i += 1
-                continue
+                img = urllib.parse.unquote(image['image'].replace("/media/", "").replace("%25", "%"), encoding='utf-8')
+            else:
+                img = img[0]
 
-            image.pop("image")
+                if i == 0:
+                    poster_changed = True
 
-            if i == 0:
-                validated_data["poster"] = img[0]
-                i += 1
+            i += 1
 
-            images.append(ProductImage(**image, product=product, image=img[0]))
+            new_images.append(ProductImage(product=product, image=img))
+
+        ProductImage.objects.filter(product=product).delete()
+        ProductImage.objects.bulk_create(new_images)
+
+        if poster_changed:
+            validated_data["poster"] = new_images[0].image
 
         validated_data["name_lower"] = validated_data["name"].lower()
         validated_data["code_lower"] = validated_data["code"].lower()
         Product.objects.filter(id=product.pk).update(**validated_data)
-
-        ProductImage.objects.filter(~Q(image__in=not_changed_images), product=product).delete()
-        ProductImage.objects.bulk_create(images)
 
         ProductOption.objects.filter(product=product).delete()
         ProductOption.objects.bulk_create(options)
