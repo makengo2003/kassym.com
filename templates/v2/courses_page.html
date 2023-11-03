@@ -25,7 +25,7 @@
             <div class="courses_cards">
                 {% for course in courses %}
                 <div class="courses_card">
-                    <div class="courses_img" style="background-image: url('/static/v2/imgs/product.png')"></div>
+                    <div class="courses_img" style="background-image: url('{{ course.poster.url }}')"></div>
 
                     <div class="courses_name">
                         <p>{{ course.name }}</p>
