@@ -71,6 +71,7 @@ class StaffServicesPresenter(BaseServicesPresenter):
                 order_date,
                 vendor_number,
                 product_comments,
+                "."
             ]]},
             valueInputOption='USER_ENTERED',
         ).execute()
