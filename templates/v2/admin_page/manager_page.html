@@ -1,0 +1,186 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Manager's Dashboard</title>
+
+    <link rel="icon" type="image/x-icon" href="/static/imgs/icon.png">
+	<link rel="stylesheet" href="{% static 'v2/css/admin_page/base.css' %}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/manager_page.css' %}">
+</head>
+<body>
+    <div id="sidebar" class="sidebar">
+        <h3>Arman</h3>
+
+        <hr>
+
+        <p :style="opened_section == 'orders' ? 'content: url({% static 'v2/imgs/blue_orders_icon.png' %}); color: #00FFF5;' : ''" @click="open_section('orders')"><img src="{% static 'v2/imgs/orders_icon.png' %}"><span>Заказ товаров</span></p>
+
+        <hr>
+
+        <p :style="opened_section == 'settings' ? 'content: url({% static 'v2/imgs/blue_settings_icon.png' %}); color: #00FFF5;' : ''" @click="open_section('settings')"><img src="{% static 'v2/imgs/settings_icon.png' %}"><span>Настройки</span></p>
+        <p onclick="window.location.href = '{% url 'logout' %}'"><img src="{% static 'v2/imgs/white_logout_icon.png' %}"><span>Выйти</span></p>
+    </div>
+
+    <div id="orders_section" class="section">
+        <div class="header">
+            <h3>Заказы</h3>
+
+            <hr>
+
+            <div class="sub_header">
+                <select @change="select_orders_change_time()">
+                    <option v-for="change_time in change_times" :value="change_time.id">Смена: ${ change_time.dt }</option>
+                </select>
+
+                <div v-if="selected_orders_change_time_is_today()">
+                    <button :class="finish_change_time_is_available() ? 'active' : ''" @click="finish_change_time()">Завершить смену</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="actions">
+                <div class="action" @click="open_category('new_orders')" :style="opened_category == 'new_orders' ? 'border-color: #2D74FF' : ''">
+                    <img src="{% static 'v2/imgs/new_orders_icon.png' %}">
+                    <div class="text">
+                        <p>183</p>
+                        <span>Новые заказы</span>
+                    </div>
+                </div>
+                <div class="action" @click="open_category('accepted_orders')" :style="opened_category == 'accepted_orders' ? 'border-color: #F38D15' : ''">
+                    <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}">
+                    <div class="text">
+                        <p>183</p>
+                        <span>Принятые заказы</span>
+                    </div>
+                </div>
+                <div class="action" @click="open_category('all_orders')" :style="opened_category == 'all_orders' ? 'border-color: #14C25A' : ''">
+                    <img src="{% static 'v2/imgs/all_orders_icon.png' %}">
+                    <div class="text">
+                        <p>183</p>
+                        <span>Все заказы</span>
+                    </div>
+                </div>
+                <div class="action" :style="opened_category == 'add_order' ? 'border-color: gray' : ''">
+                    <img src="{% static 'v2/imgs/add_order_icon.png' %}">
+                    <div class="text">
+                        <p style="opacity: 0.3;">Добавить заказ</p>
+                        <span style="color: red; font-size: 10px; opacity: 1;">Функция скоро будет доступна</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table">
+                <div class="columns">
+                    <p class="is_express"></p>
+                    <p class="company_name">ИП</p>
+                    <p class="count">Кол. товаров</p>
+                    <p class="sum">Сумма</p>
+                    <p class="time">Время</p>
+                    <p class="comments">Комментарий</p>
+                    <p class="paid_check">Чек</p>
+                </div>
+
+                <div class="rows">
+                    <div class="row" v-for="order in orders">
+                        <hr>
+                        <div class="_row">
+                            <p class="is_express"><img v-if="order.is_express" src="{% static 'v2/imgs/is_express_icon.png' %}"></p>
+                            <p class="company_name" @click="open_order(order)">
+                                <a>${ order.user.company_name }</a></p>
+                            <p class="count">${ order.total_products_count } шт</p>
+                            <p class="sum">${ order.total_sum_in_tenge } тг</p>
+                            <p class="time">${ order.created_at }</p>
+                            <p class="comments" v-if="order.comments">Есть</p>
+                            <p class="paid_check" @click="open_paid_check_(order.paid_check)"><img src="{% static 'v2/imgs/paid_check_icon.png' %}"></p>
+                            <p class="status" :style="order.status == 'new' ? 'color: red;' : 'color: green'">${ order.status }</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="window" id="order_window">
+            <div class="_window">
+                <div class="header_and_actions">
+                    <h3>Заказ<span>/${ opened_order.user.company_name }</span></h3>
+
+                    <div class="actions" v-if="opened_order.status == 'new'">
+                        <button @click="accept_order()">Принять</button>
+                        <button @click="edit_order()">Исправить</button>
+                    </div>
+                </div>
+
+                <div class="info">
+                    <div class="list">
+                        <div class="text">
+                            <span>Кол. товаров</span>
+                            <p>${ opened_order. } шт</p>
+                        </div>
+                        <div class="text">
+                            <span>Сумма</span>
+                            <p>19 400 тг</p>
+                        </div>
+                        <div class="text">
+                            <span>Время</span>
+                            <p>21:15</p>
+                        </div>
+                        <div class="text">
+                            <span>Чек</span>
+                            <p><img src="{% static 'v2/imgs/paid_check_icon.png' %}" alt=""></p>
+                        </div>
+                    </div>
+
+                    <p class="comments">Можете в сковордку положить нашу визитку, я вам отправлю на ватцап.</p>
+                </div>
+
+                <div class="table">
+                    <div class="columns">
+                        <p class="img"></p>
+                        <p class="name">Наименование</p>
+                        <p class="code">Артикул</p>
+                        <p class="count">Кол.</p>
+                        <p class="price">Цена</p>
+                        <p class="type">Тип</p>
+                        <p class="action"></p>
+                    </div>
+
+                    <hr>
+
+                    <div class="rows">
+                        <div class="row">
+                            <p class="img" style="background-image: url(/static/v2/imgs/product.png);"></p>
+                            <p class="name">Ящик для пельменей, ящик для хранения яиц, кухонный ящик, ящик для хранения яиц, ящик для хранения в холодильнике, ящик для хранения свежих домашних яиц, Holde</p>
+                            <p class="code">2110000000073asdadasd</p>
+                            <p class="count">120</p>
+                            <p class="price">120 000 R</p>
+                            <p class="type">Bazar</p>
+                            <p class="action"><button>QR Code</button></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button>QR поставки</button>
+                    <button>Лист подбора</button>
+                    <button class="connect_client_btn">Связаться</button>
+                </div>
+
+                <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn">
+            </div>
+        </div>
+    </div>
+
+	<script src="{% static 'v2/js/packages/vue-cookies.js' %}"></script>
+	<script src="{% static 'v2/js/packages/vue.global.prod.js' %}"></script>
+	<script src="{% static 'v2/js/packages/jquery.min.js' %}"></script>
+	<script src="{% static 'v2/js/packages/axios.min.js' %}"></script>
+	<script src="{% static 'v2/js/packages/pagination.js' %}"></script>
+	<script src="{% static 'v2/js/packages/sweetalert2.all.min.js' %}"></script>
+
+	<script src="{% static 'v2/js/admin_page/base.js' %}"></script>
+</body>
+</html>

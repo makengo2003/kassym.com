@@ -226,3 +226,7 @@
 .products_page .products_info .products_list .product_card .text .product_category_block .product_category {
     display: none;
 }
+
+.products_page .products_info .products_list .product_card {
+    height: 300px;
+}

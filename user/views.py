@@ -48,11 +48,19 @@ def clear_favourites_view(request: Request) -> Response:
     return Response({"success": True})
 
 
-def change_user_fullname_view(request):
-    if request.user.is_authenticated and request.method == "POST":
-        services.change_user_fullname(request.user, request.POST.get("first_name", "First Name"),
-                                      request.POST.get("last_name", "Last Name"))
-    return redirect("/profile/")
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_fullname_view(request):
+    services.change_fullname(request.user, request.data.get("first_name", "First Name"),
+                             request.data.get("last_name", "Last Name"))
+    return Response({"success": True})
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_company_name_view(request):
+    services.change_company_name(request.user, request.data.get("company_name", "ИП"))
+    return Response({"success": True})
 
 
 @api_view(["POST"])

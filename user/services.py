@@ -103,9 +103,14 @@ def login(request: Request) -> None:
         raise ValidationError(dict(form.errors))
 
 
-def change_user_fullname(user: User, first_name: str, last_name: str) -> None:
+def change_fullname(user: User, first_name: str, last_name: str) -> None:
     user.client.fullname = first_name + " " + last_name
     user.client.save(update_fields=["fullname"])
+
+
+def change_company_name(user: User, company_name: str) -> None:
+    user.client.company_name = company_name
+    user.client.save(update_fields=["company_name"])
 
 
 def add_client(data: Mapping) -> int:

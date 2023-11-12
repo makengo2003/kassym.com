@@ -33,8 +33,8 @@ class StaffModelPresenter(BaseModelPresenter):
         return ["id", "username", "first_name", "last_name"]
 
     @staticmethod
-    def get_object_form_serializer_fields():
+    def get_object_add_form_serializer_fields():
         return ["username", "first_name", "last_name"]
 
-    def object_form_serializer_create(self, validated_data):
+    def object_add_form_serializer_create(self, validated_data):
         return self.model.objects.create_user(**validated_data, password="qwerty1234", is_staff=True)

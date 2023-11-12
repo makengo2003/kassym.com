@@ -1,0 +1,282 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/cart_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_cart_page.css' %}">
+{% endblock %}
+
+
+{% block body %}
+<div class="block" id="cart_page">
+    <div class="container cart_page" v-if="current_page == 'cart'">
+        <div class="cart section">
+            <div class="header">
+                <div class="title">
+                    <img width="25" height="25" src="{% static 'v2/imgs/cart.png' %}" alt="">
+                    <h3>В корзине</h3>
+                </div>
+
+                <a @click="clear_cart()">Очистить корзину</a>
+            </div>
+
+            <hr>
+
+            <h4 style="margin: 0; margin-bottom: 150px;" v-if="cart_is_empty()">Пока нет товаров в корзине.</h4>
+
+            <div class="cart_items">
+                <div class="item" v-for="cart_item in cart">
+                    <div class="cart_item">
+                        <div class="product_poster" :style="'background-image: url(https://kassym.com/' + cart_item.product_poster + ')'"></div>
+
+                        <div class="inner">
+                            <p class="product_name"><a :href="'/product/?product_id=' + cart_item.product_id">${ cart_item.product_name }</a></p>
+
+                            <div class="product_price">
+                                <span>Цена за штуку</span>
+                                <p>${ cart_item.product_price } Р</p>
+                            </div>
+
+                            <div class="count_management">
+                                <button type="button" @click="minus_count(cart_item)"><div class="bar"></div></button>
+                                <p class="product_count">${ cart_item.count }</p>
+                                <button type="button" @click="plus_count(cart_item)"><div class="bar"></div><div class="bar vertical_bar"></div></button>
+                            </div>
+
+                            <div class="sum">
+                                <span>Сумма</span>
+                                <p>${ get_sum(cart_item) } Р</p>
+                            </div>
+
+                            <img @click="remove_cart_item(cart_item)" width="20" height="20" src="{% static 'v2/imgs/x.png' %}" alt="">
+                        </div>
+
+                        <div class="price_and_sum">
+                            <div>
+                                <span>Цена за штуку</span>
+                                <p>${ cart_item.product_price } рублей</p>
+                            </div>
+                            <div>
+                                <span>Сумма</span>
+                                <p>${ get_sum(cart_item) } рублей</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                </div>
+            </div>
+        </div>
+
+        <hr v-if="!cart_is_empty()">
+
+        <div v-if="!cart_is_empty()" class="qr_codes section">
+            <div class="header">
+                <div class="title">
+                    <img width="30" height="20" src="{% static 'v2/imgs/truck.png' %}" alt="">
+                    <h3>QR-code товара</h3>
+                </div>
+            </div>
+
+            <div class="qr_codes">
+                <div class="qr_code" v-for="(cart_item, key) in cart" :key="key">
+                    <img width="35" height="35" src="{% static 'v2/imgs/document.png' %}" alt="">
+
+                    <div class="qr_name">
+                        <p v-if="!file_is_uploaded(cart_item, 'qr_code')">Загружайте QR товара</p>
+                        <p v-else="">Загружен файл: ${ get_uploaded_file_name(cart_item.qr_code) }</p>
+                        <span>${ cart_item.product_name }</span>
+                    </div>
+
+                    <div class="upload">
+                        <input :id="'cart_item_qr_code_' + cart_item.id" style="display: none" type="file" @change="handle_file_upload(['.pdf'], $event, cart_item, 'qr_code', 'cart_item', cart_item.id)">
+
+                        <label class="upload_btn" :for="'cart_item_qr_code_' + cart_item.id" v-if="!file_is_uploaded(cart_item, 'qr_code')">Загрузить</label>
+
+                        <div class="uploaded" v-else="">
+                            <button class="cancel_btn" @click="cancel_file_upload(cart_item, 'qr_code')">Отменить</button>
+                            <div class="uploaded_status">
+                                <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
+                                <p>Готово</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qr_code deliveries_qr_code" style="margin-top: 40px;">
+                    <img width="35" height="35" src="{% static 'v2/imgs/document.png' %}" alt="">
+
+                    <div class="qr_name">
+                        <p v-if="!file_is_uploaded(deliveries_qr_code, 'file')">QR поставки</p>
+                        <p v-else="">Загружен файл: ${ get_uploaded_file_name(deliveries_qr_code.file) }</p>
+                        <span>${ get_cart_items_count() } товара</span>
+                    </div>
+
+                    <div class="upload">
+                        <input id="deliveries_qr_code_file" style="display: none" type="file" @change="handle_file_upload(['.pdf'], $event, deliveries_qr_code, 'file', 'deliveries_qr_code')">
+
+                        <label class="upload_btn" for="deliveries_qr_code_file" v-if="!file_is_uploaded(deliveries_qr_code, 'file')">Загрузить</label>
+
+                        <div class="uploaded" v-else="">
+                            <button class="cancel_btn" @click="cancel_file_upload(deliveries_qr_code, 'file')">Отменить</button>
+                            <div class="uploaded_status">
+                                <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
+                                <p>Готово</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qr_code selection_sheet">
+                    <img width="35" height="35" src="{% static 'v2/imgs/document.png' %}" alt="">
+
+                    <div class="qr_name">
+                        <p v-if="!file_is_uploaded(selection_sheet, 'file')">Лист подбора</p>
+                        <p v-else="">Загружен файл: ${ get_uploaded_file_name(selection_sheet.file) }</p>
+                    </div>
+
+                    <div class="upload">
+                        <input id="selection_sheet_file" style="display: none" type="file" @change="handle_file_upload(['.pdf'], $event, selection_sheet, 'file', 'selection_sheet')">
+
+                        <label class="upload_btn" for="selection_sheet_file" v-if="!file_is_uploaded(selection_sheet, 'file')">Загрузить</label>
+
+                        <div class="uploaded" v-else="">
+                            <button class="cancel_btn" @click="cancel_file_upload(selection_sheet, 'file')">Отменить</button>
+                            <div class="uploaded_status">
+                                <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
+                                <p>Готово</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr v-if="!cart_is_empty()">
+
+        <div v-if="!cart_is_empty()" class="express section">
+            <input :disabled="!time_is_until_18px" type="checkbox" id="express_checkbox" v-model="express_checkbox" style="accent-color: #007671;">
+            <label for="express_checkbox"><h3>Экспресс доставка</h3><span v-if="!time_is_until_18px">Скоро будет доступна</span><!-- Доступна c 09:00 до 18:00 (GMT+6, Астана). --></label>
+        </div>
+
+        <hr v-if="!cart_is_empty()">
+
+        <div v-if="!cart_is_empty()" class="comments section">
+            <div class="header">
+                <div class="title">
+                    <img width="30" height="20" src="{% static 'v2/imgs/truck.png' %}" alt="">
+                    <h3>Комментарий к заказу</h3>
+                </div>
+            </div>
+
+            <textarea v-model="comments"></textarea>
+
+            <div class="order_btn_block">
+                <button class="order_btn" @click="go_to_payment()" :disabled="is_calculating_price" :style="is_calculating_price || !order_making_is_available ? 'opacity: 0.5' : 'opacity: 1'">Перейти к оплате</button>
+                <span v-if="!order_making_is_available">Доступна c 09:00 до 23:00 (GMT+6, Астана).</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container order_page" v-if="current_page == 'payment'">
+        <div class="header">
+            <div class="title">
+                <img src="{% static 'v2/imgs/payment_card.png' %}" alt="" width="25" height="25">
+                <h3>Оплата</h3>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="content">
+            <div class="info">
+                <div class="kaspi_card">
+                    <p>Реквизиты</p>
+                    <p>4400 4301 2215 0946</p>
+                    <p>+7 708 713 9109</p>
+                    <p>GULSARA BEGIMBETOVA</p>
+                    <img src="{% static 'v2/imgs/kaspi_icon.png' %}">
+                </div>
+
+                <div class="text">
+                    <div class="itext">
+                        <span>Курс рубля</span>
+                        <p>${ payment_info.ruble_rate } тенге</p>
+                    </div>
+                    <div class="itext">
+                        <span>Количество товаров в корзине</span>
+                        <p>${ payment_info.total_products_count } шт</p>
+                    </div>
+                    <div class="itext">
+                        <span>Услуга</span>
+                        <p>${ payment_info.service_price_per_count } рубль/шт</p>
+                    </div>
+                    <div v-if="payment_info.specific_product" class="itext">
+                        <span>Упаковка габаритных товаров (Порошок)</span>
+                        <p>${ payment_info.price_for_specific_product } рубль/шт</p>
+                    </div>
+                    <div class="itext">
+                        <span>Экспресс доставка (${ payment_info.express_price_per_count } рубль/шт)</span>
+                        <p v-if="express_checkbox">Да</p>
+                        <p v-else>Нет</p>
+                    </div>
+                    <div class="itext">
+                        <span>Общяя стоимость услуги</span>
+                        <p>${ payment_info.total_service_price } рубль</p>
+                    </div>
+                    <div class="itext">
+                        <span>Общяя стоимость товаров</span>
+                        <p>${ payment_info.total_products_price } рубль</p>
+                    </div>
+
+                    <hr>
+
+                    <div class="itext">
+                        <span>Итого:</span>
+                        <div class="sum">
+                            <p>${ payment_info.total_sum_in_tenge } тенге</p>
+                            <span>${ payment_info.total_sum_in_ruble } рубль</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="qr_code paid_check_pdf">
+                <img width="35" height="35" src="{% static 'v2/imgs/document.png' %}" alt="">
+
+                <div class="qr_name">
+                    <p v-if="!file_is_uploaded(paid_check_pdf, 'file')">Загружайте чек с kaspi.kz</p>
+                    <p v-else="">Загружен файл: ${ get_uploaded_file_name(paid_check_pdf.file) }</p>
+                </div>
+
+                <div class="upload">
+                    <input id="paid_check_pdf_file" style="display: none" type="file" @change="handle_file_upload(['.pdf'], $event, paid_check_pdf, 'file', 'paid_check_pdf')">
+
+                    <label class="upload_btn" for="paid_check_pdf_file" v-if="!file_is_uploaded(paid_check_pdf, 'file')">Загрузить</label>
+
+                    <div class="uploaded" v-else="">
+                        <button class="cancel_btn" @click="cancel_file_upload(paid_check_pdf, 'file')">Отменить</button>
+                        <div class="uploaded_status">
+                            <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
+                            <p>Готово</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action">
+                <button class="order_btn" @click="make_order()" :disabled="is_making_order" :style="is_making_order ? 'opacity: 0.5' : 'opacity: 1'">Подтвердить оплату</button>
+                <button class="cancel_btn" @click="go_to_cart()">Назад в корзину</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'v2/js/packages/vue.global.prod.js' %}"></script>
+<script src="{% static 'v2/js/packages/moment.js' %}"></script>
+<script src="{% static 'v2/js/packages/moment-tz.js' %}"></script>
+<script src="{% static 'v2/js/cart_page.js' %}"></script>
+{% endblock %}

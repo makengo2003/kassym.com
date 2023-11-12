@@ -1,0 +1,99 @@
+#profile_page .container {
+    margin-top: 20px;
+}
+
+#profile_page .container * {
+    margin: 0;
+}
+
+#profile_page .user_info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+#profile_page .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+#profile_page .actions a {
+    text-decoration: none;
+    background: rgba(0, 142, 222, 0.46);
+    padding: 5px 10px;
+    font-size: 15px;
+    border-radius: 5px;
+    color: black;
+}
+
+#profile_page .go_to_catalog {
+    text-decoration: none;
+    background: #007671;
+    padding: 10px 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    color: white;
+    margin-top: 20px;
+    display: block;
+    width: fit-content;
+}
+
+#profile_page #change_password_form, #profile_page #change_fullname_form, #profile_page #change_company_name_form {
+    background: rgb(164 164 164 / 40%);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 10;
+}
+
+#profile_page #change_fullname_form form, #profile_page #change_company_name_form form, #profile_page #change_password_form form {
+    padding: 35px;
+    padding-top: 1px;
+    padding-bottom: 28px;
+
+    position: relative;
+    margin: 200px auto 0px auto;
+
+    width: 250px;
+    background-color: white;
+}
+
+#profile_page #change_fullname_form form h3, #profile_page #change_company_name_form form h3, #profile_page #change_password_form form h3 {
+    font-family: Gilroy-Bold;
+    margin-top: 18px;
+    font-size: 20px;
+    color: #02B0A9;
+}
+
+#profile_page #change_fullname_form form input, #profile_page #change_company_name_form form input, #profile_page #change_password_form form input {
+    width: 235px;
+    height: 35px;
+    border: 1px solid #B4B4B4;
+    border-radius: 5px;
+    outline: #B4B4B4;
+    margin-bottom: 10px;
+    padding-left: 10px;
+}
+
+#profile_page #change_fullname_form form button, #profile_page #change_company_name_form form button, #profile_page #change_password_form form button {
+    width: 100%;
+    margin-top: 5px;
+    height: 40px;
+    color: white;
+    font-size: 15px;
+    border: none;
+    background-color: #02B0A9;
+    border-radius: 5px;
+}
+
+#profile_page #change_fullname_form form img, #profile_page #change_company_name_form form img, #profile_page #change_password_form form img {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import threading
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,14 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-d0jc1^@a+2d0hy6+j@_as)l39x-d7z4k!q7p+fqgf-gu1n_uvi'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 if DEBUG:
     SITE_DOMAIN = "127.0.0.1:8000"
 else:
     SITE_DOMAIN = "kassym.com"
 
-ALLOWED_HOSTS = [SITE_DOMAIN, "127.0.0.1"]
+ALLOWED_HOSTS = [SITE_DOMAIN, "127.0.0.1", "192.168.89.119"]
 
 
 # Application definition
@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'pages',
     'course.apps.CourseConfig',
     'staff',
+    'cart',
+    'order',
 
     'base_object_presenter',
     'django_user_agents',
@@ -67,7 +69,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'pages.cache_control_middleware.CacheControlMiddleware'
+    'pages.cache_control_middleware.CacheControlMiddleware',
+    'user.set_request_user_middleware.SetRequestUserMiddleware'
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -204,3 +207,4 @@ EMAIL_ADMIN = EMAIL_HOST_USER
 
 MAIN_CATEGORY_ID = 7
 BOT_TOKEN = '6454586115:AAG9og9TP0yxSefacJ-jiFolCGqyxxwrOx0'
+request_user = threading.local()
