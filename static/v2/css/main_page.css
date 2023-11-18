@@ -168,11 +168,13 @@ html {
 
 .products_list .product_card .text .product_price_with_discount {
     font-family: Gilroy-Bold;
-    font-size: 15px;
+    font-size: 17px;
 }
 
 .products_list .product_card .text .product_price {
     text-decoration: line-through;
+    opacity: 0.5;
+    font-size: 12px;
 }
 
 .products_list .product_card .text .product_prices {
