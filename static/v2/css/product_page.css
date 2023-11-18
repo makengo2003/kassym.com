@@ -108,8 +108,9 @@
 }
 
 #product_template .product_info .actions .product_action .price_and_wishlist_btn .product_prices h3 {
-    font-size: 16px;
+    font-size: 15px;
     text-decoration: line-through;
+    opacity: 0.5;
 }
 
 #product_template .product_info .actions .product_action .price_and_wishlist_btn {
