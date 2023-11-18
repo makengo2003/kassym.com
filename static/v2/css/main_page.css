@@ -154,7 +154,7 @@ html {
     left: 7px;
     margin: 0;
     color: white;
-    background-color: #f66161;
+    background-color: red; /* #f66161 */
     font-size: 12px;
     padding: 1px 5px;
     border-radius: 3px;
