@@ -38,6 +38,10 @@
 }
 
 @media(max-width: 900px) {
+    #product_template .product_info .actions .product_action .price_and_wishlist_btn .product_prices {
+        gap: 8px;
+    }
+
     .main-page-top-container .categories {
         display: none;
     }

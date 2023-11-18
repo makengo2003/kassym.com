@@ -101,6 +101,17 @@
     gap: 8px;
 }
 
+#product_template .product_info .actions .product_action .price_and_wishlist_btn .product_prices {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#product_template .product_info .actions .product_action .price_and_wishlist_btn .product_prices h3 {
+    font-size: 16px;
+    text-decoration: line-through;
+}
+
 #product_template .product_info .actions .product_action .price_and_wishlist_btn {
     display: flex;
     justify-content: space-between;

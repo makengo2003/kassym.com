@@ -3,10 +3,21 @@
 <div class="products_list">
     {% for product in products %}
     <a href="/product/?product_id={{ product.id }}" class="product_card">
-        <div class="product_img" style="background-image: url({{ product.image }});"></div>
+        <div class="product_img" style="background-image: url(https://kassym.com{{ product.image }});">
+            {% if product.discount_percentage > 0 %}
+                <p class="discount_percentage">-{{ product.discount_percentage }}%</p>
+            {% endif %}
+        </div>
 
         <div class="text">
-			<span class="product_price">{{ product.price }} Р</span>
+            <div class="product_prices">
+                {% if product.discount_percentage > 0 %}
+			    <span class="product_price_with_discount">{{ product.price_with_discount }} Р</span>
+			    <span class="product_price">{{ product.price }} Р</span>
+                {% else %}
+                <span class="product_price_with_discount">{{ product.price }} Р</span>
+                {% endif %}
+            </div>
 
             <div class="product_name_block">
                 <span class="product_name">{{ product.name }}</span>
