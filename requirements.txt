@@ -32,3 +32,4 @@ uritemplate==3.0.0
 
 pypdf2~=3.0.1
 beautifulsoup4~=4.12.2
+channels~=4.0.0

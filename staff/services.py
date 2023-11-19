@@ -22,12 +22,12 @@ class StaffServicesPresenter(BaseServicesPresenter):
         self.CREDENTIALS_FILE = 'site_settings/creds.json'
         self.spreadsheet_id = '13WcrMVYLQsbqy4uF9DRsp_mliCRTS_T0_3CI2IG7g4s'
 
-        self.credentials = ServiceAccountCredentials.from_json_keyfile_name(
-            self.CREDENTIALS_FILE,
-            ['https://www.googleapis.com/auth/spreadsheets',
-             'https://www.googleapis.com/auth/drive'])
-        self.httpAuth = self.credentials.authorize(httplib2.Http())
-        self.service = apiclient.discovery.build('sheets', 'v4', http=self.httpAuth)
+        # self.credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        #     self.CREDENTIALS_FILE,
+        #     ['https://www.googleapis.com/auth/spreadsheets',
+        #      'https://www.googleapis.com/auth/drive'])
+        # self.httpAuth = self.credentials.authorize(httplib2.Http())
+        # self.service = apiclient.discovery.build('sheets', 'v4', http=self.httpAuth)
 
     def add_order(self, data):
         data["product"] = json.loads(data["product"])

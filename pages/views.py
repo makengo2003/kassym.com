@@ -92,6 +92,9 @@ def admin_page_view(request):
 @check_account_expiration()
 def profile_page_view(request):
     if request.user.is_authenticated:
+        if hasattr(request.user, "manager"):
+            return redirect("/manager/")
+
         if request.user.is_superuser or request.user.is_staff:
             return redirect("/admin/")
         return render(request, "v2/profile_page.html")
@@ -132,7 +135,6 @@ def cart_page_view(request):
 
 
 def manager_page_view(request):
-    if request.user.is_authenticated:
-        if request.user.username == "+77777777777" or request.user.username == "+77779185336":
-            return render(request, "v2/admin_page/manager_page.html")
+    if hasattr(request.user, "manager"):
+        return render(request, "v2/admin_page/manager_page.html")
     return redirect("/")

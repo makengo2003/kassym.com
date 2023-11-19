@@ -36,6 +36,8 @@ ALLOWED_HOSTS = [SITE_DOMAIN, "127.0.0.1", "192.168.89.119"]
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,6 +54,8 @@ INSTALLED_APPS = [
     'staff',
     'cart',
     'order',
+    'change_time',
+    'manager',
 
     'base_object_presenter',
     'django_user_agents',
@@ -92,7 +96,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
-
+ASGI_APPLICATION = 'project.asgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

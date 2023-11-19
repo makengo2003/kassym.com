@@ -3,22 +3,32 @@ import time
 import PyPDF2
 import apiclient
 import httplib2
+from asgiref.sync import async_to_sync
 from bs4 import BeautifulSoup
 import requests
+from channels.layers import get_channel_layer
+from django.core.exceptions import BadRequest
 
 from django.db import models
+from django.db.models import Prefetch, F, Case, When, Value, CharField
+from django.db.models.functions import Concat
 from oauth2client.service_account import ServiceAccountCredentials
+from rest_framework import serializers
 
 from base_object_presenter.models import BaseModelPresenter
 from django.contrib.auth.models import User
 
 from cart.models import CartItem
+from product.models import Product
 from project import settings
 from project.utils import datetime_now
 
 
 class Order(models.Model):
-    created_at = models.DateField(default=datetime_now, editable=False)
+    created_at = models.DateTimeField(default=datetime_now, editable=False)
+    status = models.CharField(max_length=100, default="new", choices=(("new", "Новые"), ("accepted", "Принятые")),
+                              blank=True)
+    company_name = models.CharField(max_length=255, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     deliveries_qr_code = models.FileField(upload_to="deliveries_qr_code/")
     selection_sheet_file = models.FileField(upload_to="selection_sheet_files/")
@@ -47,6 +57,27 @@ class OrderItem(models.Model):
     total_price = models.PositiveIntegerField()
 
 
+class ProductSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField("get_product_type")
+
+    class Meta:
+        model = Product
+        fields = ["id", "poster", "name", "code", "price", "type"]
+
+    def get_product_type(self, obj):
+        if obj.category_id == 7:
+            return "Китай"
+        return "Базар"
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+
+    class Meta:
+        model = OrderItem
+        fields = ["id", "count", "qr_code", "product"]
+
+
 class OrderModelPresenter(BaseModelPresenter):
     model = Order
 
@@ -54,16 +85,114 @@ class OrderModelPresenter(BaseModelPresenter):
         self.CREDENTIALS_FILE = 'site_settings/creds.json'
         self.spreadsheet_id = '13WcrMVYLQsbqy4uF9DRsp_mliCRTS_T0_3CI2IG7g4s'
 
-        self.credentials = ServiceAccountCredentials.from_json_keyfile_name(
-            self.CREDENTIALS_FILE,
-            ['https://www.googleapis.com/auth/spreadsheets',
-             'https://www.googleapis.com/auth/drive'])
-        self.httpAuth = self.credentials.authorize(httplib2.Http())
-        self.service = apiclient.discovery.build('sheets', 'v4', http=self.httpAuth)
+        # self.credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        #     self.CREDENTIALS_FILE,
+        #     ['https://www.googleapis.com/auth/spreadsheets',
+        #      'https://www.googleapis.com/auth/drive'])
+        # self.httpAuth = self.credentials.authorize(httplib2.Http())
+        # self.service = apiclient.discovery.build('sheets', 'v4', http=self.httpAuth)
+
+    @staticmethod
+    def get_many_service():
+        request_user = getattr(settings, 'request_user', None)
+
+        if hasattr(request_user, "client"):
+            filtration = {"user_id": request_user.id}
+        else:
+            filtration = {}
+
+        product_prefetch_only_fields = Prefetch("order_items__product",
+                                                queryset=Product.objects.only("id", "poster", "name", "code", "price",
+                                                                              "category_id"))
+        cart_item_prefetch_only_fields = Prefetch("order_items",
+                                                  queryset=OrderItem.objects.only("id", "count", "qr_code",
+                                                                                  "order_id", "product_id"))
+        return {
+            "prefetch_related": [cart_item_prefetch_only_fields, product_prefetch_only_fields],
+            "select_related": [],
+            "annotate": {
+                "user_fullname": Case(
+                    When(user__client__isnull=False, then=F('user__client__fullname')),
+                    default=Concat(F('user__first_name'), Value(" "), F('user__last_name')),
+                    output_field=CharField()
+                ),
+                "user_phone_number": F('user__username')
+            },
+            "only": ["id", "created_at", "status", "company_name", "deliveries_qr_code", "selection_sheet_file",
+                     "is_express",
+                     "comments", "paid_check_file", "one_file_products_qr_codes", "total_products_count",
+                     "total_sum_in_tenge"],
+            "filtration": filtration
+        }
+
+    @staticmethod
+    def get_objects_serializer_fields():
+        return ["id", "created_at", "status", "company_name", "deliveries_qr_code", "selection_sheet_file",
+                "is_express",
+                "comments", "paid_check_file", "one_file_products_qr_codes", "total_products_count",
+                "total_sum_in_tenge"]
+
+    @staticmethod
+    def get_objects_serializer_extra_fields():
+        return {
+            "items": OrderItemSerializer(many=True, source="order_items"),
+            "user_fullname": serializers.CharField(max_length=255),
+            "user_phone_number": serializers.CharField(max_length=55)
+        }
 
     @staticmethod
     def get_object_add_form_serializer_fields():
         return ["is_express", "deliveries_qr_code", "selection_sheet_file", "comments", "paid_check_file"]
+
+    def object_add_form_serializer_create(self, validated_data):
+        request_user = getattr(settings, 'request_user', None)
+        cart_items = CartItem.objects.select_related("product").filter(user=request_user)
+
+        order_items = []
+        qr_codes = validated_data.pop("files")
+        i = 0
+        for qr_code in qr_codes:
+            if qr_code.startswith("cart_item_qr_code_"):
+                cart_item = cart_items[i]
+                total_price = cart_item.count * cart_item.product.price
+                order_items.append(
+                    OrderItem(qr_code=qr_codes[qr_code], count=cart_item.count, product_id=cart_item.product_id,
+                              product_price=cart_item.product.price, total_price=total_price))
+                i += 1
+
+        calculated_prices = self.calculate(request_user, {"is_express": validated_data.get("is_express")},
+                                           cart_items=cart_items)
+        deliveries_qr_code = validated_data.pop("deliveries_qr_code")
+        selection_sheet_file = validated_data.pop("selection_sheet_file")
+        paid_check_file = validated_data.pop("paid_check_file")
+        one_file_products_qr_codes = self.get_one_file_products_qr_codes(request_user,
+                                                                         [order_items_obj.qr_code for order_items_obj in
+                                                                          order_items])
+
+        if hasattr(request_user, "client"):
+            company_name = request_user.client.company_name
+        else:
+            company_name = "Менеджер"
+
+        order = Order.objects.create(user=request_user, company_name=company_name,
+                                     deliveries_qr_code=deliveries_qr_code,
+                                     selection_sheet_file=selection_sheet_file, paid_check_file=paid_check_file,
+                                     one_file_products_qr_codes=one_file_products_qr_codes,
+                                     **validated_data, **calculated_prices)
+
+        for order_items_obj in order_items:
+            order_items_obj.order = order
+
+        OrderItem.objects.bulk_create(order_items)
+        CartItem.objects.filter(user=request_user).delete()
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            "managers_room", {"type": "managers_message", "message": {"action": "orders_count_changed"}}
+        )
+
+        self.add_to_google_sheets(request_user, order, order_items)
+        return order
 
     def calculate(self, user, data, cart_items=None):
         if not cart_items:
@@ -110,45 +239,6 @@ class OrderModelPresenter(BaseModelPresenter):
             "price_for_specific_product": price_for_specific_product
         }
 
-    def object_add_form_serializer_create(self, validated_data):
-        request_user = getattr(settings, 'request_user', None)
-        cart_items = CartItem.objects.select_related("product").filter(user=request_user)
-
-        order_items = []
-        qr_codes = validated_data.pop("files")
-        i = 0
-        for qr_code in qr_codes:
-            if qr_code.startswith("cart_item_qr_code_"):
-                cart_item = cart_items[i]
-                total_price = cart_item.count * cart_item.product.price
-                order_items.append(
-                    OrderItem(qr_code=qr_codes[qr_code], count=cart_item.count, product_id=cart_item.product_id,
-                              product_price=cart_item.product.price, total_price=total_price))
-                i += 1
-
-        calculated_prices = self.calculate(request_user, {"is_express": validated_data.get("is_express")},
-                                           cart_items=cart_items)
-        deliveries_qr_code = validated_data.pop("deliveries_qr_code")
-        selection_sheet_file = validated_data.pop("selection_sheet_file")
-        paid_check_file = validated_data.pop("paid_check_file")
-        one_file_products_qr_codes = self.get_one_file_products_qr_codes(request_user,
-                                                                         [order_items_obj.qr_code for order_items_obj in
-                                                                          order_items])
-
-        order = Order.objects.create(user=request_user, deliveries_qr_code=deliveries_qr_code,
-                                     selection_sheet_file=selection_sheet_file, paid_check_file=paid_check_file,
-                                     one_file_products_qr_codes=one_file_products_qr_codes,
-                                     **validated_data, **calculated_prices)
-
-        for order_items_obj in order_items:
-            order_items_obj.order = order
-
-        OrderItem.objects.bulk_create(order_items)
-        CartItem.objects.filter(user=request_user).delete()
-
-        self.add_to_google_sheets(request_user, order, order_items)
-        return order
-
     def get_ruble_rate(self):
         response = requests.get("https://mig.kz/api/v1/gadget/html")
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -185,7 +275,7 @@ class OrderModelPresenter(BaseModelPresenter):
             if hasattr(user, "client"):
                 company_name = user.client.company_name
             else:
-                company_name = "Admin"
+                company_name = "Менеджер"
 
             username = f'"{user.username}"'
             comments = order.comments
@@ -218,23 +308,27 @@ class OrderModelPresenter(BaseModelPresenter):
             else:
                 market_values.append(row)
 
-        self.service.spreadsheets().values().append(
-            spreadsheetId=spreadsheet_id,
-            range=manager_sheetname,
-            body={'values': manager_values},
-            valueInputOption='USER_ENTERED',
-        ).execute()
+        # self.service.spreadsheets().values().append(
+        #     spreadsheetId=spreadsheet_id,
+        #     range=manager_sheetname,
+        #     body={'values': manager_values},
+        #     valueInputOption='USER_ENTERED',
+        # ).execute()
+        #
+        # self.service.spreadsheets().values().append(
+        #     spreadsheetId=spreadsheet_id,
+        #     range=market_buyer_sheetname,
+        #     body={'values': market_values},
+        #     valueInputOption='USER_ENTERED',
+        # ).execute()
+        #
+        # self.service.spreadsheets().values().append(
+        #     spreadsheetId=spreadsheet_id,
+        #     range=china_buyer_sheetname,
+        #     body={'values': china_values},
+        #     valueInputOption='USER_ENTERED',
+        # ).execute()
 
-        self.service.spreadsheets().values().append(
-            spreadsheetId=spreadsheet_id,
-            range=market_buyer_sheetname,
-            body={'values': market_values},
-            valueInputOption='USER_ENTERED',
-        ).execute()
-
-        self.service.spreadsheets().values().append(
-            spreadsheetId=spreadsheet_id,
-            range=china_buyer_sheetname,
-            body={'values': china_values},
-            valueInputOption='USER_ENTERED',
-        ).execute()
+    @staticmethod
+    def get_updatable_fields():
+        return ["status"]

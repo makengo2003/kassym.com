@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/staff/', include("staff.urls")),
     path('api/cart/', include("cart.urls")),
     path('api/order/', include("order.urls")),
+    path('api/change_time/', include("change_time.urls")),
     path('__debug__/', include('debug_toolbar.urls')),
 ]
 
