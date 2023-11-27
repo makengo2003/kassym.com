@@ -18,6 +18,7 @@ class Client(models.Model):
     expires_at = models.DateField()
     device1 = models.CharField(max_length=255, null=True, blank=True)
     device2 = models.CharField(max_length=255, null=True, blank=True)
+    device3 = models.CharField(max_length=255, null=True, blank=True)
     ignore_device_verification = models.BooleanField(default=False)
 
     @property

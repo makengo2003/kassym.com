@@ -173,7 +173,13 @@ def set_or_verify_user_device(client: Client, request: Request) -> bool:
         if not _verify_devices(client_device1, request_device):
             if client.device2:
                 client_device2 = get_user_agent(Obj({"HTTP_USER_AGENT": client.device2}))
-                return _verify_devices(client_device2, request_device)
+                if not _verify_devices(client_device2, request_device):
+                    if client.device3:
+                        client_device3 = get_user_agent(Obj({"HTTP_USER_AGENT": client.device3}))
+                        return _verify_devices(client_device3, request_device)
+                    else:
+                        client.device3 = request.META['HTTP_USER_AGENT']
+                        client.save(update_fields=["device3"])
             else:
                 client.device2 = request.META['HTTP_USER_AGENT']
                 client.save(update_fields=["device2"])
