@@ -1,3 +1,10 @@
+var websocket_prefix = "ws://"
+
+if (window.location.host.contains("https")) {
+    websocket_prefix = "wss://"
+}
+
+
 orders_app = Vue.createApp({
     data() {
         return {
@@ -20,7 +27,7 @@ orders_app = Vue.createApp({
             opened_category: "new_orders",
             opened_order: null,
             selected_change_time: null,
-            websocket: new WebSocket('ws://' + window.location.host + '/ws/order/'),
+            websocket: new WebSocket(websocket_prefix + window.location.host + '/ws/order/'),
             uploaded_files: []
         }
     },

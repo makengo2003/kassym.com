@@ -1,3 +1,10 @@
+var websocket_prefix = "ws://"
+
+if (window.location.host.contains("https")) {
+    websocket_prefix = "wss://"
+}
+
+
 delivering_app = Vue.createApp({
     data() {
         return {
@@ -9,7 +16,7 @@ delivering_app = Vue.createApp({
             selected_status: "sorted",
             opened_order: null,
             is_making_delivered: false,
-            websocket: new WebSocket('ws://' + window.location.host + '/ws/delivering/'),
+            websocket: new WebSocket(websocket_prefix + window.location.host + '/ws/delivering/'),
         }
     },
     methods: {
