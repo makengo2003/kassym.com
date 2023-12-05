@@ -17,7 +17,7 @@ PURCHASE_STATUSES = (("new", "В обработке"), ("purchased", "Купле
 
 
 def get_main_buyer():
-    return None
+    return 0
 
 
 class Purchase(models.Model):
