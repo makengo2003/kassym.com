@@ -116,7 +116,12 @@ class OrderModelPresenter(BaseModelPresenter):
         for order_items_obj in order_items:
             order_items_obj.order = order
 
+        order.save()
+        OrderItem.objects.bulk_create(order_items)
+
+        order_items = OrderItem.objects.filter(order=order)
         purchases = []
+
         for order_item in order_items:
             purchase = Purchase(order_item=order_item)
 
@@ -125,10 +130,7 @@ class OrderModelPresenter(BaseModelPresenter):
 
             purchases += [purchase] * order_item.count
 
-        order.save()
-        OrderItem.objects.bulk_create(order_items)
         Purchase.objects.bulk_create(purchases)
-
         CartItem.objects.filter(user=request_user).delete()
 
         channel_layer = get_channel_layer()
