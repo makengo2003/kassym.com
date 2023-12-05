@@ -1,3 +1,10 @@
+var websocket_prefix = "ws://"
+
+if (window.location.host.contains("https")) {
+    websocket_prefix = "wss://"
+}
+
+
 purchases_app = Vue.createApp({
     data() {
         return {
@@ -39,7 +46,7 @@ purchases_app = Vue.createApp({
             selected_status: "new",
             selected_change_time: null,
 
-            websocket: new WebSocket('ws://' + window.location.host + '/ws/purchase/'),
+            websocket: new WebSocket(websocket_prefix + window.location.host + '/ws/purchase/'),
             is_being_considered_report: null,
             is_being_considered_form: null,
             is_being_considered: null,

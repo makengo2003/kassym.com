@@ -1,3 +1,10 @@
+var websocket_prefix = "ws://"
+
+if (window.location.host.contains("https")) {
+    websocket_prefix = "wss://"
+}
+
+
 sorting_app = Vue.createApp({
     data() {
         return {
@@ -7,7 +14,7 @@ sorting_app = Vue.createApp({
             searched: false,
 
             selected_status: "accepted",
-            websocket: new WebSocket('ws://' + window.location.host + '/ws/sorting/'),
+            websocket: new WebSocket(websocket_prefix + window.location.host + '/ws/sorting/'),
             opened_order: null,
             finish_sorting_requesting: false,
             uploaded_replaced_by_images: [],
