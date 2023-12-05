@@ -1,6 +1,6 @@
 var websocket_prefix = "ws://"
 
-if (window.location.host.contains("https")) {
+if (window.location.host == "kassym.com") {
     websocket_prefix = "wss://"
 }
 
