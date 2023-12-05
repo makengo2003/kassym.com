@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 
 def get_main_manager():
-    return 0
+    return 1
 
 
 class Order(models.Model):
