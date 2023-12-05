@@ -16,10 +16,6 @@ PURCHASE_STATUSES = (("new", "В обработке"), ("purchased", "Купле
                      ("is_being_considered", "Рассматривается"))
 
 
-def get_main_buyer():
-    return Buyer.objects.get(account__username="+77777777773").id
-
-
 class Purchase(models.Model):
     order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name="purchases")
     status = models.CharField(max_length=50, default="new", choices=PURCHASE_STATUSES)
