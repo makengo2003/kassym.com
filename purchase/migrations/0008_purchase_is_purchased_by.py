@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='purchase',
             name='is_purchased_by',
-            field=models.ForeignKey(default=purchase.models.get_main_buyer, on_delete=django.db.models.deletion.CASCADE, to='purchase.buyer'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='purchase.buyer'),
         ),
     ]

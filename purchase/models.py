@@ -16,10 +16,6 @@ PURCHASE_STATUSES = (("new", "В обработке"), ("purchased", "Купле
                      ("is_being_considered", "Рассматривается"))
 
 
-def get_main_buyer():
-    return 1
-
-
 class Purchase(models.Model):
     order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name="purchases")
     status = models.CharField(max_length=50, default="new", choices=PURCHASE_STATUSES)
@@ -27,7 +23,7 @@ class Purchase(models.Model):
     replaced_by_product_image = models.ImageField(upload_to="replaced_by_product_image/", null=True, blank=True)
     is_sorted = models.BooleanField(default=False, null=True, blank=True)
     last_modified = models.DateTimeField(default=datetime_now)
-    is_purchased_by = models.ForeignKey(Buyer, on_delete=models.PROTECT, null=True, blank=True)
+    is_purchased_by = models.ForeignKey(Buyer, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.order_item.product.name
