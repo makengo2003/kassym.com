@@ -95,12 +95,12 @@ h1, h2, h3, h4, h5, h6, b {
     background-color: #dadada;
 }
 
-.section .header .sub_header {
+.section .header .sub_header, .section ._header {
     display: flex;
     justify-content: space-between;
 }
 
-.section .header .sub_header select {
+.section .header select {
     outline: none;
     border: none;
     cursor: pointer;
@@ -173,8 +173,15 @@ h1, h2, h3, h4, h5, h6, b {
     height: 60px;
 }
 
+.section .content .pre_table {
+    max-width: 1170px;
+    overflow-x: scroll;
+    background-color: white;
+    border-radius: 7px;
+}
+
 .section .content .table {
-    padding: 10px 30px;
+    min-width: fit-content;
     background-color: white;
     border-radius: 7px;
 }
@@ -257,6 +264,10 @@ h1, h2, h3, h4, h5, h6, b {
     width: 80px;
 }
 
+.section .content .table .columns .status, .section .content .table .rows ._row .status {
+    width: 150px;
+}
+
 .window {
     background: rgb(164 164 164 / 40%);
     width: 100%;
@@ -313,7 +324,7 @@ h1, h2, h3, h4, h5, h6, b {
     align-items: center;
 }
 
-.window ._window .header_and_actions .actions .opened_by_other_fullname {
+.window ._window .opened_by_other_fullname {
     color: #f66161;
 }
 
@@ -351,7 +362,7 @@ h1, h2, h3, h4, h5, h6, b {
 }
 
 .window ._window .info .list .text span {
-    opacity: 0.2;
+    opacity: 0.35;
     font-size: 15px;
     font-family: Gilroy-Medium;
 }
@@ -364,11 +375,13 @@ h1, h2, h3, h4, h5, h6, b {
 
 .window ._window .info .comments {
     max-width: 400px;
+    width: 400px;
     font-size: 14px;
     background-color: #7c7c7c40;
     border-radius: 10px;
     padding: 10px 20px;
     transform: translateY(5px);
+    white-space: pre-line;
 }
 
 .window ._window .actions {
@@ -426,10 +439,10 @@ h1, h2, h3, h4, h5, h6, b {
 }
 
 .window ._window .table .rows .row button {
-    background-color: black;
+    background-color: #444444;
     color: white;
     padding: 5px 10px;
-    font-size: 15px;
+    font-size: 12px;
     border: none;
     border-radius: 5px;
 }
@@ -533,11 +546,20 @@ h1, h2, h3, h4, h5, h6, b {
 }
 
 .window .edit_order_form_window {
-    height: 515px;
+    height: 590px;
 }
 
 .window .edit_order_form_window h3 {
     margin-bottom: 20px;
+}
+
+.window .edit_order_form_window textarea {
+    height: 70px;
+    padding: 10px;
+    outline: none;
+    border: 1px solid green;
+    border-radius: 5px;
+    margin-bottom: 35px;
 }
 
 .window .edit_order_form_window .qr_codes {
@@ -575,12 +597,12 @@ h1, h2, h3, h4, h5, h6, b {
     width: 120px;
     height: 35px;
     border: none;
-    background-color: #6666ec;
+    background-color: #14C25A;
     color: white;
 }
 
 .window .edit_order_form_window .actions button:last-child {
-    background-color: #e41c5efc;
+    background-color: #E63152;
 }
 
 #settings_section {

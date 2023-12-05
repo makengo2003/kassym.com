@@ -10,7 +10,7 @@ class FavouriteProduct(models.Model):
 
 
 class Client(models.Model):
-    account = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, related_name="client")
+    account = models.OneToOneField(User, on_delete=models.PROTECT, blank=True, related_name="client")
     fullname = models.CharField(max_length=255)
     password = models.CharField(max_length=100, blank=True)
     company_name = models.CharField(max_length=255)
@@ -35,3 +35,7 @@ class UserRequest(models.Model):
     fullname = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
     created_at = models.DateField(default=datetime_now, editable=False)
+
+
+class SuperAdmin(models.Model):
+    account = models.OneToOneField(User, on_delete=models.PROTECT, related_name="super_admin")

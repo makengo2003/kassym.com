@@ -20,7 +20,7 @@ class BaseServicesPresenter:
             "object": BaseSerializerPresenter(self.model_presenter, "object"),
         }
 
-    def get_many(self, get_many_request_schema: MutableMapping) -> BaseSerializer:
+    def get_many(self, get_many_request_schema: MutableMapping = {}) -> BaseSerializer:
         ordering = get_many_request_schema.get("ordering", [])
         if type(ordering) == str:
             ordering = json.loads(get_many_request_schema.get("ordering", "[]"))

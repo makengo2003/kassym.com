@@ -1,0 +1,216 @@
+@media(max-width: 630px) {
+    .section .content .actions .action img {
+        display: none;
+    }
+
+    .sidebar {
+        position: fixed;
+        height: 100%;
+        z-index: 3;
+        right: 0px;
+        transform: translateY(-100%);
+        transition: transform 0.5s;
+        max-width: 280px;
+        min-width: 280px;
+    }
+
+    .sidebar h3 {
+        max-width: calc(100% - 90px);
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        min-height: min-content;
+        line-break: anywhere;
+    }
+
+    .section .content .actions .action .text {
+        height: 55px;
+    }
+
+    .section .content .actions {
+        gap: 20px;
+        padding: 15px 30px;
+        flex-wrap: wrap;
+    }
+
+    .window ._window .actions {
+        margin-top: auto;
+    }
+
+    .window ._window .table .rows {
+        overflow: initial;
+    }
+
+    .searching {
+        display: flex;
+        flex-wrap: wrap;
+        row-gap: 8px;
+        align-items: center;
+    }
+
+    .section .searching button {
+        margin-right: 10px;
+    }
+
+    .section .searching span {
+        margin-left: 0;
+    }
+
+    body {
+        background: white;
+    }
+
+    .section .content .actions .action {
+        border-color: #dcdcdc;
+    }
+
+    .burger_btn {
+        display: block;
+        position: absolute;
+        right: 30px;
+        top: 15px;
+        z-index: 5;
+    }
+
+    .bar {
+        width: 30px;
+        height: 3px;
+        background-color: black;
+        margin: 7px 0;
+        transition: 0.6s;
+    }
+
+    .sidebar.active {
+        transform: translateY(0px);
+    }
+
+    .burger_btn.active .bar {
+        background-color: white;
+    }
+
+    .burger_btn.active .bar:nth-child(1) {
+        transform: rotate(-45deg) translate(-7px, 7px);
+    }
+
+    .burger_btn.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .burger_btn.active .bar:nth-child(3) {
+        transform: rotate(45deg) translate(-7px, -7px);
+    }
+
+    .section .content {
+        padding: 0;
+        gap: 0;
+    }
+
+    .window ._window {
+        overflow: scroll;
+        height: 600px;
+        max-width: 375px;
+    }
+
+    .window ._window button {
+        font-size: 12px;
+    }
+
+    .window ._window .pre_table {
+        overflow-x: scroll;
+    }
+
+    .window ._window .table {
+        width: max-content;
+    }
+
+    .window ._window .info .comments {
+        max-width: auto;
+        width: auto;
+    }
+
+    .content .table .list .card {
+        width: 100%;
+    }
+
+    .content .table, .content .table .list {
+        height: 100%;
+        max-height: 100%;
+    }
+
+    #sorting_section .window ._window, #delivering_section .window ._window {
+        width: 300px;
+    }
+
+    .window ._window .info .list .text p {
+        text-align: right;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: right;
+    }
+
+    .window ._window .info .list .text span {
+        text-align: left;
+    }
+
+    .window ._window .info {
+        flex-direction: column;
+    }
+
+    .window ._window .info .list .texts, .window ._window .info .purchase_img {
+        height: 400px;
+        width: 300px;
+    }
+
+    .window ._window .info .list .text, #delivering_section .window ._window .info .list .text {
+        min-width: auto;
+        justify-content: space-between;
+        width: 100%;
+        gap: 25px;
+        align-items: baseline;
+    }
+
+    .window ._window h3 {
+        max-width: 270px;
+        -webkit-line-clamp: 2;
+        line-break: normal;
+    }
+
+    .window ._window .info .list button, .window ._window .buttons button {
+        width: auto;
+        height: auto;
+        padding: 7px 12px;
+    }
+
+    #is_being_considered_report ._window .info .list .texts {
+        overflow-y: initial;
+        height: fit-content;
+    }
+
+    #is_being_considered_report ._window h3 {
+        overflow: initial;
+    }
+
+    #is_being_considered_form ._window .info .list .texts {
+        overflow-y: initial;
+        height: fit-content;
+        max-height: fit-content;
+    }
+
+    #is_being_considered_form ._window h3 {
+        overflow: initial;
+    }
+
+    #finance_section .content .block h3 {
+        padding: 15px 30px 0px 30px;
+        margin-bottom: 0px;
+    }
+
+    #finance_section .content .pre_table .table .columns .description, #finance_section .content .pre_table .table .rows ._row .description {
+        width: 350px;
+    }
+
+    .section .content .table .columns .is_express, .section .content .table .rows ._row .is_express {
+        display: none;
+    }
+}

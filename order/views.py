@@ -4,10 +4,11 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from base_object_presenter.permission_classes import IsUser, IsAdmin
+from base_object_presenter.permission_classes import IsUser
 from base_object_presenter.views import BaseViewsPresenter, get_permissions_for_view
 from manager.permissions import IsManager
-from .services import OrderServicesPresenter
+from . import services
+from .services_presenter import OrderServicesPresenter
 
 
 class OrderViewsPresenter(BaseViewsPresenter):
@@ -24,7 +25,7 @@ class OrderViewsPresenter(BaseViewsPresenter):
     @method_decorator(api_view(["GET"]))
     @get_permissions_for_view("calculate")
     def calculate_view(self, request: Request) -> Response:
-        calculation_data = self.services.calculate(request.user, request.query_params)
+        calculation_data = services.calculate(request.user, request.query_params)
         return Response(calculation_data)
 
     @method_decorator(api_view(["POST"]))
@@ -38,8 +39,14 @@ class OrderViewsPresenter(BaseViewsPresenter):
     @method_decorator(parser_classes([MultiPartParser, FormParser]))
     @get_permissions_for_view("edit")
     def edit_view(self, request: Request) -> Response:
-        self.services.edit_custom(request.data.get("id"), request.FILES)
+        self.services.edit_custom(request.data.get("id"), request.data.get("new_comments", ""), request.FILES)
         return Response({"success": True})
+
+    @method_decorator(api_view(["GET"]))
+    @get_permissions_for_view("get_many")
+    def get_many_view(self, request: Request) -> Response:
+        objs = self.services.get_many(request.query_params)
+        return Response(objs.data)
 
     @method_decorator(api_view(["GET"]))
     @get_permissions_for_view("get_orders_counts")

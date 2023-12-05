@@ -5,6 +5,9 @@ orders_app = Vue.createApp({
             edit_order_form_is_opened: false,
             edit_order_form_is_submitting: false,
 
+            search_input: "",
+            searched: false,
+
             change_times: [],
             orders: [],
             opened_by_others: [],
@@ -40,9 +43,24 @@ orders_app = Vue.createApp({
                 var filtration = {"status": status, created_at__date: selected_change_time}
             }
 
+            if (this.search_input) {
+                if (!isNaN(this.search_input)) {
+                    filtration["id"] = Number(this.search_input)
+                } else {
+                    filtration["user__client__company_name"] = this.search_input
+                }
+
+                this.searched = true
+            } else {
+                this.searched = false
+            }
+
             axios("/api/order/get_many/", {params: {filtration: JSON.stringify(filtration), ordering: JSON.stringify(["-is_express", "-created_at"])}}).then((response) => {
                 this.orders = response.data
             })
+        },
+        search() {
+            this.open_category(this.opened_category)
         },
         set_orders_counts() {
             var selected_change_time = this.selected_change_time.split(".").reverse().join("-")
@@ -122,7 +140,7 @@ orders_app = Vue.createApp({
 
         },
         show_order_dt(order) {
-            return order.created_at.split("T")[1].slice(0, 5)
+            return order.created_at.split(", ")[1].slice(0, 5)
 
         },
 
@@ -162,9 +180,12 @@ orders_app = Vue.createApp({
         },
         cancel_edit_order() {
             this.edit_order_form_is_opened = false
+
             this.cancel_file_upload(this.opened_order, "uploaded_deliveries_qr_code")
             this.cancel_file_upload(this.opened_order, "uploaded_selection_sheet_file")
             this.cancel_file_upload(this.opened_order, "uploaded_paid_check_file")
+
+            this.opened_order.new_comments = ""
 
             for (var i = 0; i < this.opened_order.items.length; i++) {
                 this.cancel_file_upload(this.opened_order.items[i], "uploaded_qr_code")
@@ -172,32 +193,45 @@ orders_app = Vue.createApp({
         },
         edit_order_form_submit() {
             if (!this.edit_order_form_is_submitting) {
-                this.edit_order_form_is_submitting = true
+                Swal.fire({
+                    title: "Сохранить изменения?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Да",
+                    cancelButtonText: "Нет"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.edit_order_form_is_submitting = true
 
-                var data = {
-                    id: this.opened_order.id,
-                }
+                        var data = {
+                            id: this.opened_order.id,
+                            new_comments: this.opened_order.new_comments,
+                        }
 
-                for (var key in this.uploaded_files) {
-                    data[key] = this.uploaded_files[key]
-                }
+                        for (var key in this.uploaded_files) {
+                            data[key] = this.uploaded_files[key]
+                        }
 
-                axios.post("/api/order/edit/", data, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        "X-CSRFToken": $cookies.get("csrftoken")
+                        axios.post("/api/order/edit/", data, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                                "X-CSRFToken": $cookies.get("csrftoken")
+                            }
+                        }).then((response) => {
+                            Swal.fire({
+                              title: "Заказ исправлен",
+                              icon: "success",
+                            })
+                            this.cancel_edit_order()
+                        }).catch((err) => {
+                            Swal.fire("Произошла какая-та ошибка!", "Свяжитесь с нами", "error")
+                        }).finally(() => {
+                            this.edit_order_form_is_submitting = false
+                        })
                     }
-                }).then((response) => {
-                    Swal.fire({
-                      title: "Заказ исправлен",
-                      icon: "success",
-                    })
-                    this.cancel_edit_order()
-                }).catch((err) => {
-                    Swal.fire("Произошла какая-та ошибка!", "Свяжитесь с нами", "error")
-                }).finally(() => {
-                    this.edit_order_form_is_submitting = false
-                })
+                });
             }
         },
         file_is_uploaded(obj, label) {
@@ -242,10 +276,14 @@ orders_app = Vue.createApp({
         open_order(order) {
             this.opened_order = order
             this.websocket.send(JSON.stringify({"order_id": this.opened_order.id, "action": "open"}))
+            document.body.style.overflow = 'hidden';
         },
         close_order() {
-            this.websocket.send(JSON.stringify({"order_id": this.opened_order.id, "action": "close"}))
-            this.opened_order = null
+            if (this.opened_order != null) {
+                this.websocket.send(JSON.stringify({"order_id": this.opened_order.id, "action": "close"}))
+                this.opened_order = null
+            }
+            document.body.style.overflow = '';
         },
         handle_websocket_message(event) {
             var data = JSON.parse(event.data);
@@ -255,6 +293,11 @@ orders_app = Vue.createApp({
                 this.get_orders_change_times()
             } else if (data["action"] == "orders_count_changed") {
                 this.select_orders_change_time()
+                if (this.opened_order) {
+                    if (data["order_id"] == this.opened_order.id) {
+                        this.close_order()
+                    }
+                }
             } else if (data["action"] == "order_changed") {
                 axios("/api/order/get_many/", {params: {filtration: JSON.stringify({id: data["order_id"]})}}).then((response) => {
                     var order = response.data[0]

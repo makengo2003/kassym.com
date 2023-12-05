@@ -13,12 +13,14 @@ class Product(models.Model):
     is_available = models.BooleanField(default=False)
     code = models.CharField(max_length=50, default="", blank=True)
     vendor_number = models.CharField(max_length=50, null=True, blank=True)
+    boutique = models.CharField(max_length=500, null=True, blank=True)
     height = models.CharField(max_length=50, null=True, blank=True)
     width = models.CharField(max_length=50, null=True, blank=True)
     length = models.CharField(max_length=50, null=True, blank=True)
     count = models.PositiveIntegerField(default=0)
     currency = models.CharField(max_length=10, default="ru", choices=(("kz", "KZ"), ("ru", "RU")))
     poster = models.ImageField(upload_to="products_posters/", null=True, editable=False, blank=True)
+    market = models.CharField(max_length=255, null=True, blank=True, choices=(("sadovod", "Садовод"), ("yuzhnye_vorota", "Южные ворота")))
 
     def save(self, *args, **kwargs):
         self.name_lower = self.name.lower() if self.name else None

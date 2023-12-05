@@ -1,3 +1,5 @@
 from django.contrib import admin
+from change_time.models import ChangeTime
 
-# Register your models here.
+
+admin.site.register(ChangeTime)

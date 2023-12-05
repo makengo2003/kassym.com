@@ -155,7 +155,7 @@
         <hr v-if="!cart_is_empty()">
 
         <div v-if="!cart_is_empty()" class="express section">
-            <input :disabled="!time_is_until_18px" type="checkbox" id="express_checkbox" v-model="express_checkbox" style="accent-color: #007671;">
+            <input :disabled="!time_is_until_18px" type="checkbox" id="express_checkbox" @change="is_confirming_cart = false" v-model="express_checkbox" style="accent-color: #007671;">
             <label for="express_checkbox"><h3>Экспресс доставка</h3><span v-if="!time_is_until_18px">Скоро будет доступна</span><!-- Доступна c 09:00 до 18:00 (GMT+6, Астана). --></label>
         </div>
 
@@ -169,10 +169,14 @@
                 </div>
             </div>
 
-            <textarea v-model="comments"></textarea>
+            <textarea @input="is_confirming_cart = false" v-model="comments"></textarea>
 
             <div class="order_btn_block">
-                <button class="order_btn" @click="go_to_payment()" :disabled="is_calculating_price" :style="is_calculating_price || !order_making_is_available ? 'opacity: 0.5' : 'opacity: 1'">Перейти к оплате</button>
+                <div class="btns">
+                    <button class="order_btn" @click="go_to_payment()" :disabled="is_calculating_price" :style="is_calculating_price || !order_making_is_available ? 'opacity: 0.5' : 'opacity: 1'">Перейти к оплате</button>
+                    <button class="cancel_btn" @click="go_to_cart()" v-if="is_confirming_cart && !cart_is_confirmed">Отменить</button>
+                </div>
+
                 <span v-if="!order_making_is_available">Доступна c 09:00 до 23:00 (GMT+6, Астана).</span>
             </div>
         </div>

@@ -8,6 +8,11 @@ sidebar_app = Vue.createApp({
                     open_section() {},
                     close_section() {},
                 },
+                "purchases": mounted_purchases_app,
+                "sorting": mounted_sorting_app,
+                "delivering": mounted_delivering_app,
+                "finance": mounted_finance_app,
+                "expenses": mounted_expenses_app,
             }
         }
     },
@@ -22,13 +27,20 @@ sidebar_app = Vue.createApp({
             window.location.hash = this.opened_section
             this.sections[this.opened_section].open_section()
             document.getElementById(this.opened_section + "_section").style.display = "block"
+            document.getElementById("burger_btn").classList.remove("active")
+            document.getElementById("sidebar").classList.remove("active")
+            document.body.style.overflow = '';
         }
     },
     mounted() {
         if (window.location.hash) {
             this.open_section(window.location.hash.slice(1, window.location.hash.length))
         } else {
-            this.open_section("orders")
+            if (window.location.href.includes("buyer")) {
+                this.open_section("purchases")
+            } else {
+                this.open_section("orders")
+            }
         }
     }
 })

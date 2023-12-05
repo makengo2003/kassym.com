@@ -1,8 +1,10 @@
 from typing import MutableMapping
 
-import urllib.parse
-from django.db.models import Q
+from django.core.files.storage import FileSystemStorage
+from django_bulk_update.helper import bulk_update
 from rest_framework import serializers
+
+from project import settings
 from .models import Product, ProductImage, ProductOption, ProductOptionValue
 
 
@@ -124,32 +126,27 @@ class ProductFormSerializer(serializers.ModelSerializer):
             options.append(product_option)
 
         i = 0
-        new_images = []
-        poster_changed = False
+        product_images = list(product.images.all())
+        fs = FileSystemStorage(location=settings.MEDIA_ROOT)
 
         for image in images:
             img = files.pop("image: " + image['image'], False)
 
-            if not img:
-                img = urllib.parse.unquote(image['image'].replace("/media/", "").replace("%25", "%"), encoding='utf-8')
-            else:
-                img = img[0]
+            if img:
+                file = img[0]
+                file_name = fs.save("products_images/" + file.name, file)
 
+                product_images[i].image = file_name
+                
                 if i == 0:
-                    poster_changed = True
+                    validated_data["poster"] = file_name
 
             i += 1
 
-            new_images.append(ProductImage(product=product, image=img))
-
-        ProductImage.objects.filter(product=product).delete()
-        ProductImage.objects.bulk_create(new_images)
-
-        if poster_changed:
-            validated_data["poster"] = new_images[0].image
-
         validated_data["name_lower"] = validated_data["name"].lower()
         validated_data["code_lower"] = validated_data["code"].lower()
+
+        bulk_update(product_images, update_fields=["image"])
         Product.objects.filter(id=product.pk).update(**validated_data)
 
         ProductOption.objects.filter(product=product).delete()

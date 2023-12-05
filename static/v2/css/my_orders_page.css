@@ -1,0 +1,128 @@
+body {
+    background-color: #00000008;
+
+}
+
+#my_orders_page .container, .navbar-top-block, .navbar-block {
+    background-color: white;
+
+}
+
+#my_orders_page .container {
+    margin-top: 20px;
+
+}
+
+#my_orders_page .section {
+    padding: 20px 55px 40px 55px;
+
+}
+
+#my_orders_page .header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#my_orders_page hr {
+    width: 100%;
+    height: 2px;
+    background-color: #0000001a;
+    border: none;
+}
+
+#my_orders_page .section hr {
+    height: 1px;
+
+}
+
+#my_orders_page .orders {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#my_orders_page .orders .order {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    justify-content: space-between;
+}
+
+#my_orders_page .orders .order:hover .inner h3 {
+    text-decoration: underline;
+}
+
+#my_orders_page .orders .order .inner {
+    width: 100%;
+}
+
+#my_orders_page .orders .order .inner h3 {
+    font-size: 18px;
+}
+
+#my_orders_page .orders .order .text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#my_orders_page .orders .order .text p {
+    margin: 0;
+    opacity: 0.5;
+    font-size: 15px;
+}
+
+#my_orders_page .orders .order .text p.order_status {
+    opacity: 1;
+}
+
+#my_orders_page .orders .order .text p.order_status {
+    color: green;
+}
+
+#my_orders_page .orders .order .text p.order_status.new {
+    color: red;
+}
+
+#my_orders_page .orders .order a {
+    font-size: 18px;
+    color: black;
+}
+
+
+
+
+
+@media(max-width: 900px) {
+    #my_orders_page .section {
+        padding: 5px 30px 40px 30px;
+    }
+}
+
+@media(max-width: 630px) {
+    #my_orders_page .orders .order .text {
+        width: calc(100% / 2);
+    }
+
+    #my_orders_page .orders .order {
+        row-gap: 15px;
+    }
+}
+
+@media(max-width: 500px) {
+    body {
+        background: white;
+    }
+
+    #my_orders_page .header h3 {
+        margin: 0;
+    }
+
+    #my_orders_page .section {
+        padding: 0;
+    }
+}

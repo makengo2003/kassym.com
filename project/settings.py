@@ -30,7 +30,7 @@ if DEBUG:
 else:
     SITE_DOMAIN = "kassym.com"
 
-ALLOWED_HOSTS = [SITE_DOMAIN, "127.0.0.1", "192.168.89.119"]
+ALLOWED_HOSTS = [SITE_DOMAIN, "127.0.0.1", "192.168.79.119", "172.20.10.3", "192.168.224.119"]
 
 
 # Application definition
@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'order',
     'change_time',
     'manager',
+    'purchase',
+    'sorting',
 
     'base_object_presenter',
     'django_user_agents',

@@ -309,7 +309,12 @@ body {
     padding: 10px;
 }
 
-#cart_page .order_btn, #cart_page .order_page .cancel_btn {
+#cart_page .order_btn_block .btns {
+    display: flex;
+    gap: 20px;
+}
+
+#cart_page .order_btn, #cart_page .cancel_btn {
     border: none;
     border-radius: 5px;
     color: white;
@@ -320,15 +325,15 @@ body {
     letter-spacing: 0px;
 }
 
-#cart_page .order_page .cancel_btn {
+#cart_page .cancel_btn {
     margin-top: 50px;
 }
 
-#cart_page .order_page .cancel_btn, #cart_page .order_page .order_btn {
+#cart_page .cancel_btn, #cart_page .order_page .order_btn {
     margin: 0;
 }
 
-#cart_page .order_page .cancel_btn {
+#cart_page .cancel_btn {
     color: #007671;
     background: white;
     border: 1px solid #007671;

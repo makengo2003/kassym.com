@@ -55,7 +55,7 @@ class ClientFormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
-        fields = ["fullname", "phone_number", "expires_at", "company_name", "device1", "device2", "device3"
+        fields = ["fullname", "phone_number", "expires_at", "company_name", "device1", "device2", "device3",
                   "ignore_device_verification"]
 
     def create(self, validated_data):

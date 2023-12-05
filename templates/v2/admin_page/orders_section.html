@@ -1,0 +1,279 @@
+{% load static %}
+
+<div id="orders_section" class="section">
+    <div class="header">
+        <div class="_header">
+            <h3>Заказы</h3>
+
+            <select @change="select_orders_change_time()" v-model="selected_change_time">
+                <option v-for="change_time in change_times" :value="change_time.dt">Смена: ${ change_time.dt }</option>
+            </select>
+        </div>
+
+        <hr>
+
+        <div class="sub_header">
+            <form class="searching" @submit.prevent="search()">
+                <input type="text" v-model="search_input">
+                <button type="submit">Поиск</button>
+                <span v-if="searched" style="cursor: pointer" @click="search_input=''; search()">Отменить поиск</span>
+            </form>
+
+            <div v-if="selected_orders_change_time_is_today()">
+                <button :disabled="!finish_change_time_is_available()" :class="finish_change_time_is_available() ? 'active' : ''" @click="finish_change_time()">Завершить смену</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="actions">
+            <div class="action" @click="open_category('new_orders')" :style="opened_category == 'new_orders' ? 'border-color: #2D74FF' : ''">
+                <img src="{% static 'v2/imgs/new_orders_icon.png' %}">
+                <div class="text">
+                    <p>${ orders_counts.new_orders_count }</p>
+                    <span>Новые заказы</span>
+                </div>
+            </div>
+            <div class="action" @click="open_category('accepted_orders')" :style="opened_category == 'accepted_orders' ? 'border-color: #F38D15' : ''">
+                <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}">
+                <div class="text">
+                    <p>${ orders_counts.accepted_orders_count }</p>
+                    <span>Принятые заказы</span>
+                </div>
+            </div>
+            <div class="action" @click="open_category('all_orders')" :style="opened_category == 'all_orders' ? 'border-color: #14C25A' : ''">
+                <img src="{% static 'v2/imgs/all_orders_icon.png' %}">
+                <div class="text">
+                    <p>${ orders_counts.new_orders_count + orders_counts.accepted_orders_count }</p>
+                    <span>Все заказы</span>
+                </div>
+            </div>
+            <div class="action" style="display: none;" :style="opened_category == 'add_order' ? 'border-color: gray' : ''">
+                <img src="{% static 'v2/imgs/add_order_icon.png' %}">
+                <div class="text">
+                    <p style="opacity: 0.3;">Добавить заказ</p>
+                    <span style="color: red; font-size: 10px; opacity: 1;">Функция скоро будет доступна</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pre_table">
+            <div class="table">
+                <div class="columns">
+                    <p class="is_express"></p>
+                    <p class="comments">Номер заказа</p>
+                    <p class="company_name">ИП</p>
+                    <p class="count">Кол. товаров</p>
+                    <p class="sum">Сумма</p>
+                    <p class="time">Время</p>
+                    <p class="comments">Комментарий</p>
+                    <p class="paid_check">Чек</p>
+                    <p class="status"></p>
+                </div>
+
+                <div class="rows">
+                    <div class="row" v-for="order in orders">
+                        <hr>
+                        <div class="_row">
+                            <p class="is_express"><img v-if="order.is_express" src="{% static 'v2/imgs/is_express_icon.png' %}"></p>
+                            <p class="comments" @click="open_order(order)"><a style="text-decoration: underline;">#${ order.id }</a></p>
+                            <p class="company_name" style="text-decoration: none;">${ order.company_name }</p>
+                            <p class="count">${ order.total_products_count } шт</p>
+                            <p class="sum">${ order.total_sum_in_tenge } тг</p>
+                            <p class="time">${ show_order_dt(order) }</p>
+                            <p class="comments" v-if="order.comments">Есть</p>
+                            <p class="comments" v-else=""></p>
+                            <p class="paid_check" @click="open_object_file(order, 'paid_check_file')"><img src="{% static 'v2/imgs/paid_check_icon.png' %}"></p>
+                            <p class="status" v-if="order.status == 'new'" style="color: red">В обработке</p>
+                            <p class="status" v-else="" style="color: green">Принят</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window" v-if="opened_order != null">
+        <div class="_window">
+            <div class="header_and_actions">
+                <h3>Заказ<span>/${ opened_order.company_name }</span></h3>
+
+                <div class="actions" v-if="opened_order.status == 'new'">
+                    <button @click="accept_order()">Принять</button>
+                    <button @click="edit_order()">Исправить</button>
+                    <p class="opened_by_other_fullname">${ get_opened_by_other_fullname() }</p>
+                </div>
+            </div>
+
+            <div class="info">
+                <div class="list">
+                    <div class="text">
+                        <span>Кол. товаров</span>
+                        <p>${ opened_order.total_products_count } шт</p>
+                    </div>
+                    <div class="text">
+                        <span>Сумма</span>
+                        <p>${ opened_order.total_sum_in_tenge } тг</p>
+                    </div>
+                    <div class="text">
+                        <span>Время</span>
+                        <p>${ show_order_dt(opened_order) }</p>
+                    </div>
+                    <div class="text">
+                        <span>Чек</span>
+                        <p @click="open_object_file(opened_order, 'paid_check_file')"><img src="{% static 'v2/imgs/paid_check_icon.png' %}"></p>
+                    </div>
+                </div>
+
+                <p class="comments" v-if="opened_order.comments">${ opened_order.comments }</p>
+            </div>
+
+            <div class="table">
+                <div class="columns">
+                    <p class="img"></p>
+                    <p class="name">Наименование</p>
+                    <p class="code">Артикул</p>
+                    <p class="count">Кол.</p>
+                    <p class="price">Цена</p>
+                    <p class="type">Тип</p>
+                    <p class="action"></p>
+                </div>
+
+                <hr>
+
+                <div class="rows">
+                    <div class="row" v-for="order_item in opened_order.items">
+                        <p class="img" :style="'background-image: url(https://kassym.com/' + order_item.product.poster + ');'"></p>
+                        <p class="name"><a :href="'/product/?product_id=' + order_item.product.id" target="_blank">${ order_item.product.name }</a></p>
+                        <p class="code">${ order_item.product.code }</p>
+                        <p class="count">${ order_item.count }</p>
+                        <p class="price">${ order_item.product.price } Р</p>
+                        <p class="type">${ order_item.product.type }</p>
+                        <p class="action"><button @click="open_object_file(order_item, 'qr_code')">QR Code</button></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button @click="open_object_file(opened_order, 'deliveries_qr_code')">QR поставки</button>
+                <button @click="open_object_file(opened_order, 'selection_sheet_file')">Лист подбора</button>
+
+                <p style="margin-left: auto">${ opened_order.user_phone_number } (${ opened_order.user_fullname })</p>
+            </div>
+
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="close_order()">
+        </div>
+    </div>
+
+    <div class="window" v-if="edit_order_form_is_opened">
+        <div class="_window edit_order_form_window">
+            <h3>Исправить Заказ<span>/${ opened_order.company_name }</span></h3>
+
+            <textarea v-model="opened_order.new_comments" placeholder="Добавить комментарии"></textarea>
+
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="cancel_edit_order()">
+
+            <div class="qr_codes">
+                <div class="qr_code" v-for="order_item in opened_order.items">
+                    <img width="35" height="35" src="{% static 'v2/imgs/document.png' %}" alt="">
+
+                    <div class="qr_name">
+                        <p v-if="!file_is_uploaded(order_item, 'uploaded_qr_code')">Загружайте QR товара</p>
+                        <p v-else="">Загружен файл: ${ get_uploaded_file_name(order_item.uploaded_qr_code) }</p>
+                        <span>${ order_item.product.name }</span>
+                    </div>
+
+                    <div class="upload">
+                        <input :id="'order_item_uploaded_qr_code_' + order_item.id" style="display: none" type="file" @change="handle_file_upload(['.pdf'], $event, order_item, 'uploaded_qr_code', 'order_item', order_item.id)">
+
+                        <label class="upload_btn" :for="'order_item_uploaded_qr_code_' + order_item.id" v-if="!file_is_uploaded(order_item, 'uploaded_qr_code')">Загрузить</label>
+
+                        <div class="uploaded" v-else="">
+                            <button class="cancel_btn" @click="cancel_file_upload(order_item, 'uploaded_qr_code')">Отменить</button>
+                            <div class="uploaded_status">
+                                <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
+                                <p>Готово</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px;" class="qr_code">
+                    <img width="35" height="35" src="{% static 'v2/imgs/document.png' %}" alt="">
+
+                    <div class="qr_name">
+                        <p v-if="!file_is_uploaded(opened_order, 'uploaded_deliveries_qr_code')">QR поставки</p>
+                        <p v-else="">Загружен файл: ${ get_uploaded_file_name(opened_order.uploaded_deliveries_qr_code) }</p>
+                        <span>${ opened_order.items.length } товара</span>
+                    </div>
+
+                    <div class="upload">
+                        <input id="opened_order_uploaded_deliveries_qr_code" style="display: none" type="file" @change="handle_file_upload(['.pdf'], $event, opened_order, 'uploaded_deliveries_qr_code', 'opened_order')">
+
+                        <label class="upload_btn" for="opened_order_uploaded_deliveries_qr_code" v-if="!file_is_uploaded(opened_order, 'uploaded_deliveries_qr_code')">Загрузить</label>
+
+                        <div class="uploaded" v-else="">
+                            <button class="cancel_btn" @click="cancel_file_upload(opened_order, 'uploaded_deliveries_qr_code')">Отменить</button>
+                            <div class="uploaded_status">
+                                <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
+                                <p>Готово</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qr_code">
+                    <img width="35" height="35" src="{% static 'v2/imgs/document.png' %}" alt="">
+
+                    <div class="qr_name">
+                        <p v-if="!file_is_uploaded(opened_order, 'uploaded_selection_sheet_file')">Лист подбора</p>
+                        <p v-else="">Загружен файл: ${ get_uploaded_file_name(opened_order.uploaded_selection_sheet_file) }</p>
+                    </div>
+
+                    <div class="upload">
+                        <input id="opened_order_uploaded_selection_sheet_file" style="display: none" type="file" @change="handle_file_upload(['.pdf'], $event, opened_order, 'uploaded_selection_sheet_file', 'opened_order')">
+
+                        <label class="upload_btn" for="opened_order_uploaded_selection_sheet_file" v-if="!file_is_uploaded(opened_order, 'uploaded_selection_sheet_file')">Загрузить</label>
+
+                        <div class="uploaded" v-else="">
+                            <button class="cancel_btn" @click="cancel_file_upload(opened_order, 'uploaded_selection_sheet_file')">Отменить</button>
+                            <div class="uploaded_status">
+                                <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
+                                <p>Готово</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qr_code">
+                    <img width="35" height="35" src="{% static 'v2/imgs/document.png' %}" alt="">
+
+                    <div class="qr_name">
+                        <p v-if="!file_is_uploaded(opened_order, 'uploaded_paid_check_file')">Чек KASPI</p>
+                        <p v-else="">Загружен файл: ${ get_uploaded_file_name(opened_order.uploaded_paid_check_file) }</p>
+                    </div>
+
+                    <div class="upload">
+                        <input id="opened_order_uploaded_paid_check_file" style="display: none" type="file" @change="handle_file_upload(['.pdf'], $event, opened_order, 'uploaded_paid_check_file', 'opened_order')">
+
+                        <label class="upload_btn" for="opened_order_uploaded_paid_check_file" v-if="!file_is_uploaded(opened_order, 'uploaded_paid_check_file')">Загрузить</label>
+
+                        <div class="uploaded" v-else="">
+                            <button class="cancel_btn" @click="cancel_file_upload(opened_order, 'uploaded_paid_check_file')">Отменить</button>
+                            <div class="uploaded_status">
+                                <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
+                                <p>Готово</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button @click="edit_order_form_submit()">Сохранить</button>
+                <button @click="cancel_edit_order()">Отменить</button>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -7,13 +7,15 @@ from django.contrib.sessions.models import Session
 
 from typing import Mapping, List
 
-from django.db.models import F, Case, When
+from django.db.models import F, Case, When, Q, Sum, Value, FloatField
+from django.db.models.functions import Cast
 from django.shortcuts import get_object_or_404
 from django_user_agents.utils import get_user_agent
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.request import Request
 from user_agents.parsers import UserAgent
 
+from order.models import Order
 from product.models import Product
 from product.serializers import ProductsSerializer
 from project.settings import BOT_TOKEN
@@ -218,3 +220,45 @@ def get_favourite_products(user):
         category_name=F("category__name"),
     ).order_by("-favourites__id").distinct().only("id", "name", "price", "code", "is_available", "count", "currency", "poster")
     return ProductsSerializer(products, many=True).data
+
+
+def get_finance(change_time):
+    finance = Order.objects.filter(~Q(status="new"), created_at__date=change_time).aggregate(
+        total_price=Sum("total_sum_in_tenge"),
+        total_products_price_in_tenge=Sum(F("total_products_price") * (F("ruble_rate") - Value(0.5))),
+        total_products_price_in_ruble=Sum(F("total_products_price"))
+    )
+
+    total_price = int(finance["total_price"] or 0)
+    total_products_price_in_tenge = int(finance["total_products_price_in_tenge"] or 0)
+    total_products_price_in_ruble = int(finance["total_products_price_in_ruble"] or 0)
+
+    total_expenses_in_ruble = 0
+    total_expenses_in_tenge = 0
+    total_managers_expenses_in_ruble = 0
+    total_managers_expenses_in_tenge = 0
+    total_buyers_expenses_in_ruble = 0
+    total_buyers_expenses_in_tenge = 0
+    total_sorters_expenses_in_ruble = 0
+    total_sorters_expenses_in_tenge = 0
+
+    expenses = [{
+        "staff_fullname": "adqweqwd",
+        "sum": 123,
+        "description": "adrkpoegjifn oajnesio njinaksd ",
+    }] * 20
+
+    return {
+        "total_price": total_price,
+        "total_products_price_in_tenge": total_products_price_in_tenge,
+        "total_products_price_in_ruble": total_products_price_in_ruble,
+        "total_expenses_in_ruble": total_expenses_in_ruble,
+        "total_expenses_in_tenge": total_expenses_in_tenge,
+        "total_managers_expenses_in_ruble": total_managers_expenses_in_ruble,
+        "total_managers_expenses_in_tenge": total_managers_expenses_in_tenge,
+        "total_buyers_expenses_in_ruble": total_buyers_expenses_in_ruble,
+        "total_buyers_expenses_in_tenge": total_buyers_expenses_in_tenge,
+        "total_sorters_expenses_in_ruble": total_sorters_expenses_in_ruble,
+        "total_sorters_expenses_in_tenge": total_sorters_expenses_in_tenge,
+        "expenses": expenses
+    }

@@ -1,0 +1,239 @@
+#my_order_page .container {
+    margin-top: 20px;
+}
+
+#my_order_page .orders {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+#my_order_page .orders .order {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+#my_order_page .orders .order a {
+    font-size: 18px;
+    color: black;
+}
+
+#my_order_page .title {
+    display: flex;
+    align-items: center;
+    margin: 12px 0px 30px 0px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#my_order_page .title h2 {
+    margin: 0;
+}
+
+#my_order_page .title .order_status {
+    padding: 3px 8px;
+    border-radius: 5px;
+    color: white;
+    background: green;
+    font-size: 14px;
+}
+
+#my_order_page .path {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+    height: 20px;
+}
+
+#my_order_page .path a {
+    text-decoration: none;
+    color: gray;
+    transition: color 0.3s;
+    min-width: fit-content;
+}
+
+#my_order_page .path a:last-child {
+    min-width: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    line-break: anywhere;
+}
+
+#my_order_page .path span {
+    cursor: default;
+    color: gray;
+}
+
+#my_order_page .path button {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+}
+
+#my_order_page .path a:hover {
+    color: black;
+
+}
+
+#my_order_page .path button .bar {
+    width: 9.5px;
+    height: 2px;
+    background-color: gray;
+    transition: background-color 0.3s;
+}
+
+#my_order_page .path button:hover .bar {
+    background-color: black;
+}
+
+#my_order_page .path button .bar:first-child {
+    transform: rotate(-45deg) translateY(2.5px);
+
+}
+
+#my_order_page .path button .bar:nth-child(2) {
+    transform: rotate(45deg) translateY(-2.5px);
+
+}
+
+#my_order_page .availability {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+}
+
+#my_order_page .availability span {
+    margin-top: 0;
+    color: white;
+}
+
+#my_order_page .availability img {
+    width: 15px;
+    height: 15px;
+    padding: 2px 3px;
+    border-radius: 4px;
+    background: #D3EFFF;
+    border: 1px solid #017cc2;
+}
+
+#my_order_page .availability .new, #my_order_page .availability .will_be_tomorrow {
+    background: black;
+    opacity: 0.4;
+}
+
+#my_order_page .availability .purchased, #my_order_page .availability .replaced {
+    background: #26c126;
+}
+
+#my_order_page .availability .not_available {
+    background: #f66161;
+}
+
+#my_order_page .window {
+    background: rgb(164 164 164 / 40%);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+#my_order_page .window ._window {
+    position: relative;
+
+    padding: 22px 30px;
+    margin: 8% auto 0px auto;
+
+    width: 1000px;
+    background-color: white;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#my_order_page .window ._window .close_window_btn {
+    position: absolute;
+    right: 22px;
+    top: 22px;
+    cursor: pointer;
+}
+
+#my_order_page .window {
+    z-index: 10;
+}
+
+#my_order_page .window ._window {
+    background: none;
+    display: flex;
+
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    align-items: center;
+    justify-content: center;
+}
+
+@-webkit-keyframes zoom {
+  from {-webkit-transform:scale(0)}
+  to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+#my_order_page .window img {
+    max-height: 85vh;
+    max-width: 85vw;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+#my_order_page .products_list .product_card {
+    height: 290px;
+}
+
+#my_order_page .products_list {
+    margin-bottom: 25px;
+}
+
+@media(max-width: 1150px) {
+    #my_order_page .products_list .product_card {
+        height: 275px;
+    }
+}
+
+@media(max-width: 900px) {
+    #my_order_page .products_list .product_card {
+        height: 260px;
+    }
+
+    #my_order_page .products_list .product_card .text .product_name_block, .products_list .product_card .text .product_category_block {
+        -webkit-line-clamp: 2;
+        line-break: normal;
+    }
+}
+
+@media(max-width: 630px) {
+    #my_order_page .products_list .product_card {
+        height: 275px;
+    }
+}
+
+@media(max-width: 500px) {
+    #my_order_page .products_list .product_card {
+        height: 300px;
+    }
+}

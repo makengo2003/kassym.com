@@ -1,0 +1,239 @@
+{% load static %}
+
+<div id="purchases_section" class="section">
+    <div class="header">
+        <h3>Закупка</h3>
+
+        <hr>
+
+        <div class="sub_header">
+            <select @change="select_change_time()" v-model="selected_change_time">
+                <option v-for="change_time in change_times" :value="change_time.dt">Смена: ${ change_time.dt }</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="actions">
+            <div class="action" @click="open_market('sadovod')" :style="opened_market == 'sadovod' ? 'border-color: #2D74FF' : ''">
+                <img src="{% static 'v2/imgs/sadovod_icon.png' %}">
+                <div class="text">
+                    <p>Садовод</p>
+                    <span v-if="purchases_counts.sadovod > 0">${ purchases_counts.sadovod } позиции</span>
+                    <span v-else="">0 товаров</span>
+                </div>
+            </div>
+            <div class="action" @click="open_market('yuzhnye_vorota')" :style="opened_market == 'yuzhnye_vorota' ? 'border-color: green' : ''">
+                <img src="{% static 'v2/imgs/yuzhnye_vorota_icon.png' %}">
+                <div class="text">
+                    <p>Южные ворота</p>
+                    <span v-if="purchases_counts.yuzhnye_vorota > 0">${ purchases_counts.yuzhnye_vorota } позиции</span>
+                    <span v-else="">0 товаров</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="table">
+            <div class="statuses">
+                <p @click="select_status('new')" :class="selected_status == 'new' ? 'active': ''">Новые</p>
+                <p @click="select_status('purchased')" :class="selected_status == 'purchased' ? 'active': ''">Купленные</p>
+                <p @click="select_status('replaced')" :class="selected_status == 'replaced' ? 'active': ''">Заменён</p>
+                <p @click="select_status('not_available')" :class="selected_status == 'not_available' ? 'active': ''">Нет в наличии</p>
+                <p @click="select_status('will_be_tomorrow')" :class="selected_status == 'will_be_tomorrow' ? 'active': ''">Будет завтра</p>
+                <p @click="select_status('is_being_considered')" :class="selected_status == 'is_being_considered' ? 'active': ''">Рассматривается</p>
+            </div>
+
+            <div class="list">
+                <div class="card" v-for="purchase in purchases" @click="open_purchase(purchase)">
+                    <div class="purchase_img" :style="'background-image: url(https://kassym.com/media/' + purchase.product_poster + ')'"></div>
+
+                    <div class="text">
+                        <p>${ purchase.product_name }</p>
+                        <p>${ purchase.count } шт.</p>
+                        <p>${ purchase.product_vendor_number }</p>
+                        <p>${ purchase.product_boutique }</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window product_image_window" v-if="opened_product_image">
+        <div class="_window">
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="opened_product_image = ''">
+            <img class="product_image" :src="opened_product_image">
+        </div>
+    </div>
+
+    <div class="window" v-if="opened_purchase != null">
+        <div class="_window">
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <h3>${ opened_purchase.product_name }</h3>
+                <p class="opened_by_other_fullname">${ get_opened_by_other_fullname() }</p>
+            </div>
+
+            <div class="info">
+                <div class="purchase_img" @click="opened_product_image = 'https://kassym.com/media/' + opened_purchase.product_poster" :style="'background-image: url(https://kassym.com/media/' + opened_purchase.product_poster + ')'"></div>
+
+                <div class="list">
+                    <div class="texts" :style="purchase_form.replaced_count > 0 ? 'height: revert-layer;' : ''">
+                        <div class="text">
+                            <span>Кол. товаров</span>
+                            <p>${ opened_purchase.count } шт.</p>
+                        </div>
+                        <div class="text">
+                            <span>Номер поставщика</span>
+                            <p>${ opened_purchase.product_vendor_number }</p>
+                        </div>
+                        <div class="text">
+                            <span>Бутик</span>
+                            <p>${ opened_purchase.product_boutique }</p>
+                        </div>
+                        <div class="text">
+                            <span>Цена в каталоге</span>
+                            <p>${ opened_purchase.product_price } Р</p>
+                        </div>
+                        <div class="text" v-if="!purchase_actions_are_available()" :style="!purchase_actions_are_available() && selected_status != 'replaced' ? 'margin-bottom: 155px' : ''">
+                            <span>Цена за шт.</span>
+                            <p>${ opened_purchase.price_per_count } Р</p>
+                        </div>
+                        <div class="text" v-if="!purchase_actions_are_available() && selected_status == 'replaced'" :style="!purchase_actions_are_available() ? 'margin-bottom: 129px' : ''">
+                            <span>Фото заменён</span>
+                            <p><a target="_blank" style="color: blue; text-decoration: underline;" @click="opened_product_image = '/media/' + opened_purchase.replaced_by_product_image">Посмотреть</a></p>
+                        </div>
+                        <div class="text" v-if="purchase_actions_are_available()" style="margin-top: 20px;">
+                            <span>Цена за шт.</span>
+                            <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.price_per_count">
+                        </div>
+                        <div class="text" v-if="purchase_actions_are_available()">
+                            <span>Количество купленных</span>
+                            <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.purchased_count">
+                        </div>
+                        <div class="text" v-if="purchase_actions_are_available()">
+                            <span>Количество заменённых</span>
+                            <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.replaced_count">
+                        </div>
+                        <div class="text" v-if="purchase_actions_are_available()">
+                            <span>Количество "Нет в наличий"</span>
+                            <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.not_available_count">
+                        </div>
+                        <div class="text" v-if="purchase_actions_are_available()">
+                            <span>Количество "Будет завтра"</span>
+                            <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.will_be_tomorrow_count">
+                        </div>
+                        <div class="text" v-if="purchase_actions_are_available() && purchase_form.replaced_count > 0">
+                            <span id="span_replaced_by_product_image">Фото заменён:<span v-if="purchase_form.replaced_by_product_image">${ purchase_form.replaced_by_product_image }</span></span>
+                            <input :disabled="purchasing_is_available" style="display: none;" id="replaced_by_product_image" type="file" @change="handle_file_upload($event)">
+                            <label class="upload_btn" for="replaced_by_product_image" id="replaced_by_product_image_label">
+                                <span :style="purchasing_is_available ? 'opacity: 0.3' : ''">Загрузить</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div v-if="purchase_actions_are_available() && !purchasing_is_available" class="buttons">
+                        <button @click="open_product()" style="width: fit-content; padding-right: 20px; padding-left: 20px;">Перейти к товару</button>
+                        <button @click="check_purchase_inputted_data()" :disabled="!(purchase_form.purchased_count != 0 || purchase_form.replaced_count != 0 || purchase_form.not_available_count != 0 || purchase_form.will_be_tomorrow_count != 0)">Куплено</button>
+                    </div>
+
+                    <div v-else-if="purchase_actions_are_available()" class="buttons">
+                        <button @click="make_purchase()">Подтвердить</button>
+                        <button @click="cancel_purchasing()">Отменить</button>
+                    </div>
+                </div>
+            </div>
+
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="close_purchase_window()">
+        </div>
+    </div>
+
+    <div class="window" id="is_being_considered_report" v-if="is_being_considered_report != null">
+        <div class="_window">
+            <h3>Замена для следующих ИП</h3>
+
+            <div class="info">
+                <div class="purchase_img" @click="opened_product_image = 'https://kassym.com' + is_being_considered_report.product_poster" :style="'background-image: url(https://kassym.com' + is_being_considered_report.product_poster + ')'"></div>
+
+                <div class="list">
+                    <div class="texts">
+                        <div class="text">
+                            <span>Фото заменён</span>
+                            <p><a style="text-decoration: underline; color: blue" @click="opened_product_image = '/media/' + is_being_considered_report.replaced_by_product_image">Посмотреть</a></p>
+                        </div>
+                        <div class="text" v-for="client in is_being_considered_report.clients">
+                            <div class="client">
+                                <span>${ client.phone_number }</span>
+                                <span>${ client.fullname }</span>
+                            </div>
+
+                            <p>${ client.product_count } шт</p>
+                        </div>
+                    </div>
+
+                    <button @click="close_is_being_considered_report()">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window" id="is_being_considered_form" v-if="is_being_considered_form != null">
+        <div class="_window">
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="close_is_being_considered_form()">
+            <h3>Замена для следующих ИП</h3>
+
+            <div class="info">
+                <div class="purchase_img" @click="opened_product_image = 'https://kassym.com' + is_being_considered_form.product_poster" :style="'background-image: url(https://kassym.com' + is_being_considered_form.product_poster + ')'"></div>
+
+                <div class="list">
+                    <div class="texts">
+                        <div class="text">
+                            <span>Кол. товаров</span>
+                            <p>${ is_being_considered_form.count } шт.</p>
+                        </div>
+                        <div class="text">
+                            <span>Номер поставщика</span>
+                            <p>${ is_being_considered_form.product_vendor_number }</p>
+                        </div>
+                        <div class="text">
+                            <span>Бутик</span>
+                            <p>${ is_being_considered_form.product_boutique }</p>
+                        </div>
+                        <div class="text">
+                            <span>Цена в каталоге</span>
+                            <p>${ is_being_considered_form.product_price } Р</p>
+                        </div>
+                        <div class="text">
+                            <span>Фото заменён</span>
+                            <p><a target="_blank" style="color: blue; text-decoration: underline;" @click="opened_product_image = is_being_considered_form.replaced_by_product_image">Посмотреть</a></p>
+                        </div>
+                        <div class="text">
+                            <span>Цена за шт.</span>
+                            <input type="number" v-model="is_being_considered_form.price_per_count" :disabled="is_being_considered">
+                        </div>
+
+
+
+
+                        <div class="text" v-for="purchase in is_being_considered_form.purchases" style="align-items: baseline">
+                            <div class="client" style="display: flex; flex-direction: column;">
+                                <span style="opacity: 1;">${ purchase.client_phone_number }</span>
+                                <span>${ purchase.client_fullname }</span>
+                            </div>
+
+                            <select v-model="purchase.status" :disabled="is_being_considered" :style="purchase.status == 'replaced' ? 'color: green' : 'color: red'">
+                                <option value="replaced" selected>Заменён</option>
+                                <option value="not_available">Нет в наличий</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button v-if="!is_being_considered" @click="save_is_being_considered_form()">Сохранить</button>
+                        <button v-if="is_being_considered" @click="submit_is_being_considered_form()">Сохранить</button>
+                        <button v-if="is_being_considered" @click="cancel_is_being_considered_form()">Отменить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

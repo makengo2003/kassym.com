@@ -100,7 +100,7 @@
         height: 150px;
     }
 
-    #cart_page .order_page .cancel_btn, #cart_page .order_page .order_btn {
+    #cart_page .order_page .cancel_btn, #cart_page .order_page .order_btn, #cart_page .order_btn_block .btns .cancel_btn, #cart_page .order_btn_block .btns .order_btn {
         font-size: 19.1px;
     }
 
@@ -239,6 +239,11 @@
 	#cart_page .order_page .cancel_btn, #cart_page .order_page .order_btn {
         font-size: 15px;
         padding: 10px 11.8px;
+    }
+
+    #cart_page .order_btn_block .btns .cancel_btn, #cart_page .order_btn_block .btns .order_btn {
+        font-size: 17px;
+        padding: 11px 12.8px;
     }
 }
 

@@ -112,3 +112,11 @@ def search_clients_view(request: Request) -> Response:
 def leave_request_view(request: Request):
     services.leave_request(request.data)
     return Response({"success": True})
+
+
+@api_view(["GET"])
+def get_finance_view(request: Request) -> Response:
+    if hasattr(request.user, "super_admin"):
+        finance = services.get_finance(request.query_params.get("change_time"))
+        return Response(finance)
+    return Response({"message": "you are not super admin"})

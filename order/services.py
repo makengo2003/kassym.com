@@ -1,72 +1,63 @@
-from typing import Mapping, MutableMapping
+import requests
+from bs4 import BeautifulSoup
 
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-from django.contrib.auth.models import User
-from django.core.files.base import ContentFile
-from django.core.files.storage import FileSystemStorage
-from django.db.models import Count, When, Q
-from django.shortcuts import get_object_or_404
-
-from base_object_presenter.services import BaseServicesPresenter
 from cart.models import CartItem
-from project import settings
-from .models import OrderModelPresenter
+from order.models import Order
 
 
-class OrderServicesPresenter(BaseServicesPresenter):
-    model_presenter = OrderModelPresenter()
+def calculate(user, data, cart_items=None):
+    if not cart_items:
+        cart_items = CartItem.objects.select_related("product").filter(user=user)
 
-    def calculate(self, user: User, data: Mapping):
-        return self.model_presenter.calculate(user, data)
+    total_products_count = 0
+    total_products_price = 0
+    total_service_price = 0
+    specific_product = False
+    price_for_specific_product = 100
+    specific_products_count = 0
 
-    def add_custom(self, add_request_schema: MutableMapping, files: Mapping) -> int:
-        serializer = self.serializers["object_add_form"](data=add_request_schema)
-        serializer.is_valid(raise_exception=True)
-        return serializer.save(files=files).id
+    for cart_item in cart_items:
+        total_products_price += cart_item.count * cart_item.product.price
+        total_products_count += cart_item.count
 
-    def get_orders_counts(self, created_at__date):
-        orders_counts = self.model_presenter.model.objects.filter(created_at__date=created_at__date).aggregate(
-            new_orders_count=Count("id", filter=Q(status="new")),
-            accepted_orders_count=Count("id", filter=Q(status="accepted"))
-        )
+        if cart_item.product_id == 7810 or cart_item.product_id == 714:
+            total_service_price += price_for_specific_product * cart_item.count
+            specific_product = True
+            specific_products_count += cart_item.count
 
-        return orders_counts
+    service_price_per_count = 50
+    express_price_per_count = 150
+    total_service_price += service_price_per_count * (total_products_count - specific_products_count)
 
-    def accept_order(self, order_id):
-        self.model_presenter.model.objects.filter(id=order_id).update(status="accepted")
+    is_express = data.get("is_express", False)
+    if (type(is_express) == str and is_express == "true") or (type(is_express) == bool and is_express is True):
+        total_service_price += express_price_per_count * total_products_count
 
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            "managers_room", {"type": "managers_message", "message": {"action": "orders_count_changed"}}
-        )
+    ruble_rate = get_ruble_rate()
+    total_sum_in_ruble = total_products_price + total_service_price
+    total_sum_in_tenge = total_sum_in_ruble * ruble_rate
 
-    def edit_custom(self, obj_id, files):
-        order = get_object_or_404(self.model_presenter.model, id=obj_id)
-        fs = FileSystemStorage(location=settings.MEDIA_ROOT)
+    return {
+        "ruble_rate": ruble_rate,
+        "total_products_count": total_products_count,
+        "service_price_per_count": service_price_per_count,
+        "express_price_per_count": express_price_per_count,
+        "total_service_price": total_service_price,
+        "total_products_price": total_products_price,
+        "total_sum_in_tenge": round(total_sum_in_tenge, 2),
+        "total_sum_in_ruble": total_sum_in_ruble,
+        "specific_product": specific_product,
+        "price_for_specific_product": price_for_specific_product
+    }
 
-        for file in files:
-            if file.startswith("opened_order_uploaded_deliveries_qr_code: "):
-                order.deliveries_qr_code = fs.save("deliveries_qr_code/" + files[file].name, files[file])
 
-            elif file.startswith("opened_order_uploaded_selection_sheet_file: "):
-                order.selection_sheet_file = fs.save("selection_sheet_files/" + files[file].name, files[file])
+def get_ruble_rate():
+    response = requests.get("https://mig.kz/api/v1/gadget/html")
+    soup = BeautifulSoup(response.text, 'html.parser')
+    rub_row = soup.find('td', class_='currency', text='RUB').find_parent('tr')
+    return float(rub_row.find('td', class_='sell delta-neutral').text) + 0.5
 
-            elif file.startswith("opened_order_uploaded_paid_check_file: "):
-                order.paid_check_file = fs.save("paid_check_files/" + files[file].name, files[file])
 
-            elif file.startswith("order_item_uploaded_qr_code_"):
-                order_item_id = int(file.split(":")[0].split("order_item_uploaded_qr_code_")[1])
-                order.order_items.filter(id=order_item_id).update(qr_code=fs.save("products_qr_code/" + files[file].name, files[file]))
-
-        order.one_file_products_qr_codes = self.model_presenter.get_one_file_products_qr_codes(
-            order.user,
-            [order_item.qr_code for order_item in order.order_items.all()]
-        )
-
-        order.save()
-
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            "managers_room", {"type": "managers_message", "message": {"action": "order_changed", "order_id": order.id}}
-        )
+def get_order(user, order_id):
+    order = Order.objects.filter(user=user, id=order_id).prefetch_related("order_items", "order_items__purchases").first()
+    return order

@@ -1,0 +1,67 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/my_order_page.css' %}">
+{% endblock %}
+
+
+{% block body %}
+<div class="block" id="my_order_page">
+    <div class="window" id="replaced_by_product_image_window" style="display: none">
+        <div class="_window">
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" onclick="close_replaced_by_product_image()">
+            <img class="product_image" id="replaced_by_product_image">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="path">
+            <button class="go_back_btn" onclick="window.history.go(-1)">
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </button>
+            <a href="/">Главная</a>
+            <span>/</span>
+            <a href="/my_orders/">Мои заказы</a>
+            <span>/</span>
+            <a>Заказ #{{ order.id }}</a>
+        </div>
+
+        <div class="title">
+            <h2>Заказ #{{ order.id }}</h2>
+        </div>
+
+        <div class="products_list">
+            {% for order_item in order.order_items.all %}
+                {% for purchase in order_item.purchases.all %}
+                <a href="/product/?product_id={{ order_item.product.id }}" class="product_card">
+                    <div class="absolute_product_card">
+                        <div class="product_img" style="background-image: url(https://kassym.com/{{ order_item.product.poster.url }});"></div>
+
+                        <div class="text">
+                            <div class="product_name_block">
+                                <span class="product_name">{{ order_item.product.name }}</span>
+                            </div>
+
+                            <div class="availability">
+                                <span class="product_is_available {{ purchase.status }}">{{ purchase.get_status_display }}</span>
+                                {% if purchase.status == 'replaced' %}
+                                <img onclick="open_replaced_by_product_image(event, '{{ purchase.replaced_by_product_image.url }}')" src="{% static 'v2/imgs/eye_icon.png' %}" alt="">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'v2/js/my_order_page.js' %}"></script>
+{% endblock %}

@@ -17,6 +17,8 @@ cart_app = Vue.createApp({
                 file: null
             },
             is_calculating_price: false,
+            is_confirming_cart: false,
+            cart_is_confirmed: false,
             is_making_order: false,
             order_making_is_available: false,
             time_is_until_18px: false,
@@ -24,10 +26,24 @@ cart_app = Vue.createApp({
     },
     methods: {
         clear_cart() {
-            axios.post("/api/cart/clear/", {}, {headers: {"X-CSRFToken": $cookies.get("csrftoken")}})
-            this.cart = []
+            Swal.fire({
+                title: "Очистить корзину?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Да",
+                cancelButtonText: "Нет"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post("/api/cart/clear/", {}, {headers: {"X-CSRFToken": $cookies.get("csrftoken")}})
+                    this.cart = []
+                }
+            });
         },
         minus_count(cart_item) {
+            this.is_confirming_cart = false
+
             cart_item.count -= 1
 
             if (cart_item.count < 1) {
@@ -37,8 +53,9 @@ cart_app = Vue.createApp({
             axios.post("/api/cart/update_fields/", {"id": cart_item.id, "count": cart_item.count}, {headers: {"X-CSRFToken": $cookies.get("csrftoken")}})
         },
         plus_count(cart_item) {
-            cart_item.count += 1
+            this.is_confirming_cart = false
 
+            cart_item.count += 1
             axios.post("/api/cart/update_fields/", {"id": cart_item.id, "count": cart_item.count}, {headers: {"X-CSRFToken": $cookies.get("csrftoken")}})
         },
         get_sum(cart_item) {
@@ -46,6 +63,8 @@ cart_app = Vue.createApp({
 
         },
         remove_cart_item(cart_item) {
+            this.is_confirming_cart = false
+
             axios.post("/api/cart/delete/", {id: cart_item.id}, {headers: {"X-CSRFToken": $cookies.get("csrftoken")}})
             this.cancel_file_upload(cart_item, "qr_code")
             this.cart.splice(this.cart.indexOf(cart_item), 1)
@@ -78,6 +97,8 @@ cart_app = Vue.createApp({
 
         },
         cancel_file_upload(obj, label) {
+            this.is_confirming_cart = false
+
             if (this.file_is_uploaded(obj, label)) {
                 delete this.uploaded_files[obj[label]]
                 document.getElementById(obj[label].split(":")[0]).value = null
@@ -95,12 +116,15 @@ cart_app = Vue.createApp({
         go_to_cart() {
             this.cancel_file_upload(this.paid_check_pdf, "file")
             this.current_page = "cart"
+            this.cart_is_confirmed = false
+            this.is_confirming_cart = false
         },
         go_to_payment() {
             var astana_current_time = moment.tz("Asia/Almaty").hour()
-            this.order_making_is_available = astana_current_time < 23 && astana_current_time > 8
+            this.order_making_is_available = astana_current_time < 24 && astana_current_time > -1
+            this.time_is_until_18px = astana_current_time < -1 && astana_current_time > 25
 
-            if (!this.is_calculating_price && this.order_making_is_available) {
+            if (this.order_making_is_available) {
                 for (var i = 0; i < this.cart.length; i++) {
                     if (this.cart[i]["qr_code"] == null) {
                         Swal.fire("Все QR-коды товаров должны быть загружены.", "", "warning")
@@ -118,22 +142,41 @@ cart_app = Vue.createApp({
                     return
                 }
 
-                this.is_calculating_price = true
+                if (this.is_confirming_cart) {
+                    this.is_confirming_cart = false
+                    this.cart_is_confirmed = true
+                } else {
+                    this.cart_is_confirmed = false
+                    this.is_confirming_cart = true
 
-                var astana_current_time = moment.tz("Asia/Almaty").hour()
-                if (this.express_checkbox && astana_current_time < -1 && astana_current_time > 25) {
+                    Swal.fire({
+                        title: "Пожалуйста, внимательно проверьте корзину и загруженные файлы",
+                        icon: "warning"
+                    })
+                }
+
+                if (this.express_checkbox && this.time_is_until_18px) {
                     this.express_checkbox = true
                 } else {
                     this.express_checkbox = false
                 }
 
-                axios("/api/order/calculate/", {params: {is_express: this.express_checkbox}}).then((response) => {
-                    this.payment_info = response.data
-                    this.current_page = "payment"
-                    window.scrollTo({top: 0, behavior: "smooth"});
-                }).finally(() => {
-                    this.is_calculating_price = false
-                })
+                if (this.cart_is_confirmed) {
+                    this.is_calculating_price = true
+
+                    axios("/api/order/calculate/", {params: {is_express: this.express_checkbox}}).then((response) => {
+                        this.payment_info = response.data
+                        this.current_page = "payment"
+                        window.scrollTo({top: 0, behavior: "smooth"});
+                    }).catch((err) => {
+                        this.is_confirming_cart = true
+                        Swal.fire("Ошибка", "Свяжитесь с менеджерами", "error")
+                    }).finally(() => {
+                        this.is_calculating_price = false
+                    })
+                }
+            } else {
+                this.is_confirming_cart = false
             }
         },
         make_order() {
@@ -174,7 +217,7 @@ cart_app = Vue.createApp({
                       title: "Заказ принят",
                       icon: "success",
                     }).then((result) => {
-                      window.location.href = '/';
+                      window.location.href = '/my_orders/';
                     });
                 }).catch((err) => {
                     Swal.fire("Произошла какая-та ошибка!", "Свяжитесь с менеджерами", "error")
@@ -190,7 +233,7 @@ cart_app = Vue.createApp({
     mounted() {
         axios("/api/cart/get_many/").then(response => this.cart = response.data)
         var astana_current_time = moment.tz("Asia/Almaty").hour()
-        this.order_making_is_available = astana_current_time < 23 && astana_current_time > 8
+        this.order_making_is_available = astana_current_time < 24 && astana_current_time > -1
         this.time_is_until_18px = astana_current_time < -1 && astana_current_time > 25
     }
 })
