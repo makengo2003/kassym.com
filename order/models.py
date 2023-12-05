@@ -11,7 +11,7 @@ class Order(models.Model):
                               blank=True)
     company_name = models.CharField(max_length=255, null=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    manager = models.ForeignKey(Manager, on_delete=models.PROTECT, null=True)
+    manager = models.ForeignKey(Manager, on_delete=models.PROTECT, null=True, blank=True)
     deliveries_qr_code = models.FileField(upload_to="deliveries_qr_code/")
     selection_sheet_file = models.FileField(upload_to="selection_sheet_files/")
     is_express = models.BooleanField(null=True, blank=True)
