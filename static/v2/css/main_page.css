@@ -162,6 +162,20 @@ html {
     border-radius: 8px;
 
     box-shadow: 0px 0px 3px 0px #e4e4e4;
+    position: relative;
+}
+
+.products_list .product_card .product_img .discount_percentage {
+    position: absolute;
+    bottom: 7px;
+    left: 7px;
+    margin: 0;
+    color: white;
+    background-color: #f66161;
+    font-size: 12px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: Gilroy-Bold;
 }
 
 .products_list .product_card .text {
@@ -169,9 +183,21 @@ html {
     font-size: 13px;
 }
 
-.products_list .product_card .text .product_price {
+.products_list .product_card .text .product_price_with_discount {
     font-family: Gilroy-Bold;
-    font-size: 15px;
+    font-size: 17px;
+}
+
+.products_list .product_card .text .product_price {
+    text-decoration: line-through;
+    opacity: 0.5;
+    font-size: 12px;
+}
+
+.products_list .product_card .text .product_prices {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .products_list .product_card .text .product_category {

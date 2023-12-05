@@ -117,19 +117,19 @@ def _get_products(user: User, order_by: str = "-id", last_obj_id: Sequence = Non
             image=F("poster"),
             is_favourite=is_favourite_case,
             category_name=F("category__name"),
-        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster")[index_starts_at:index_starts_at+40]
+        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster", "discount_percentage")[index_starts_at:index_starts_at+40]
     elif searching:
         products = Product.objects.filter(q_filter, **filter_query).annotate(
             image=F("poster"),
             is_favourite=is_favourite_case,
             category_name=F("category__name"),
-        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster")
+        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster", "discount_percentage")
     else:
         products = Product.objects.filter(q_filter, **filter_query).annotate(
             image=F("poster"),
             is_favourite=is_favourite_case,
             category_name=F("category__name"),
-        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster")[index_starts_at:index_starts_at+40]
+        ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster", "discount_percentage")[index_starts_at:index_starts_at+40]
 
     products = ProductsSerializer(data=products, many=True)
     products.is_valid()
@@ -171,7 +171,9 @@ def get_top_5_products_of_each_category(user):
                 "is_available": product.is_available,
                 "count": product.count,
                 "category_id": product.category.id,
-                "is_favourite": product.is_favourite
+                "is_favourite": product.is_favourite,
+                "discount_percentage": product.discount_percentage,
+                "price_with_discount": product.price - int(product.price * (product.discount_percentage / 100))
             })
 
     random.shuffle(products)

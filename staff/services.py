@@ -38,7 +38,9 @@ class StaffServicesPresenter(BaseServicesPresenter):
         product_name = data["product"]["name"]
         product_code = data["product"]["code"]
         product_image = f'= IMAGE("https://kassym.com/{data["product"]["image"]}"; 2)'
-        product_price = str(data["product"]["price"])
+        product_price = data["product"]["price"]
+        product_discount_percentage = data["product"]["discount_percentage"]
+        product_price = str(product_price - int(product_price * (product_discount_percentage / 100)))
         order_date = data["date"]
 
         vendor_number = Product.objects.filter(id=data["product"]["id"]).first().vendor_number

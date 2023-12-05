@@ -70,7 +70,14 @@
             <div class="actions">
                 <div class="product_action">
                     <div class="price_and_wishlist_btn">
-                        <h2>{{ product.price }} Р</h2>
+                        <div class="product_prices">
+                            {% if product.discount_percentage > 0 %}
+                            <h2>{{ product.price_with_discount }} Р</h2>
+                            <h3>{{ product.price }} Р</h3>
+                            {% else %}
+                            <h2>{{ product.price }} Р</h2>
+                            {% endif %}
+                        </div>
                         {% if product.is_favourite %}
                         <img src="{% static 'v2/imgs/heart.png' %}" alt="" onclick="add_wishlist(event)" data-value="true" data-id="{{ product.id }}">
                         {% else %}

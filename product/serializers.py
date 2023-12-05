@@ -12,15 +12,20 @@ class ProductsSerializer(serializers.ModelSerializer):
     is_favourite = serializers.BooleanField(default=False)
     image = serializers.SerializerMethodField('get_default_image', required=False)
     category_name = serializers.CharField(max_length=255, required=False)
+    price_with_discount = serializers.SerializerMethodField('get_price_with_discount', required=False)
 
     class Meta:
         model = Product
-        fields = ["id", "name", "price", "code", "image", "is_favourite", "category_name", "is_available", "count", "currency"]
+        fields = ["id", "name", "price", "code", "image", "is_favourite", "category_name", "is_available", "count",
+                  "currency", "discount_percentage", "price_with_discount"]
 
     def get_default_image(self, obj):
         if obj.poster:
             return obj.poster.url
         return None
+
+    def get_price_with_discount(self, obj):
+        return obj.price - int(obj.price * (obj.discount_percentage / 100))
 
 
 class ProductOptionValueSerializer(serializers.ModelSerializer):
@@ -49,10 +54,14 @@ class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, required=False)
     category_id = serializers.IntegerField()
     category_name = serializers.CharField(max_length=500)
+    price_with_discount = serializers.SerializerMethodField('get_price_with_discount', required=False)
 
     class Meta:
         model = Product
         exclude = ["category"]
+
+    def get_price_with_discount(self, obj):
+        return obj.price - int(obj.price * (obj.discount_percentage / 100))
 
 
 class ProductFormSerializer(serializers.ModelSerializer):

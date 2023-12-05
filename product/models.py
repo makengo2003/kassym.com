@@ -10,6 +10,7 @@ class Product(models.Model):
     code_lower = models.CharField(max_length=500, null=True, editable=False, blank=True)
     description = models.TextField()
     price = models.PositiveIntegerField()
+    discount_percentage = models.PositiveIntegerField(blank=True, default=0)
     is_available = models.BooleanField(default=False)
     code = models.CharField(max_length=50, default="", blank=True)
     vendor_number = models.CharField(max_length=50, null=True, blank=True)
