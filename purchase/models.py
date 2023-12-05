@@ -23,7 +23,7 @@ class Purchase(models.Model):
     replaced_by_product_image = models.ImageField(upload_to="replaced_by_product_image/", null=True, blank=True)
     is_sorted = models.BooleanField(default=False, null=True, blank=True)
     last_modified = models.DateTimeField(default=datetime_now)
-    is_purchased_by = models.ForeignKey(Buyer, on_delete=models.PROTECT)
+    is_purchased_by = models.ForeignKey(Buyer, on_delete=models.PROTECT, null=True)
 
     def __str__(self):
         return self.order_item.product.name
