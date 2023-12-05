@@ -20,11 +20,6 @@
 
     {% block styles %}
     {% endblock %}
-
-	<script src="{% static 'js/packages/vue.global.prod.js' %}"></script>
-	<script src="{% static 'js/packages/axios.min.js' %}"></script>
-	<script src="{% static 'js/packages/sweetalert.min.js' %}"></script>
-	<script src="{% static 'js/packages/vue-cookies.js' %}"></script>
 </head>
 <body>
 	<div class="main_content">
@@ -55,18 +50,36 @@
 					<button>Поиск</button>
 				</form>
 
-				{% if request.user.is_authenticated %}
-				<div class="pages">
-					<p><a href="/courses/">Курсы</a></p>
-					<p><a href="/favourites/">Избранные</a></p>
-				</div>
-				{% endif %}
-
 				<div class="authentication">
 					{% if not request.user.is_authenticated %}
 					<button class="signup_btn" onclick="document.getElementById('login_form_window').style.display = 'block'">Войти</button>
 					{% else %}
-					<button class="signup_btn" onclick="window.location.href = '/profile/'">Профиль</button>
+					<div id="profile_dropdown_btn" class="profile_dropdown_btn" onclick="profile_dropdown_clicked()">
+						<div class="user">
+							{% if request.user.client %}
+							<p class="fullname">{{ request.user.client.fullname }}</p>
+							<span class="company_name">{{ request.user.client.company_name }}</span>
+							{% else %}
+							<p class="fullname">Admin</p>
+							<span class="company_name">Admin</span>
+							{% endif %}
+						</div>
+
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+
+						<div class="profile_dropdown">
+							<a href="/profile/"><img src="{% static 'v2/imgs/profile_icon.png' %}" alt=""><span>Профиль</span></a>
+							<a href="/favourites/"><img src="{% static 'v2/imgs/empty_heart.png' %}" alt=""><span>Избранные</span></a>
+							<a href="/cart/"><img style="transform: translateX(-2px);" src="{% static 'v2/imgs/cart_icon.png' %}" alt=""><span>Корзина</span></a>
+							<a href="/my_orders/"><img style="transform: translateX(-2px);" src="{% static 'v2/imgs/my_orders_icon.png' %}" alt=""><span>Мои заказы</span></a>
+							<a href="/courses/"><img src="{% static 'v2/imgs/courses_icon.png' %}" alt=""><span>Курсы</span></a>
+							<hr>
+							<a style="color: #f66161;" href="/api/user/logout/"><img style="transform: translateX(2px);" src="{% static 'v2/imgs/logout_icon.png' %}" alt=""><span>Выйти</span></a>
+						</div>
+					</div>
 					{% endif %}
 				</div>
 
@@ -84,6 +97,8 @@
 
 							{% if request.user.is_authenticated %}
 							<a href="/favourites/">Избранные</a>
+							<a href="/cart/">Корзина</a>
+							<a href="/my_orders/">Мои заказы</a>
 							<a href="/courses/">Курсы</a>
 							{% endif %}
 
@@ -228,6 +243,44 @@
 		</div>
 	</div>
 
+	<div id="add_to_cart_form">
+		<form onsubmit="submit_add_to_cart_form(event)">
+			<img src="{% static 'v2/imgs/close_form.png' %}" onclick="document.getElementById('add_to_cart_form').style.display = 'none'">
+
+			{% csrf_token %}
+			<input type="hidden" id="add_to_cart_form-product_id">
+
+			<h2>Добавить в корзину</h2>
+
+			<div class="content">
+				<div id="add_to_cart_form-poster"></div>
+
+				<div class="info">
+					<div class="product">
+						<p id="add_to_cart_form-name"></p>
+						<p id="add_to_cart_form-category_name"></p>
+					</div>
+
+					<div class="count_management">
+						<button type="button" onclick="minus_count()"><div class="bar"></div></button>
+						<p id="add_to_cart_form-count"></p>
+						<button type="button" onclick="plus_count()"><div class="bar"></div><div class="bar vertical_bar"></div></button>
+
+						<p id="add_to_cart_form-price"></p>
+						<p style="margin-left: 3px;">Р</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="action">
+				<button type="submit">Добавить в корзину</button>
+				<p>Итого: <span id="add_to_cart_form-sum"></span> <span style="margin-left: -2px;">Р</span></p>
+			</div>
+		</form>
+	</div>
+
+
+
 	<script>
 	{% if not request.user.is_authenticated %}
 		let user_is_authenticated = false
@@ -235,6 +288,14 @@
 		let user_is_authenticated = true
 	{% endif %}
 	</script>
+
+	<script src="{% static 'v2/js/packages/vue.global.prod.js' %}"></script>
+	<script src="{% static 'v2/js/packages/vue-cookies.js' %}"></script>
+	<script src="{% static 'v2/js/packages/jquery.min.js' %}"></script>
+	<script src="{% static 'v2/js/packages/axios.min.js' %}"></script>
+	<script src="{% static 'v2/js/packages/pagination.js' %}"></script>
+	<script src="{% static 'v2/js/packages/sweetalert2.all.min.js' %}"></script>
+
 	<script src="{% static 'v2/js/base.js' %}"></script>
 	{% block scripts %}
     {% endblock %}

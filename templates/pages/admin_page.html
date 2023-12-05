@@ -445,6 +445,10 @@
 							<input type="text" :value="client_form['device2']" disabled>
 						</div>
 						<div v-if="client_form['id'] != 0" class="add_product block_css">
+							<b>Устройство 3:</b>
+							<input type="text" :value="client_form['device3']" disabled>
+						</div>
+						<div v-if="client_form['id'] != 0" class="add_product block_css">
 							<span @click="reset_devices()" style="color: blue; text-decoration: underline;">Сброс устройств</span>
 						</div>
 

@@ -7,13 +7,15 @@ from django.contrib.sessions.models import Session
 
 from typing import Mapping, List
 
-from django.db.models import F, Case, When
+from django.db.models import F, Case, When, Q, Sum, Value, FloatField
+from django.db.models.functions import Cast
 from django.shortcuts import get_object_or_404
 from django_user_agents.utils import get_user_agent
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.request import Request
 from user_agents.parsers import UserAgent
 
+from order.models import Order
 from product.models import Product
 from product.serializers import ProductsSerializer
 from project.settings import BOT_TOKEN
@@ -103,9 +105,14 @@ def login(request: Request) -> None:
         raise ValidationError(dict(form.errors))
 
 
-def change_user_fullname(user: User, first_name: str, last_name: str) -> None:
+def change_fullname(user: User, first_name: str, last_name: str) -> None:
     user.client.fullname = first_name + " " + last_name
     user.client.save(update_fields=["fullname"])
+
+
+def change_company_name(user: User, company_name: str) -> None:
+    user.client.company_name = company_name
+    user.client.save(update_fields=["company_name"])
 
 
 def add_client(data: Mapping) -> int:
@@ -168,7 +175,13 @@ def set_or_verify_user_device(client: Client, request: Request) -> bool:
         if not _verify_devices(client_device1, request_device):
             if client.device2:
                 client_device2 = get_user_agent(Obj({"HTTP_USER_AGENT": client.device2}))
-                return _verify_devices(client_device2, request_device)
+                if not _verify_devices(client_device2, request_device):
+                    if client.device3:
+                        client_device3 = get_user_agent(Obj({"HTTP_USER_AGENT": client.device3}))
+                        return _verify_devices(client_device3, request_device)
+                    else:
+                        client.device3 = request.META['HTTP_USER_AGENT']
+                        client.save(update_fields=["device3"])
             else:
                 client.device2 = request.META['HTTP_USER_AGENT']
                 client.save(update_fields=["device2"])
@@ -207,3 +220,45 @@ def get_favourite_products(user):
         category_name=F("category__name"),
     ).order_by("-favourites__id").distinct().only("id", "name", "price", "code", "is_available", "count", "currency", "poster")
     return ProductsSerializer(products, many=True).data
+
+
+def get_finance(change_time):
+    finance = Order.objects.filter(~Q(status="new"), created_at__date=change_time).aggregate(
+        total_price=Sum("total_sum_in_tenge"),
+        total_products_price_in_tenge=Sum(F("total_products_price") * (F("ruble_rate") - Value(0.5))),
+        total_products_price_in_ruble=Sum(F("total_products_price"))
+    )
+
+    total_price = int(finance["total_price"] or 0)
+    total_products_price_in_tenge = int(finance["total_products_price_in_tenge"] or 0)
+    total_products_price_in_ruble = int(finance["total_products_price_in_ruble"] or 0)
+
+    total_expenses_in_ruble = 0
+    total_expenses_in_tenge = 0
+    total_managers_expenses_in_ruble = 0
+    total_managers_expenses_in_tenge = 0
+    total_buyers_expenses_in_ruble = 0
+    total_buyers_expenses_in_tenge = 0
+    total_sorters_expenses_in_ruble = 0
+    total_sorters_expenses_in_tenge = 0
+
+    expenses = [{
+        "staff_fullname": "adqweqwd",
+        "sum": 123,
+        "description": "adrkpoegjifn oajnesio njinaksd ",
+    }] * 20
+
+    return {
+        "total_price": total_price,
+        "total_products_price_in_tenge": total_products_price_in_tenge,
+        "total_products_price_in_ruble": total_products_price_in_ruble,
+        "total_expenses_in_ruble": total_expenses_in_ruble,
+        "total_expenses_in_tenge": total_expenses_in_tenge,
+        "total_managers_expenses_in_ruble": total_managers_expenses_in_ruble,
+        "total_managers_expenses_in_tenge": total_managers_expenses_in_tenge,
+        "total_buyers_expenses_in_ruble": total_buyers_expenses_in_ruble,
+        "total_buyers_expenses_in_tenge": total_buyers_expenses_in_tenge,
+        "total_sorters_expenses_in_ruble": total_sorters_expenses_in_ruble,
+        "total_sorters_expenses_in_tenge": total_sorters_expenses_in_tenge,
+        "expenses": expenses
+    }

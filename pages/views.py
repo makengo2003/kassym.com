@@ -3,28 +3,28 @@ from django.shortcuts import render, redirect
 
 from project.utils import check_account_expiration
 from site_settings import services as site_settings_services
-from django.views.decorators.cache import never_cache
 from project.settings import MAIN_CATEGORY_ID
 from course import services as course_services
 from product import services as product_services
+from order.services_presenter import OrderServicesPresenter
+from order import services as order_services
 from user import services as user_services
 import random
 
 
-@never_cache
 def search_page_view(request):
-    products_count = product_services.get_many(request.user, request.GET)["count"]
-    return render(request, "v2/search_page.html", {"count": products_count})
+    if request.user.is_authenticated:
+        products_count = product_services.get_many(request.user, request.GET)["count"]
+        return render(request, "v2/search_page.html", {"count": products_count})
+    return redirect("/")
 
 
-@never_cache
 def main_page_view(request):
     products = product_services.get_top_5_products_of_each_category(request.user)
     random.shuffle(products)
     return render(request, "v2/main_page.html", {"products": products})
 
 
-@never_cache
 @check_account_expiration()
 def favourites_page_view(request):
     if request.user.is_authenticated:
@@ -33,7 +33,6 @@ def favourites_page_view(request):
     return redirect("/")
 
 
-@never_cache
 @check_account_expiration()
 def products_page_view(request):
     if request.user.is_authenticated:
@@ -54,7 +53,6 @@ def products_page_view(request):
     return redirect("/")
 
 
-@never_cache
 @check_account_expiration()
 def product_page_view(request):
     if request.user.is_authenticated:
@@ -86,35 +84,43 @@ def product_page_view(request):
     return redirect("/")
 
 
-@never_cache
 @check_account_expiration()
 def admin_page_view(request):
+    if hasattr(request.user, "super_admin"):
+        return redirect("/super_admin/")
+
     if request.user.is_staff or request.user.is_superuser:
         return render(request, "pages/admin_page.html", {"MAIN_CATEGORY_ID": MAIN_CATEGORY_ID})
+
     return redirect("/profile/")
 
 
-@never_cache
 @check_account_expiration()
 def profile_page_view(request):
     if request.user.is_authenticated:
+        if hasattr(request.user, "manager"):
+            return redirect("/manager/")
+
+        elif hasattr(request.user, "buyer"):
+            return redirect("/buyer/")
+
+        elif hasattr(request.user, "super_admin"):
+            return redirect("/super_admin/")
+
         if request.user.is_superuser or request.user.is_staff:
             return redirect("/admin/")
-        return render(request, "pages/profile_page.html")
+        return render(request, "v2/profile_page.html")
     return redirect("/")
 
 
-@never_cache
 def about_us_view(request):
     return render(request, "pages/about_us_page.html", {"about_us": site_settings_services.get_about_us_text()})
 
 
-@never_cache
 def guarantee_view(request):
     return FileResponse(site_settings_services.get_guarantee_file())
 
 
-@never_cache
 @check_account_expiration()
 def courses_page_view(request):
     if request.user.is_authenticated:
@@ -124,11 +130,49 @@ def courses_page_view(request):
     return redirect("/")
 
 
-@never_cache
 @check_account_expiration()
 def lesson_page_view(request):
     if request.user.is_authenticated:
         lesson_id = request.GET.get("id", 0)
         course, lessons, lesson = course_services.get_lesson_page(lesson_id)
         return render(request, "v2/lesson_page.html", {"course": course, "lessons": lessons, "lesson": lesson})
+    return redirect("/")
+
+
+@check_account_expiration()
+def cart_page_view(request):
+    if hasattr(request.user, "client"):
+        return render(request, "v2/cart_page.html")
+    return redirect("/")
+
+
+def manager_page_view(request):
+    if hasattr(request.user, "manager"):
+        return render(request, "v2/admin_page/index.html")
+    return redirect("/")
+
+
+def buyer_page_view(request):
+    if hasattr(request.user, "buyer"):
+        return render(request, "v2/admin_page/index.html")
+    return redirect("/")
+
+
+def super_admin_page_view(request):
+    if hasattr(request.user, "super_admin"):
+        return render(request, "v2/admin_page/index.html")
+    return redirect("/")
+
+
+def my_orders_page_view(request):
+    if hasattr(request.user, "client"):
+        orders = OrderServicesPresenter().get_many({"ordering": ["-id"]})
+        return render(request, "v2/my_orders_page.html", {"orders": orders.data})
+    return redirect("/")
+
+
+def my_order_page_view(request):
+    if hasattr(request.user, "client"):
+        order = order_services.get_order(request.user, int(request.GET.get("id", 0)))
+        return render(request, "v2/my_order_page.html", {"order": order})
     return redirect("/")

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import threading
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,12 +30,14 @@ if DEBUG:
 else:
     SITE_DOMAIN = "kassym.com"
 
-ALLOWED_HOSTS = [SITE_DOMAIN, "127.0.0.1"]
+ALLOWED_HOSTS = [SITE_DOMAIN, "127.0.0.1", "192.168.79.119", "172.20.10.3", "192.168.224.119"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +52,12 @@ INSTALLED_APPS = [
     'pages',
     'course.apps.CourseConfig',
     'staff',
+    'cart',
+    'order',
+    'change_time',
+    'manager',
+    'purchase',
+    'sorting',
 
     'base_object_presenter',
     'django_user_agents',
@@ -67,7 +75,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'pages.cache_control_middleware.CacheControlMiddleware'
+    'pages.cache_control_middleware.CacheControlMiddleware',
+    'user.set_request_user_middleware.SetRequestUserMiddleware'
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -89,7 +98,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
-
+ASGI_APPLICATION = 'project.asgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -204,3 +221,4 @@ EMAIL_ADMIN = EMAIL_HOST_USER
 
 MAIN_CATEGORY_ID = 7
 BOT_TOKEN = '6454586115:AAG9og9TP0yxSefacJ-jiFolCGqyxxwrOx0'
+request_user = threading.local()

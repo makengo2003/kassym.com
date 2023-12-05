@@ -1,0 +1,117 @@
+{% load static %}
+
+<div id="delivering_section" class="section">
+    <div class="header">
+        <h3>Отправка</h3>
+
+        <hr>
+
+        <div class="sub_header">
+            <form class="searching" @submit.prevent="get_orders()">
+                <input type="text" v-model="search_input">
+                <button type="submit">Поиск</button>
+                <span v-if="searched" style="cursor: pointer" @click="search_input=''; get_orders()">Отменить поиск</span>
+            </form>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="table">
+            <div class="statuses">
+                <p @click="select_status('sorted')" :class="selected_status == 'sorted' ? 'active': ''">К отправке</p>
+                <p @click="select_status('delivered')" :class="selected_status == 'delivered' ? 'active': ''">Отправленные</p>
+            </div>
+
+            <div class="columns">
+                <p class="is_express"></p>
+                <p class="comments">Номер заказа</p>
+                <p class="company_name">ИП</p>
+            </div>
+
+            <div class="rows">
+                <div class="row" v-for="order in orders">
+                    <hr>
+                    <div class="_row" @click="open_order(order)" style="cursor: pointer;">
+                        <p class="is_express"><img v-if="order.is_express" src="{% static 'v2/imgs/is_express_icon.png' %}"></p>
+                        <p class="comments">#${ order.id }</p>
+                        <p class="company_name" style="text-decoration: none;">${ order.company_name }</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window" v-if="opened_order != null">
+        <div class="_window">
+            <div class="header_and_actions">
+                <h3>#${ opened_order.id }/${ opened_order.company_name }</h3>
+            </div>
+
+            <div class="info">
+                <div class="list">
+                    <div class="text">
+                        <span>Менеджер</span>
+                        <p>${ opened_order.manager.first_name } ${ opened_order.manager.last_name } <span class="dt">(${ opened_order.accepted_dt })</span></p>
+                    </div>
+                    <div class="text">
+                        <span>Сортировщик</span>
+                        <p>${ opened_order.is_sorting_by } <span class="dt">(${ opened_order.sorted_dt })</span></p>
+                    </div>
+                    <div class="text" v-if="opened_order.status == 'delivered'">
+                        <span>Кем отправлен</span>
+                        <p>${ opened_order.delivered_by } <span class="dt">(${ opened_order.delivered_dt })</span></p>
+                    </div>
+                    <div class="text">
+                        <span>Кол. товаров</span>
+                        <p>${ opened_order.total_products_count } шт</p>
+                    </div>
+                    <div class="text">
+                        <span>Лист подбора</span>
+                        <p><a @click="open_object_file(opened_order, 'selection_sheet_file')" style="text-decoration: underline">Посмотреть</a></p>
+                    </div>
+                    <div class="text">
+                        <span>QR поставки</span>
+                        <p><a @click="open_object_file(opened_order, 'deliveries_qr_code')" style="text-decoration: underline">Посмотреть</a></p>
+                    </div>
+                </div>
+
+                <p class="comments" v-if="opened_order.comments">${ opened_order.comments }</p>
+            </div>
+
+            <div class="pre_table">
+                <div class="table">
+                    <div class="columns">
+                        <p class="name">Товар</p>
+                        <p class="type">Тип</p>
+                        <p class="buyer">Закупщик</p>
+                        <p class="qr_code">QR Code</p>
+                    </div>
+
+                    <hr>
+
+                    <div class="rows">
+                        <div class="_row" v-for="order_item in opened_order.order_items">
+                            <div class="row" v-for="purchase in order_item.purchases" :style="purchase.status_display == 'Нет в наличий' ? 'opacity: 0.3' : ''">
+                                <p class="name"><a :href="'/product/?product_id=' + order_item.product.id" target="_blank">${ order_item.product.name }</a></p>
+
+                                <p class="type" v-if="order_item.product.category != 7">${ order_item.product.market }</p>
+                                <p class="type" v-else="">Китай</p>
+
+                                <p class="buyer" v-if="purchase.buyer">${ purchase.buyer.first_name } ${ purchase.buyer.last_name } <span>(${ purchase.last_modified })</span></p>
+                                <p class="buyer" v-else=""></p>
+                                <p class="qr_code"><button @click="open_object_file(order_item, 'qr_code')">QR Code</button></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button v-if="opened_order.status == 'sorted'" @click="make_delivered()">Отправлен</button>
+            </div>
+
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="close_order()">
+        </div>
+    </div>
+</div>
+

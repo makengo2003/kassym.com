@@ -1,0 +1,105 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>kassym.com dashboard</title>
+
+    <link rel="icon" type="image/x-icon" href="/static/imgs/icon.png">
+	<link rel="stylesheet" href="{% static 'v2/css/admin_page/base.css' %}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/manager_page.css' %}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/buyer_page.css' %}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/media_buyer_page.css' %}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/finance_section.css' %}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/expenses_section.css' %}">
+</head>
+<body>
+    <div class="burger_btn" id="burger_btn" onclick="open_burger()">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+
+    <div id="sidebar" class="sidebar">
+        <h3>{{ request.user.first_name }}</h3>
+
+        <hr>
+
+        <p onclick="window.location.href = '/'"><img src="{% static 'v2/imgs/go_to_site.png' %}"><span>Открыть сайт</span></p>
+
+        {% if request.user.manager or request.user.super_admin %}
+        <p :style="opened_section == 'orders' ? 'color: #00FFF5;' : ''" @click="open_section('orders')"><img :src="opened_section == 'orders' ? '{% static 'v2/imgs/blue_orders_icon.png' %}' : '{% static 'v2/imgs/orders_icon.png' %}'"><span>Заказ товаров</span></p>
+        {% endif %}
+
+        {% if request.user.buyer or request.user.super_admin %}
+        <p :style="opened_section == 'purchases' ? 'color: #00FFF5;' : ''" @click="open_section('purchases')"><img :src="opened_section == 'purchases' ? '{% static 'v2/imgs/blue_orders_icon.png' %}' : '{% static 'v2/imgs/orders_icon.png' %}'"><span>Закуп</span></p>
+        <p :style="opened_section == 'sorting' ? 'color: #00FFF5;' : ''" @click="open_section('sorting')"><img :src="opened_section == 'sorting' ? '{% static 'v2/imgs/blue_sorting_icon.png' %}' : '{% static 'v2/imgs/sorting_icon.png' %}'"><span>Сортировка</span></p>
+        <p :style="opened_section == 'delivering' ? 'color: #00FFF5;' : ''" @click="open_section('delivering')"><img :src="opened_section == 'delivering' ? '{% static 'v2/imgs/blue_delivery_icon.png' %}' : '{% static 'v2/imgs/delivery_icon.png' %}'"><span>Отправка</span></p>
+        {% endif %}
+
+        {% if request.user.super_admin %}
+        <p :style="opened_section == 'finance' ? 'color: #00FFF5;' : ''" @click="open_section('finance')"><img :src="opened_section == 'finance' ? '{% static 'v2/imgs/blue_finance_icon.png' %}' : '{% static 'v2/imgs/finance_icon.png' %}'"><span>Финансы</span></p>
+        {% else %}
+        <p :style="opened_section == 'expenses' ? 'color: #00FFF5;' : ''" @click="open_section('expenses')"><img :src="opened_section == 'expenses' ? '{% static 'v2/imgs/blue_expenses_icon.png' %}' : '{% static 'v2/imgs/expenses_icon.png' %}'"><span>Расходы</span></p>
+        {% endif %}
+
+        <hr>
+
+        <p :style="opened_section == 'settings' ? 'color: #00FFF5;' : ''" @click="open_section('settings')"><img :src="opened_section == 'settings' ? '{% static 'v2/imgs/blue_settings_icon.png' %}' : '{% static 'v2/imgs/settings_icon.png' %}'"><span>Настройки</span></p>
+        <p onclick="window.location.href = '{% url 'logout' %}'"><img src="{% static 'v2/imgs/white_logout_icon.png' %}"><span>Выйти</span></p>
+    </div>
+
+    {% if request.user.manager or request.user.super_admin %}
+        {% include 'v2/admin_page/orders_section.html' %}
+    {% endif %}
+
+    {% if request.user.buyer or request.user.super_admin %}
+        {% include 'v2/admin_page/purchases_section.html' %}
+        {% include 'v2/admin_page/sorting_section.html' %}
+        {% include 'v2/admin_page/delivering_section.html' %}
+    {% endif %}
+
+    {% if request.user.super_admin %}
+        {% include 'v2/admin_page/finance_section.html' %}
+    {% else %}
+        {% include 'v2/admin_page/expenses_section.html' %}
+    {% endif %}
+
+    {% include 'v2/admin_page/settings_section.html' %}
+
+    <div class="scripts">
+        <script src="{% static 'v2/js/packages/vue-cookies.js' %}"></script>
+        <script src="{% static 'v2/js/packages/vue.global.prod.js' %}"></script>
+        <script src="{% static 'v2/js/packages/vue-native-websocket.js' %}"></script>
+        <script src="{% static 'v2/js/packages/jquery.min.js' %}"></script>
+        <script src="{% static 'v2/js/packages/axios.min.js' %}"></script>
+        <script src="{% static 'v2/js/packages/pagination.js' %}"></script>
+        <script src="{% static 'v2/js/packages/sweetalert2.all.min.js' %}"></script>
+
+
+        <script src="{% static 'v2/js/admin_page/base.js' %}"></script>
+        <script src="{% static 'v2/js/admin_page/buyer.js' %}"></script>
+        <script src="{% static 'v2/js/admin_page/sorting.js' %}"></script>
+        <script src="{% static 'v2/js/admin_page/delivering.js' %}"></script>
+        <script src="{% static 'v2/js/admin_page/finance.js' %}"></script>
+        <script src="{% static 'v2/js/admin_page/expenses.js' %}"></script>
+
+        <script src="{% static 'v2/js/admin_page/sidebar.js' %}"></script>
+
+        <script>
+            function open_burger() {
+                document.getElementById("burger_btn").classList.toggle("active")
+                document.getElementById("sidebar").classList.toggle("active")
+
+                if (document.getElementById("sidebar").classList.contains("active")) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>

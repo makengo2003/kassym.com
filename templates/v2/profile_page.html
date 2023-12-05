@@ -1,0 +1,72 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/profile_page.css' %}">
+{% endblock %}
+
+
+{% block body %}
+<div class="block" id="profile_page">
+    <div class="container">
+        <div class="user_info">
+            <h2>{{ request.user.client.fullname }}</h2>
+            <p class="company_name">{{ request.user.client.company_name }}</p>
+            <p>{{ request.user.username }}</p>
+        </div>
+        <div class="actions">
+			<a onclick="open_change_password_form()">Изменить пароль</a>
+			<a onclick="open_change_fullname_form()">Изменить ФИО</a>
+			<a onclick="open_change_company_name_form()">Изменить ИП</a>
+			<a href="{% url 'logout' %}">Выйти из системы</a>
+        </div>
+        <a class="go_to_catalog" href="/">Перейти к каталогу</a>
+    </div>
+
+    <div id="change_password_form">
+        <form onsubmit="change_password(event)">
+            {% csrf_token %}
+            <h3>Изменить пароль</h3>
+
+            <input type="password" name="old_password" placeholder="Текущий пароль" required>
+            <input type="password" name="new_password1" placeholder="Новый пароль" required>
+            <input type="password" name="new_password2" placeholder="Подтвердить новый пароль" required>
+
+            <p id="change_password_error" style="color: red; font-size: 12px;"></p>
+
+            <button type="submit">Изменить</button>
+            <img src="{% static 'v2/imgs/close_form.png' %}" alt="" onclick="close_change_password_form()">
+        </form>
+    </div>
+
+    <div id="change_fullname_form">
+        <form onsubmit="change_fullname(event)">
+            {% csrf_token %}
+            <h3>Изменить ФИО</h3>
+
+            <input type="text" name="first_name" placeholder="Имя" required>
+            <input type="text" name="last_name" placeholder="Фамилия" required>
+
+            <button type="submit">Изменить</button>
+            <img src="{% static 'v2/imgs/close_form.png' %}" alt="" onclick="close_change_fullname_form()">
+        </form>
+    </div>
+
+    <div id="change_company_name_form">
+        <form onsubmit="change_company_name(event)">
+            {% csrf_token %}
+            <h3>Изменить ИП</h3>
+
+            <input type="text" name="company_name" placeholder="Названия ИП" required>
+
+            <button type="submit">Изменить</button>
+            <img src="{% static 'v2/imgs/close_form.png' %}" alt="" onclick="close_change_company_name_form()">
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'v2/js/profile_page.js' %}"></script>
+{% endblock %}

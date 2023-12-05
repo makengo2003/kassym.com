@@ -1,0 +1,594 @@
+.content .table {
+    padding: 20px 27px;
+    padding-bottom: 0px;
+    height: 500px;
+}
+
+.content .table .statuses {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 0px 3px;
+    flex-wrap: wrap;
+}
+
+.content .table .statuses p {
+    margin: 0;
+    padding: 5px 15px;
+    border-radius: 5px;
+    background-color: white;
+    color: #1D1D42;
+    border: 1px solid #1D1D42;
+    font-family: Gilroy-Medium;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.content .table .statuses p.active {
+    background-color: #1D1D42;
+    color: white;
+}
+
+.content .table .list {
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+    padding: 3px 3px 30px 3px;
+    gap: 25px;
+    max-height: 420px;
+}
+
+.content .table .list .card {
+    display: flex;
+    gap: 10px;
+    width: calc(100% / 3 - 57px);
+    padding: 17px 20px;
+    box-shadow: 0px 0px 10px -6px #1D1D42;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.content .table .list .card .purchase_img {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    box-shadow: 0px 0px 5px -3px black;
+
+    min-width: 69px;
+    height: 93px;
+    border-radius: 3px;
+}
+
+.content .table .list .card .text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.content .table .list .card .text p {
+    margin: 0px;
+    font-size: 14px;
+    letter-spacing: 0px;
+    cursor: auto;
+}
+
+.content .table .list .card .text p:first-child {
+    font-family: Gilroy-Medium;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    min-height: 36px;
+}
+
+.window ._window .info .list .text {
+    min-width: 370px;
+}
+
+.window ._window .info .list .text #replaced_by_product_image_label span {
+    background: #2f2f2f;
+    color: white;
+    padding: 3px 7px;
+    opacity: 1;
+    border-radius: 3px;
+    font-family: Gilroy-Regular;
+}
+
+.window ._window .info .list button, .window ._window .buttons button {
+    margin-top: auto;
+    width: 150px;
+    height: 40px;
+    border: none;
+    border-radius: 3px;
+    background: #2f2f2f;
+    color: white;
+    font-size: 15px;
+}
+
+.window ._window {
+    width: fit-content;
+    gap: 15px;
+}
+
+.window ._window h3 {
+    font-size: 18px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    min-height: 22px;
+    line-break: anywhere;
+    padding-right: 30px;
+}
+
+.window ._window .info {
+    align-items: normal;
+    gap: 20px;
+    margin-top: 0;
+}
+
+.window ._window .info .purchase_img {
+    min-width: 221.25px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-shadow: 0px 0px 5px -3px black;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.window ._window .info .list .texts, .window ._window .info .purchase_img {
+    height: 295px;
+}
+
+.window ._window .info .list .texts {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.window ._window .close_window_btn {
+    right: 15px;
+    top: 15px;
+}
+
+.window ._window .info .list .text input {
+    width: 70px;
+    font-size: 16px;
+}
+
+.window ._window .info .list .text select {
+    text-align: right;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding-right: 3px;
+    font-size: 16px;
+}
+
+.window ._window .buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.window ._window .info .list {
+    gap: 20px;
+    align-items: end;
+}
+
+
+#sorting_section .window ._window .table {
+    width: max-content;
+}
+
+#sorting_section .window ._window .pre_table {
+    overflow-x: scroll;
+}
+
+#sorting_section .window ._window .table .rows .row .is_sorted, #sorting_section .window ._window .table .columns .is_sorted {
+    margin-right: 40px;
+    width: 92px;
+}
+
+#sorting_section .content .table {
+    height: 705px;
+}
+
+#sorting_section .content .table .rows {
+    height: 600px;
+}
+
+#sorting_section .window ._window {
+    width: 1000px;
+}
+
+#sorting_section .window ._window .info {
+    gap: 40px;
+}
+
+#sorting_section .window ._window .table .columns .replaced_column, #sorting_section .window ._window .table .rows .row .replaced_column {
+    width: 120px;
+    margin-right: 30px;
+}
+
+#sorting_section .window ._window .table .columns .not_available {
+    color: red;
+}
+
+#sorting_section .window ._window .table .columns .purchased, #sorting_section .window ._window .table .columns .replaced {
+    color: green;
+}
+
+#sorting_section .window ._window .table .columns .new, #sorting_section .window ._window .table .columns .will_be_tomorrow {
+    opacity: 0.5;
+}
+
+#sorting_section .window ._window .table .columns .status select, #sorting_section .window ._window .table .rows .row .status select {
+    border: none;
+    outline: none;
+    width: 100px;
+    transform: translateX(-4px);
+}
+
+#sorting_section .window ._window .table .columns .status, #sorting_section .window ._window .table .rows .row .status {
+    width: 200px;
+}
+
+#sorting_section .window ._window .table .qr_code {
+    border: none;
+    padding: 0;
+    width: 150px;
+}
+
+#sorting_section .window ._window .table .rows .is_sorted input {
+    width: 20px;
+    height: 20px;
+}
+
+#sorting_section .window ._window .header_and_actions .actions button {
+    background: #2f2f2f;
+}
+
+
+
+
+
+
+
+
+
+#delivering_section .window ._window {
+    width: 1000px;
+}
+
+#delivering_section .window ._window .info {
+    gap: 40px;
+}
+
+#delivering_section .window ._window .table .columns .replaced_column, #delivering_section .window ._window .table .rows .row .replaced_column {
+    width: 120px;
+    margin-right: 30px;
+}
+
+#delivering_section .window ._window .table .columns .not_available {
+    color: red;
+}
+
+#delivering_section .window ._window .table .columns .purchased, #delivering_section .window ._window .table .columns .replaced {
+    color: green;
+}
+
+#delivering_section .window ._window .table .columns .new, #delivering_section .window ._window .table .columns .will_be_tomorrow {
+    opacity: 0.5;
+}
+
+#delivering_section .window ._window .table .columns .status select, #delivering_section .window ._window .table .rows .row .status select {
+    border: none;
+    outline: none;
+    width: 100px;
+    transform: translateX(-4px);
+}
+
+#delivering_section .window ._window .table .columns .status, #delivering_section .window ._window .table .rows .row .status {
+    width: 200px;
+}
+
+#delivering_section .window ._window .table .qr_code {
+    border: none;
+    padding: 0;
+    width: 150px;
+}
+
+#delivering_section .window ._window .table .rows .is_sorted input {
+    width: 20px;
+    height: 20px;
+}
+
+#delivering_section .window ._window .header_and_actions .actions button {
+    background: #2f2f2f;
+}
+
+
+
+
+
+
+
+
+
+
+
+.section .header .sub_header .searching input {
+    padding: 3.88px 5px;
+    border: 1px solid #1D1D42;
+    outline: none;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    outline: none;
+}
+
+.section .header .sub_header .searching button {
+    opacity: 1;
+    background: #1D1D42;
+    border: 3px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.window.product_image_window {
+    z-index: 11;
+}
+
+.window.product_image_window ._window {
+    background: none;
+    display: flex;
+
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    align-items: center;
+    justify-content: center;
+}
+
+@-webkit-keyframes zoom {
+  from {-webkit-transform:scale(0)}
+  to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+.window .product_image {
+    max-height: 85vh;
+    max-width: 85vw;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+#sorting_section .window ._window .table .rows .row .name, #sorting_section .window ._window .table .columns .name {
+    width: 200px;
+    margin-right: 35px;
+}
+
+#sorting_section .window ._window .table .rows .row .name a {
+    width: fit-content;
+}
+
+#sorting_section .window ._window .table .rows .row .type, #sorting_section .window ._window .table .columns .type {
+    width: 80px;
+    margin-right: 50px;
+}
+
+#sorting_section .window ._window .table .rows .row .replaced_column, #sorting_section .window ._window .table .columns .replaced_column {
+    width: 120px;
+    margin-right: 30px;
+}
+
+#sorting_section .window ._window .table .rows .row .not_available {
+    color: red;
+}
+
+#sorting_section .window ._window .table .rows .row .purchased, #sorting_section .window ._window .table .rows .row .replaced {
+    color: green;
+}
+
+#sorting_section .window ._window .table .rows .row .new, #sorting_section .window ._window .table .rows .row .will_be_tomorrow {
+    opacity: 0.5;
+}
+
+#sorting_section .window ._window .table .rows .row .status select, #sorting_section .window ._window .table .columns .status select {
+    border: none;
+    outline: none;
+    width: 100px;
+    transform: translateX(-4px);
+}
+
+#sorting_section .window ._window .table .rows .row .status, #sorting_section .window ._window .table .columns .status {
+    width: 100px;
+    margin-right: 50px;
+}
+
+#sorting_section .window ._window .table .rows .row .buyer, #sorting_section .window ._window .table .columns .buyer {
+    width: 110px;
+    margin-right: 40px;
+}
+
+#sorting_section .window ._window .table .rows .row .qr_code, #sorting_section .window ._window .table .columns .qr_code {
+    width: 86px;
+    margin-right: 30px;
+}
+
+#sorting_section .window ._window .table .rows .row p:last-child, #sorting_section .window ._window .table .columns p:last-child {
+    margin-left: auto;
+}
+
+#sorting_section .window ._window .table .rows .row div:last-child, #sorting_section .window ._window .table .columns div:last-child {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    width: 100px;
+}
+
+
+
+
+
+
+
+
+#delivering_section .window ._window .table .rows .row .name, #delivering_section .window ._window .table .columns .name {
+    width: 200px;
+    margin-right: 35px;
+}
+
+#delivering_section .window ._window .table .rows .row .name a {
+    width: fit-content;
+}
+
+#delivering_section .window ._window .table .rows .row .type, #delivering_section .window ._window .table .columns .type {
+    width: 80px;
+    margin-right: 50px;
+}
+
+#delivering_section .window ._window .table .rows .row .replaced_column, #delivering_section .window ._window .table .columns .replaced_column {
+    width: 120px;
+    margin-right: 30px;
+}
+
+#delivering_section .window ._window .table .rows .row .not_available {
+    color: red;
+}
+
+#delivering_section .window ._window .table .rows .row .purchased, #delivering_section .window ._window .table .rows .row .replaced {
+    color: green;
+}
+
+#delivering_section .window ._window .table .rows .row .new, #delivering_section .window ._window .table .rows .row .will_be_tomorrow {
+    opacity: 0.5;
+}
+
+#delivering_section .window ._window .table .rows .row .status select, #delivering_section .window ._window .table .columns .status select {
+    border: none;
+    outline: none;
+    width: 100px;
+    transform: translateX(-4px);
+}
+
+#delivering_section .window ._window .table .rows .row .status, #delivering_section .window ._window .table .columns .status {
+    width: 100px;
+    margin-right: 50px;
+}
+
+#delivering_section .window ._window .table .rows .row .buyer, #delivering_section .window ._window .table .columns .buyer {
+    width: 110px;
+    margin-right: 40px;
+}
+
+#delivering_section .window ._window .table .rows .row .qr_code, #delivering_section .window ._window .table .columns .qr_code {
+    width: 86px;
+    margin-right: 30px;
+}
+
+#delivering_section .window ._window .table .rows .row p:last-child, #delivering_section .window ._window .table .columns p:last-child {
+    margin-left: auto;
+}
+
+#delivering_section .window ._window .table .rows .row div:last-child, #delivering_section .window ._window .table .columns div:last-child {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    width: 100px;
+}
+
+
+
+
+
+
+
+
+.window ._window .info .list .text #span_replaced_by_product_image {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+
+.window ._window .info .list .text #span_replaced_by_product_image span {
+    opacity: 1;
+    width: 100%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    min-height: min-content;
+    line-break: anywhere;
+}
+
+
+
+
+
+#delivering_section .window ._window .info .list .text {
+    min-width: 450px;
+}
+
+#delivering_section .window ._window .table .rows .row .buyer, #delivering_section .window ._window .table .columns .buyer {
+    width: 260px;
+    margin-right: 40px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.section .header .sub_header .searching span {
+    margin-left: 10px;
+}
+
+#settings_section {
+    background-color: white;
+}
+
+
+#is_being_considered_report ._window .info .list .texts {
+    display: flex;
+    flex-direction: column;
+    justify-content: normal;
+    gap: 10px;
+    overflow-y: scroll;
+}
+
+#is_being_considered_report ._window .info .list .texts .text {
+    align-items: baseline;
+}
+
+#is_being_considered_report ._window .info .list .text span {
+    width: 80%;
+    opacity: 1;
+}
+
+#is_being_considered_report ._window .info .list .text .client {
+    display: flex;
+    flex-direction: column;
+}
+
+#is_being_considered_report ._window .info .list .text .client span:last-child {
+    font-size: 13px;
+    opacity: 0.35;
+}
+
+#is_being_considered_form ._window .info .list .texts {
+    max-height: 450px;
+    height: fit-content;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

@@ -208,6 +208,7 @@ body {
     padding-left: 40px;
     background: #4ebda3;
     color: white;
+    display: none;
 
     transform: translateY(-100%);
     transition: transform 0.8s 0s;
@@ -466,4 +467,268 @@ body {
 
 .burger .burger-container .authentication .login_btn {
     border-color: #4ebda3;
+}
+
+#add_to_cart_form {
+    display: none;
+    background: rgb(164 164 164 / 40%);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: 10;
+}
+
+#add_to_cart_form form {
+    background: white;
+
+    margin: 15% auto auto auto;
+    padding: 20px 25px;
+
+    width: 800px;
+    max-width: 800px;
+
+    display: flex;
+    position: relative;
+
+    flex-direction: column;
+    gap: 20px;
+}
+
+#add_to_cart_form * {
+    margin: 0;
+
+}
+
+#add_to_cart_form img {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+#add_to_cart_form .content {
+    display: flex;
+    gap: 15px;
+}
+
+#add_to_cart_form-poster {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+
+    min-width: 75px;
+    min-height: 75px;
+    max-width: 75px;
+    max-height: 75px;
+    width: 75px;
+    height: 75px;
+
+    border: 1px solid black;
+}
+
+#add_to_cart_form .product {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+#add_to_cart_form-category_name {
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+#add_to_cart_form-name {
+    font-size: 20px;
+    line-height: 20px;
+
+    font-family: Gilroy-Medium;
+}
+
+#add_to_cart_form form button[type="submit"] {
+    width: 245px;
+    height: 40px;
+
+    border: none;
+    border-radius: 7px;
+
+    background-color: #007671;
+    color: white;
+
+    font-size: 17px;
+    font-family: Gilroy-Medium;
+}
+
+#add_to_cart_form-count, #add_to_cart_form .count_management button {
+    border: none;
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f1f1f1;
+}
+
+#add_to_cart_form .count_management {
+    display: flex;
+    align-items: center;
+
+    gap: 0px;
+    margin-top: 10px;
+}
+
+#add_to_cart_form .count_management p {
+    font-size: 16px;
+    font-family: 'Gilroy-Bold';
+}
+
+#add_to_cart_form-price {
+    margin-left: 15px;
+
+}
+
+#add_to_cart_form .count_management #add_to_cart_form-count {
+    font-family: Gilroy-Regular;
+
+}
+
+#add_to_cart_form .count_management .bar {
+    width: 12px;
+    height: 1.2px;
+    background: black;
+}
+
+#add_to_cart_form .count_management .bar.vertical_bar {
+    position: absolute;
+    transform: rotate(90deg);
+}
+
+#add_to_cart_form .action {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+#add_to_cart_form .action p {
+    font-size: 18px;
+    font-family: Gilroy-Medium;
+}
+
+#add_to_cart_form .action p span {
+    font-family: Gilroy-Bold;
+
+}
+
+.navbar-container .authentication .profile_dropdown_btn {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0 20px 20px;
+    cursor: pointer;
+}
+
+.navbar-container .authentication .profile_dropdown_btn .user {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    justify-content: center;
+}
+
+.navbar-container .authentication .profile_dropdown_btn .user * {
+    margin: 0;
+    line-height: 15px;
+    max-width: 200px;
+    text-align: left;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    min-height: min-content;
+}
+
+.navbar-container .authentication .profile_dropdown_btn .fullname {
+    font-family: Gilroy-Medium;
+    font-size: 14px;
+}
+
+.navbar-container .authentication .profile_dropdown_btn .company_name {
+    font-family: Gilroy-Regular;
+    font-size: 13px;
+    opacity: 0.5;
+}
+
+.navbar-container .authentication .profile_dropdown_btn .bars {
+    display: flex;
+    transform: translateY(-1px);
+    transform: rotate(0deg);
+    transition: transform 0.2s 0s;
+}
+
+.navbar-container .authentication .profile_dropdown_btn .bars .bar {
+    width: 10px;
+    height: 1.5px;
+    transform: rotate(45deg) translateX(2.3px);
+}
+
+.navbar-container .authentication .profile_dropdown_btn .bars .bar:last-child {
+    transform: rotate(-45deg) translateX(-2.3px);
+
+}
+
+.navbar-container .authentication .profile_dropdown_btn .profile_dropdown img {
+    width: 25px;
+    height: 25px;
+}
+
+.navbar-container .authentication .profile_dropdown_btn .profile_dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 25px;
+    width: calc(100% - 50px);
+}
+
+.navbar-container .authentication .profile_dropdown_btn .profile_dropdown a:first-child {
+    padding-top: 15px;
+}
+
+.navbar-container .authentication .profile_dropdown_btn .profile_dropdown a:last-child {
+    padding-bottom: 15px;
+}
+
+.navbar-container .authentication .profile_dropdown_btn .profile_dropdown hr {
+    margin: 5px 15px 0 15px;
+}
+
+.navbar-container .profile_dropdown {
+    position: absolute;
+    right: 0;
+    bottom: -338%;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 220px;
+    background: white;
+
+    border: 1px solid #9c9b9b80;
+    border-radius: 6px;
+
+    z-index: -1;
+    opacity: 0;
+    transform: translateY(-10%);
+    transition: transform 0.2s 0s, opacity 0.2s 0s;
+}
+
+.navbar-container .authentication .profile_dropdown_btn.active_profile_dropdown .profile_dropdown {
+    opacity: 1;
+    transform: translateY(0);
+    transition: transform 0.2s 0s, opacity 0.2s 0s;
+}
+
+.navbar-container .authentication .profile_dropdown_btn.active_profile_dropdown .bars {
+    transform: rotate(-180deg);
+    transition: transform 0.2s 0s;
 }

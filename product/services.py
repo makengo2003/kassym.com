@@ -227,5 +227,5 @@ def get_many(user, get_many_request_schema):
 
     return {
         "count": count,
-        "html": render_to_string("v2/products.html", {"products": ProductsSerializer(products, many=True).data})
+        "html": render_to_string("v2/products.html", {"user": user, "products": ProductsSerializer(products, many=True).data})
     }

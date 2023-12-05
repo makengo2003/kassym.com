@@ -82,3 +82,7 @@
     transform: rotate(45deg) translateY(-2.5px);
 
 }
+
+#wishlist_page .products_list {
+    margin-bottom: 70px;
+}

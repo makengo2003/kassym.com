@@ -151,8 +151,6 @@
 
     font-size: 15px;
     font-family: Gilroy-Medium;
-
-    opacity: 0.2;
 }
 
 #product_template .product_info .actions .download_images .download_all_btn_block button {
@@ -446,4 +444,12 @@
 
 #other_products .products_list .product_card .text .product_category_block .product_category {
     display: none;
+}
+
+#other_products .products_list .product_card {
+    height: 300px;
+}
+
+#other_products .products_list {
+    margin-bottom: 70px;
 }

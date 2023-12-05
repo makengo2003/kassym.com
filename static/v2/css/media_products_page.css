@@ -6,10 +6,30 @@
     .products_page .products_info {
         gap: 45px;
     }
+
+    .products_page .products_info .products_list .product_card {
+        height: 285px;
+    }
 }
 
 @media(max-width: 900px) {
     .products_page .products_info {
         flex-direction: column;
+    }
+
+    .products_page .products_info .products_list .product_card {
+        height: 310px;
+    }
+}
+
+@media(max-width: 630px) {
+    .products_page .products_info .products_list .product_card {
+        height: 330px;
+    }
+}
+
+@media(max-width: 500px) {
+    .products_page .products_info .products_list .product_card {
+        height: 360px;
     }
 }

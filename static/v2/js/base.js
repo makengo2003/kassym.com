@@ -176,3 +176,97 @@ function close_categories_burger() {
     document.getElementsByClassName("burger-content")[0].style.display = "block"
     document.getElementsByClassName("categories-burger-content")[0].style.display = "none"
 }
+
+function open_add_to_cart_form(id, name, category_name, price, poster) {
+    document.getElementById("add_to_cart_form").style.display = "block"
+
+    if (document.getElementById("add_to_cart_form-product_id").value != id) {
+        document.getElementById("add_to_cart_form-product_id").value = id
+        document.getElementById("add_to_cart_form-name").innerText = name
+        document.getElementById("add_to_cart_form-category_name").innerText = category_name
+        document.getElementById("add_to_cart_form-price").innerText = price
+        document.getElementById("add_to_cart_form-count").innerText = 1
+        document.getElementById("add_to_cart_form-sum").innerText = 1 * price
+        document.getElementById("add_to_cart_form-poster").style.backgroundImage = "url(" + poster + ")"
+    }
+}
+
+function plus_count() {
+    document.getElementById("add_to_cart_form-count").innerText = parseInt(document.getElementById("add_to_cart_form-count").innerText) + 1
+    count_onchange()
+}
+
+function minus_count() {
+    document.getElementById("add_to_cart_form-count").innerText = parseInt(document.getElementById("add_to_cart_form-count").innerText) - 1
+    count_onchange()
+}
+
+function count_onchange() {
+    var count = parseInt(document.getElementById("add_to_cart_form-count").innerText)
+
+    if (count < 1) {
+        count = 1
+        document.getElementById("add_to_cart_form-count").innerText = 1
+    }
+
+    document.getElementById("add_to_cart_form-sum").innerText = count * parseInt(document.getElementById("add_to_cart_form-price").innerText)
+}
+
+function submit_add_to_cart_form(event) {
+    event.preventDefault()
+    var submit_btn = event.target.querySelectorAll("button[type='submit']")[0]
+
+    if (!submit_btn.disabled) {
+        submit_btn.disabled = true
+        submit_btn.style.opacity = "0.5"
+
+        axios.post("/api/cart/add/", {
+            product_id: document.getElementById("add_to_cart_form-product_id").value,
+            count: parseInt(document.getElementById("add_to_cart_form-count").innerText)
+        }, {
+            headers: {
+                "X-CSRFToken": $cookies.get("csrftoken")
+            }
+        }).then((response) => {
+            document.getElementById("add_to_cart_form-product_id").value = 0
+            document.getElementById("add_to_cart_form").style.display = "none"
+            Swal.fire("Товар в корзине", "", "success")
+        }).finally(() => {
+            submit_btn.disabled = false
+            submit_btn.style.opacity = "1"
+        })
+    }
+}
+
+function wait_profile_dropdown_closing() {
+    var dropdown_btn = document.getElementById('profile_dropdown_btn')
+    var dropdown = dropdown_btn.getElementsByClassName("profile_dropdown")[0]
+
+    if (!dropdown_btn.className.includes("active_profile_dropdown")) {
+        dropdown.style.zIndex = "-2"
+    }
+
+    dropdown.removeEventListener("transitionend", wait_profile_dropdown_closing)
+}
+
+function profile_dropdown_clicked() {
+    var dropdown_btn = document.getElementById('profile_dropdown_btn')
+    var dropdown = dropdown_btn.getElementsByClassName("profile_dropdown")[0]
+
+    dropdown_btn.classList.toggle('active_profile_dropdown')
+
+    if (dropdown_btn.className.includes("active_profile_dropdown")) {
+        dropdown.style.zIndex = "2"
+    }
+
+    dropdown.addEventListener("transitionend", wait_profile_dropdown_closing)
+}
+
+document.addEventListener('click', function (event) {
+    var dropdown_btn = document.getElementById('profile_dropdown_btn')
+    var dropdown = dropdown_btn.getElementsByClassName("profile_dropdown")[0];
+
+    if (!dropdown.contains(event.target) && !dropdown_btn.contains(event.target) && dropdown_btn.className.includes("active_profile_dropdown")) {
+        profile_dropdown_clicked()
+    }
+});

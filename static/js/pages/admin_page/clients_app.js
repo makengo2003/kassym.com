@@ -126,6 +126,7 @@ clients_app = Vue.createApp({
         reset_devices() {
             this.client_form["device1"] = ""
             this.client_form["device2"] = ""
+            this.client_form["device3"] = ""
         },
         search_clients() {
             this.is_getting_clients = true

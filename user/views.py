@@ -48,11 +48,19 @@ def clear_favourites_view(request: Request) -> Response:
     return Response({"success": True})
 
 
-def change_user_fullname_view(request):
-    if request.user.is_authenticated and request.method == "POST":
-        services.change_user_fullname(request.user, request.POST.get("first_name", "First Name"),
-                                      request.POST.get("last_name", "Last Name"))
-    return redirect("/profile/")
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_fullname_view(request):
+    services.change_fullname(request.user, request.data.get("first_name", "First Name"),
+                             request.data.get("last_name", "Last Name"))
+    return Response({"success": True})
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_company_name_view(request):
+    services.change_company_name(request.user, request.data.get("company_name", "ИП"))
+    return Response({"success": True})
 
 
 @api_view(["POST"])
@@ -104,3 +112,11 @@ def search_clients_view(request: Request) -> Response:
 def leave_request_view(request: Request):
     services.leave_request(request.data)
     return Response({"success": True})
+
+
+@api_view(["GET"])
+def get_finance_view(request: Request) -> Response:
+    if hasattr(request.user, "super_admin"):
+        finance = services.get_finance(request.query_params.get("change_time"))
+        return Response(finance)
+    return Response({"message": "you are not super admin"})
