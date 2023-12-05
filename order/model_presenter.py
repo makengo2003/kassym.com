@@ -108,13 +108,16 @@ class OrderModelPresenter(BaseModelPresenter):
         else:
             company_name = "Менеджер"
 
-        order = Order(user=request_user, company_name=company_name,
-                      deliveries_qr_code=deliveries_qr_code,
-                      selection_sheet_file=selection_sheet_file, paid_check_file=paid_check_file,
-                      **validated_data, **calculated_prices)
+        order = Order.objects.create(user=request_user, company_name=company_name,
+                                     deliveries_qr_code=deliveries_qr_code,
+                                     selection_sheet_file=selection_sheet_file, paid_check_file=paid_check_file,
+                                     **validated_data, **calculated_prices)
 
         for order_items_obj in order_items:
             order_items_obj.order = order
+
+        OrderItem.objects.bulk_create(order_items)
+        order_items = OrderItem.objects.filter(order=order)
 
         purchases = []
         for order_item in order_items:
@@ -125,10 +128,7 @@ class OrderModelPresenter(BaseModelPresenter):
 
             purchases += [purchase] * order_item.count
 
-        order.save()
-        OrderItem.objects.bulk_create(order_items)
         Purchase.objects.bulk_create(purchases)
-
         CartItem.objects.filter(user=request_user).delete()
 
         channel_layer = get_channel_layer()
