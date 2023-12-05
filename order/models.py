@@ -5,17 +5,13 @@ from project.utils import datetime_now
 from django.contrib.auth.models import User
 
 
-def get_main_manager():
-    return Manager.objects.get(account__username="+77777777776").id
-
-
 class Order(models.Model):
     created_at = models.DateTimeField(default=datetime_now, editable=False)
     status = models.CharField(max_length=100, default="new", choices=(("new", "В обработке"), ("accepted", "Принят"), ("is_sorting", "Сортируется"), ("sorted", "Сортирован"), ("delivered", "Отправлен")),
                               blank=True)
     company_name = models.CharField(max_length=255, null=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    manager = models.ForeignKey(Manager, on_delete=models.PROTECT, default=get_main_manager)
+    manager = models.ForeignKey(Manager, on_delete=models.PROTECT, null=True)
     deliveries_qr_code = models.FileField(upload_to="deliveries_qr_code/")
     selection_sheet_file = models.FileField(upload_to="selection_sheet_files/")
     is_express = models.BooleanField(null=True, blank=True)
