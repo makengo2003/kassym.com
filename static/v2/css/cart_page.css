@@ -548,4 +548,5 @@ body {
     text-decoration: none;
 
     z-index: 10000;
+    display: none;
 }
