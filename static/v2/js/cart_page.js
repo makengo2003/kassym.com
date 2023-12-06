@@ -121,7 +121,7 @@ cart_app = Vue.createApp({
         },
         go_to_payment() {
             var astana_current_time = moment.tz("Asia/Almaty").hour()
-            this.order_making_is_available = astana_current_time < 24 && astana_current_time > -1
+            this.order_making_is_available = astana_current_time < 23 && astana_current_time > 8
             this.time_is_until_18px = astana_current_time < -1 && astana_current_time > 25
 
             if (this.order_making_is_available) {
@@ -233,7 +233,7 @@ cart_app = Vue.createApp({
     mounted() {
         axios("/api/cart/get_many/").then(response => this.cart = response.data)
         var astana_current_time = moment.tz("Asia/Almaty").hour()
-        this.order_making_is_available = astana_current_time < 24 && astana_current_time > -1
+        this.order_making_is_available = astana_current_time < 23 && astana_current_time > 8
         this.time_is_until_18px = astana_current_time < -1 && astana_current_time > 25
     }
 })
