@@ -22,6 +22,7 @@ cart_app = Vue.createApp({
             is_making_order: false,
             order_making_is_available: false,
             time_is_until_18px: false,
+            open_tutorial: false
         }
     },
     methods: {
@@ -228,6 +229,10 @@ cart_app = Vue.createApp({
         },
         get_uploaded_file_name(file_name) {
             return file_name.slice(file_name.indexOf(":") + 1, file_name.length)
+        },
+        close_tutorial() {
+            document.getElementById("make_order_tutorial_video").pause();
+            this.open_tutorial = false
         }
     },
     mounted() {
@@ -241,3 +246,24 @@ cart_app = Vue.createApp({
 
 cart_app.config.compilerOptions.delimiters = ["${", "}"];
 mounted_cart_app = cart_app.mount("#cart_page")
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    var footer = document.querySelector(".footer-container");
+    var button = document.querySelector(".tech_support_btn");
+    var buttonHeight = button.getBoundingClientRect().top + 150;
+
+    window.addEventListener("scroll", function() {
+        var footerTop = footer.getBoundingClientRect().top;
+
+        if (footerTop < buttonHeight) {
+            button.style.bottom = (button.offsetHeight * 2) + (buttonHeight - footerTop) + "px";
+        } else {
+            button.style.bottom = "10%";
+        }
+    });
+});
+
