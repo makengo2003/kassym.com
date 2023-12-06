@@ -10,7 +10,36 @@
 {% block body %}
 <div class="block" id="cart_page">
     <div class="container cart_page" v-if="current_page == 'cart'">
-        <div class="cart section">
+        <div class="section tutorial_section">
+            <div class="header">
+                <div class="title">
+                    <h3>Прежде чем заказать, посмотрите <br>видео-урок</h3>
+                </div>
+
+                <a @click="open_tutorial = true">Посмотреть видео-урок</a>
+            </div>
+        </div>
+
+        <div class="tutorial_window" :style="open_tutorial == true ? 'display: flex' : 'display: none'">
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="close_tutorial()">
+
+            <video controls id="make_order_tutorial_video">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/mp4">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/webm">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/ogg">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/quicktime">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/x-msvideo">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/x-matroska">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/x-flv">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/x-ms-wmv">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/x-ms-asf">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/3gpp">
+                <source src="{% static 'v2/make_order_tutorial.mp4' %}" type="video/3gpp2">
+                Ваш браузер не поддерживает воспроизведение видео.
+            </video>
+        </div>
+
+        <div class="cart section" :style="cart_is_empty() ? 'padding-bottom: 150px;' : ''">
             <div class="header">
                 <div class="title">
                     <img width="25" height="25" src="{% static 'v2/imgs/cart.png' %}" alt="">
@@ -22,7 +51,7 @@
 
             <hr>
 
-            <h4 style="margin: 0; margin-bottom: 150px;" v-if="cart_is_empty()">Пока нет товаров в корзине.</h4>
+            <h4 style="margin: 0;" v-if="cart_is_empty()">Пока нет товаров в корзине.</h4>
 
             <div class="cart_items">
                 <div class="item" v-for="cart_item in cart">
@@ -68,7 +97,9 @@
             </div>
         </div>
 
-        <hr v-if="!cart_is_empty()">
+        <div class="divider">
+            <hr v-if="!cart_is_empty()">
+        </div>
 
         <div v-if="!cart_is_empty()" class="qr_codes section">
             <div class="header">
@@ -152,14 +183,18 @@
             </div>
         </div>
 
-        <hr v-if="!cart_is_empty()">
+        <div class="divider">
+            <hr v-if="!cart_is_empty()">
+        </div>
 
         <div v-if="!cart_is_empty()" class="express section">
             <input :disabled="!time_is_until_18px" type="checkbox" id="express_checkbox" @change="is_confirming_cart = false" v-model="express_checkbox" style="accent-color: #007671;">
             <label for="express_checkbox"><h3>Экспресс доставка</h3><span v-if="!time_is_until_18px">Скоро будет доступна</span><!-- Доступна c 09:00 до 18:00 (GMT+6, Астана). --></label>
         </div>
 
-        <hr v-if="!cart_is_empty()">
+        <div class="divider">
+            <hr v-if="!cart_is_empty()">
+        </div>
 
         <div v-if="!cart_is_empty()" class="comments section">
             <div class="header">
@@ -275,6 +310,13 @@
         </div>
     </div>
 </div>
+
+
+{% for contact in contacts %}
+{% if contact.type == 'whatsapp' %}
+<a class="tech_support_btn" href="{{ contact.link }}" target="_blank">Тех. поддержка</a>
+{% endif %}
+{% endfor %}
 {% endblock %}
 
 
