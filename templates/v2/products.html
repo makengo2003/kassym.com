@@ -40,7 +40,7 @@
                 </div>
 
                 {% if request.user.is_authenticated or user.is_authenticated %}
-                <button class="add_to_cart_btn" onclick="event.preventDefault(); open_add_to_cart_form({{ product.id }}, '{{ product.name }}', '{{ product.category_name }}', {{ product.price }}, '{{ product.images.0.image }}')">В корзину</button>
+                <button class="add_to_cart_btn" onclick="event.preventDefault(); open_add_to_cart_form({{ product.id }}, '{{ product.name }}', '{{ product.category_name }}', {{ product.price }}, '{{ product.image }}')">В корзину</button>
                 {% else %}
                 <button class="add_to_cart_btn" onclick="document.getElementById('login_form_window').style.display = 'block'">В корзину</button>
                 {% endif %}
