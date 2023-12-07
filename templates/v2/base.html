@@ -1,10 +1,12 @@
 {% load category_tags %}
 {% load site_settings_tags %}
 {% load static %}
+{% load static_files_versions_tags %}
 
 {% get_categories as categories %}
 {% get_contacts as contacts %}
 {% get_slides as slides %}
+{% get_server_ran_time as server_ran_time %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,8 +17,8 @@
 
 	<title>{% block title %}kassym.qazaq{% endblock %}</title>
 
-	<link rel="stylesheet" href="{% static 'v2/css/base.css' %}">
-	<link rel="stylesheet" href="{% static 'v2/css/media_base.css' %}">
+	<link rel="stylesheet" href="{% static 'v2/css/base.css' %}?v={{ server_ran_time }}">
+	<link rel="stylesheet" href="{% static 'v2/css/media_base.css' %}?v={{ server_ran_time }}">
 
     {% block styles %}
     {% endblock %}

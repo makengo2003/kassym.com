@@ -1,4 +1,6 @@
 {% load static %}
+{% load static_files_versions_tags %}
+{% get_server_ran_time as server_ran_time %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,12 +10,12 @@
 	<title>kassym.com dashboard</title>
 
     <link rel="icon" type="image/x-icon" href="/static/imgs/icon.png">
-	<link rel="stylesheet" href="{% static 'v2/css/admin_page/base.css' %}">
-    <link rel="stylesheet" href="{% static 'v2/css/admin_page/manager_page.css' %}">
-    <link rel="stylesheet" href="{% static 'v2/css/admin_page/buyer_page.css' %}">
-    <link rel="stylesheet" href="{% static 'v2/css/admin_page/media_buyer_page.css' %}">
-    <link rel="stylesheet" href="{% static 'v2/css/admin_page/finance_section.css' %}">
-    <link rel="stylesheet" href="{% static 'v2/css/admin_page/expenses_section.css' %}">
+	<link rel="stylesheet" href="{% static 'v2/css/admin_page/base.css' %}?v={{ server_ran_time }}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/manager_page.css' %}?v={{ server_ran_time }}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/buyer_page.css' %}?v={{ server_ran_time }}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/media_buyer_page.css' %}?v={{ server_ran_time }}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/finance_section.css' %}?v={{ server_ran_time }}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/expenses_section.css' %}?v={{ server_ran_time }}">
 </head>
 <body>
     <div class="burger_btn" id="burger_btn" onclick="open_burger()">
