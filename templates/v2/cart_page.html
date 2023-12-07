@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'v2/css/cart_page.css' %}">
-<link rel="stylesheet" href="{% static 'v2/css/media_cart_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/cart_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/media_cart_page.css' %}?v={{ server_ran_time }}">
 {% endblock %}
 
 
