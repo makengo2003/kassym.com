@@ -180,6 +180,33 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="qr_code selection_sheet" v-for="selection_list in additional_selection_lists">
+                    <img width="35" height="35" src="{% static 'v2/imgs/document.png' %}" alt="">
+
+                    <div class="qr_name">
+                        <p v-if="!file_is_uploaded(selection_list, 'file')">Лист подбора</p>
+                        <p v-else="">Загружен файл: ${ get_uploaded_file_name(selection_list.file) }</p>
+                    </div>
+
+                    <div class="upload">
+                        <input :id="'selection_list_file_' + selection_list.id" style="display: none" type="file" @change="handle_file_upload(['.pdf'], $event, selection_list, 'file', 'selection_list', selection_list.id)">
+
+                        <label class="upload_btn" :for="'selection_list_file_' + selection_list.id" v-if="!file_is_uploaded(selection_list, 'file')">Загрузить</label>
+
+                        <div class="uploaded" v-else="">
+                            <button class="cancel_btn" @click="cancel_file_upload(selection_list, 'file')">Отменить</button>
+                            <div class="uploaded_status">
+                                <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
+                                <p>Готово</p>
+                            </div>
+                        </div>
+
+                        <img @click="remove_selection_list(selection_list)" width="20" height="20" src="{% static 'v2/imgs/x.png' %}" alt="">
+                    </div>
+                </div>
+
+                <button class="add_selection_list_btn" @click="add_selection_list()">+1 Лист подбора</button>
             </div>
         </div>
 
