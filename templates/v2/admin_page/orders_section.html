@@ -134,9 +134,9 @@
                     <p class="name">Наименование</p>
                     <p class="code">Артикул</p>
                     <p class="count">Кол.</p>
-                    <p class="price">Цена</p>
+                    <p class="price" style="visibility: hidden; width: 50px;">Цена</p>
                     <p class="type">Тип</p>
-                    <p class="action"></p>
+                    <p class="action" style="width: 150px;"></p>
                 </div>
 
                 <hr>
@@ -146,10 +146,10 @@
                         <p class="img" :style="'background-image: url(https://kassym.com/' + order_item.product.poster + ');'"></p>
                         <p class="name"><a :href="'/product/?product_id=' + order_item.product.id" target="_blank">${ order_item.product.name }</a></p>
                         <p class="code">${ order_item.product.code }</p>
-                        <p class="count">${ order_item.count }</p>
-                        <p class="price">${ order_item.product.price } Р</p>
+                        <p class="count">${ order_item.count } шт</p>
+                        <p class="price" style="visibility: hidden; width: 50px;">${ order_item.product.price } Р</p>
                         <p class="type">${ order_item.product.type }</p>
-                        <p class="action"><button @click="open_object_file(order_item, 'qr_code')">QR Code</button></p>
+                        <p class="action" style="width: 150px;"><button @click="open_object_file(order_item, 'qr_code')">QR Code</button></p>
                     </div>
                 </div>
             </div>

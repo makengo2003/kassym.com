@@ -474,6 +474,8 @@ h1, h2, h3, h4, h5, h6, b {
 
 .window ._window .table .columns .action, .window ._window .table .rows .row .action {
     width: 87px;
+    display: flex;
+    justify-content: right;
 }
 
 .qr_code {

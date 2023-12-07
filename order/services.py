@@ -17,7 +17,7 @@ def calculate(user, data, cart_items=None):
     specific_products_count = 0
 
     for cart_item in cart_items:
-        total_products_price += cart_item.count * cart_item.product.price
+        total_products_price += cart_item.count * (cart_item.product.price - cart_item.product.price * cart_item.product.discount_percentage / 100)
         total_products_count += cart_item.count
 
         if cart_item.product_id == 7810 or cart_item.product_id == 714:

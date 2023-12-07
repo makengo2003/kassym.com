@@ -97,7 +97,7 @@
                     </div>
 
                     <div class="add_to_cart_block">
-                        <button onclick="open_add_to_cart_form({{ product.id }}, '{{ product.name }}', '{{ product.category_name }}', {{ product.price }}, '{{ product.images.0.image }}')">Добавить в корзину</button>
+                        <button onclick="open_add_to_cart_form({{ product.id }}, '{{ product.name }}', '{{ product.category_name }}', {{ product.price_with_discount }}, '{{ product.images.0.image }}')">Добавить в корзину</button>
 
                         <div class="availability">
                             {% if product.is_available %}
