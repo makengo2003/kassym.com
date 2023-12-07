@@ -550,3 +550,13 @@ body {
     z-index: 10000;
     display: none;
 }
+
+.add_selection_list_btn {
+    padding: 9px 12px;
+    width: fit-content;
+    font-size: 15px;
+    border: none;
+    color: white;
+    background: #007671;
+    border-radius: 5px;
+}

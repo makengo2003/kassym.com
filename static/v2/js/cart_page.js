@@ -22,7 +22,8 @@ cart_app = Vue.createApp({
             is_making_order: false,
             order_making_is_available: false,
             time_is_until_18px: false,
-            open_tutorial: false
+            open_tutorial: false,
+            additional_selection_lists: []
         }
     },
     methods: {
@@ -70,13 +71,13 @@ cart_app = Vue.createApp({
             this.cancel_file_upload(cart_item, "qr_code")
             this.cart.splice(this.cart.indexOf(cart_item), 1)
         },
-        handle_file_upload(extensions, event, obj, label, obj_name, obj_id_label="") {
+        handle_file_upload(extensions, event, obj, label, obj_name, obj_id_label=null) {
             var file = event.target.files[0]
 
             if (file) {
                 var label_for_uploaded_files_list = obj_name + "_" + label
 
-                if (obj_id_label != "")
+                if (obj_id_label != null)
                     label_for_uploaded_files_list += "_" + obj_id_label
 
                 label_for_uploaded_files_list += ": " + file.name
@@ -141,6 +142,13 @@ cart_app = Vue.createApp({
                 if (this.selection_sheet["file"] == null) {
                     Swal.fire("Необходимо загрузить лист подбора.", "", "warning")
                     return
+                }
+
+                for (var i = 0; i < this.additional_selection_lists.length; i++) {
+                    if (this.additional_selection_lists[i]["file"] == null) {
+                        Swal.fire("Необходимо загрузить лист подбора.", "", "warning")
+                        return
+                    }
                 }
 
                 if (this.is_confirming_cart) {
@@ -208,6 +216,10 @@ cart_app = Vue.createApp({
                     data[this.cart[i]["qr_code"]] = this.uploaded_files[this.cart[i]["qr_code"]]
                 }
 
+                for (var i = 0; i < this.additional_selection_lists.length; i++) {
+                    data[this.additional_selection_lists[i]["file"]] = this.uploaded_files[this.additional_selection_lists[i]["file"]]
+                }
+
                 axios.post("/api/order/add/", data, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -233,6 +245,16 @@ cart_app = Vue.createApp({
         close_tutorial() {
             document.getElementById("make_order_tutorial_video").pause();
             this.open_tutorial = false
+        },
+
+        add_selection_list() {
+            this.is_confirming_cart = false
+            this.additional_selection_lists.push({id: generateUUID(), file: null})
+        },
+        remove_selection_list(selection_list) {
+            this.is_confirming_cart = false
+            this.cancel_file_upload(selection_list, "file")
+            this.additional_selection_lists.splice(this.additional_selection_lists.indexOf(selection_list), 1)
         }
     },
     mounted() {
@@ -247,6 +269,16 @@ cart_app = Vue.createApp({
 cart_app.config.compilerOptions.delimiters = ["${", "}"];
 mounted_cart_app = cart_app.mount("#cart_page")
 
+
+
+
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (Math.random() * 16) | 0,
+        v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
+}
 
 
 

@@ -1,7 +1,9 @@
 from datetime import datetime
 
+import PyPDF2
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.core.files.storage import FileSystemStorage
 from django.db.models import Prefetch, Case, When, F, Value, CharField
 from django.db.models.functions import Concat
 from rest_framework import serializers
@@ -85,22 +87,35 @@ class OrderModelPresenter(BaseModelPresenter):
         cart_items = CartItem.objects.select_related("product").filter(user=request_user)
 
         order_items = []
-        qr_codes = validated_data.pop("files")
+        files = validated_data.pop("files")
         i = 0
-        for qr_code in qr_codes:
+
+        for qr_code in files:
             if qr_code.startswith("cart_item_qr_code_"):
                 cart_item = cart_items[i]
                 total_price = cart_item.count * cart_item.product.price
                 order_items.append(
-                    OrderItem(qr_code=qr_codes[qr_code], count=cart_item.count, product_id=cart_item.product_id,
+                    OrderItem(qr_code=files[qr_code], count=cart_item.count, product_id=cart_item.product_id,
                               product_price=cart_item.product.price, total_price=total_price))
                 i += 1
+
+        additional_selection_lists = []
+        fs = FileSystemStorage(location=settings.MEDIA_ROOT)
+
+        for selection_list in files:
+            if selection_list.startswith("selection_list_file_"):
+                file = files[selection_list]
+                file_name = fs.save("selection_sheet_files/" + file.name, file)
+                additional_selection_lists.append(file_name)
+
+        file = validated_data.pop("selection_sheet_file")
+        file_name = fs.save("selection_sheet_files/" + file.name, file)
+        selection_sheet_file = merge_pdfs([file_name] + additional_selection_lists)
 
         calculated_prices = calculate(request_user,
                                       {"is_express": validated_data.get("is_express")},
                                       cart_items=cart_items)
         deliveries_qr_code = validated_data.pop("deliveries_qr_code")
-        selection_sheet_file = validated_data.pop("selection_sheet_file")
         paid_check_file = validated_data.pop("paid_check_file")
 
         if hasattr(request_user, "client"):
@@ -165,3 +180,18 @@ class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = ["id", "count", "qr_code", "product"]
+
+
+def merge_pdfs(pdf_files):
+    pdf_writer = PyPDF2.PdfWriter()
+
+    for pdf_file in pdf_files:
+        with open("../media/" + pdf_file, 'rb') as file:
+            pdf_reader = PyPDF2.PdfReader(file)
+            for page_num in range(len(pdf_reader.pages)):
+                pdf_writer.add_page(pdf_reader.pages[page_num])
+
+    with open("../media/" + pdf_files[0], 'wb') as output_file:
+        pdf_writer.write(output_file)
+
+    return pdf_files[0]
