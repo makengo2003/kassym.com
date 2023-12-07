@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'v2/css/flickity_3.0.0_flickity.css' %}">
-<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}">
-<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/flickity_3.0.0_flickity.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}?v={{ server_ran_time }}">
 {% endblock %}
 
 {% block body %}

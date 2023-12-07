@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import threading
 from pathlib import Path
+from time import time
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -222,3 +223,4 @@ EMAIL_ADMIN = EMAIL_HOST_USER
 MAIN_CATEGORY_ID = 7
 BOT_TOKEN = '6454586115:AAG9og9TP0yxSefacJ-jiFolCGqyxxwrOx0'
 request_user = threading.local()
+SERVER_RAN_TIME = time()

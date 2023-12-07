@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'v2/css/wishlist_page.css' %}">
-<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}">
-<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}">
+<link rel="stylesheet" href="{% static 'v2/css/wishlist_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}?v={{ server_ran_time }}">
 {% endblock %}
 
 
