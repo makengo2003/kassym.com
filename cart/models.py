@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import F, Value
+from django.db.models import F, Value, ExpressionWrapper, IntegerField
 from django.db.models.functions import Concat
 from rest_framework import serializers
 
@@ -26,7 +26,10 @@ class CartModelPresenter(BaseModelPresenter):
             "select_related": ["product"],
             "annotate": {
                 "product_name": F("product__name"),
-                "product_price": F("product__price"),
+                "product_price": ExpressionWrapper(
+                    F('product__price') - F('product__price') * F('product__discount_percentage') / 100,
+                    output_field=IntegerField()
+                ),
                 "product_poster": Concat(Value('/media/'), F('product__poster'), output_field=models.CharField()),
             },
             "only": ["id", "product_id", "count"],
