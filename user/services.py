@@ -7,15 +7,14 @@ from django.contrib.sessions.models import Session
 
 from typing import Mapping, List
 
-from django.db.models import F, Case, When, Q, Sum, Value, FloatField
-from django.db.models.functions import Cast
+from django.db.models import F, Case, When, Q, Sum, DecimalField
 from django.shortcuts import get_object_or_404
 from django_user_agents.utils import get_user_agent
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.request import Request
 from user_agents.parsers import UserAgent
 
-from order.models import Order
+from order.models import Order, OrderItem
 from product.models import Product
 from product.serializers import ProductsSerializer
 from project.settings import BOT_TOKEN
@@ -225,13 +224,21 @@ def get_favourite_products(user):
 def get_finance(change_time):
     finance = Order.objects.filter(~Q(status="new"), created_at__date=change_time).aggregate(
         total_price=Sum("total_sum_in_tenge"),
-        total_products_price_in_tenge=Sum(F("total_products_price") * (F("ruble_rate") - Value(0.5))),
-        total_products_price_in_ruble=Sum(F("total_products_price"))
     )
+    order_items = OrderItem.objects.filter(~Q(order__status="new"), order__created_at__date=change_time).select_related("product")
+
+    total_products_price_for_markets = 0
+    total_products_price_for_china = 0
+
+    for order_item in order_items:
+        if order_item.product.category_id == 7:
+            total_products_price_for_china += order_item.total_price
+        else:
+            total_products_price_for_markets += order_item.total_price
 
     total_price = int(finance["total_price"] or 0)
-    total_products_price_in_tenge = int(finance["total_products_price_in_tenge"] or 0)
-    total_products_price_in_ruble = int(finance["total_products_price_in_ruble"] or 0)
+    total_products_price_for_markets = int(total_products_price_for_markets or 0)
+    total_products_price_for_china = int(total_products_price_for_china or 0)
 
     total_expenses_in_ruble = 0
     total_expenses_in_tenge = 0
@@ -250,8 +257,8 @@ def get_finance(change_time):
 
     return {
         "total_price": total_price,
-        "total_products_price_in_tenge": total_products_price_in_tenge,
-        "total_products_price_in_ruble": total_products_price_in_ruble,
+        "total_products_price_for_markets": total_products_price_for_markets,
+        "total_products_price_for_china": total_products_price_for_china,
         "total_expenses_in_ruble": total_expenses_in_ruble,
         "total_expenses_in_tenge": total_expenses_in_tenge,
         "total_managers_expenses_in_ruble": total_managers_expenses_in_ruble,
