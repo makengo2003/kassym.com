@@ -93,10 +93,12 @@ class OrderModelPresenter(BaseModelPresenter):
         for qr_code in files:
             if qr_code.startswith("cart_item_qr_code_"):
                 cart_item = cart_items[i]
-                total_price = cart_item.count * cart_item.product.price
+                product_price = (cart_item.product.price - cart_item.product.price *
+                                 cart_item.product.discount_percentage / 100)
+                total_price = cart_item.count * product_price
                 order_items.append(
                     OrderItem(qr_code=files[qr_code], count=cart_item.count, product_id=cart_item.product_id,
-                              product_price=cart_item.product.price, total_price=total_price))
+                              product_price=product_price, total_price=total_price))
                 i += 1
 
         additional_selection_lists = []

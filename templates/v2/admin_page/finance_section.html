@@ -31,25 +31,32 @@
                     <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}">
 
                     <div class="text">
-                        <p>${ finance.total_products_price_in_ruble } Р</p>
-                        <p style="font-size: 12px; opacity: 0.6;">${ finance.total_products_price_in_tenge } тг</p>
-                        <span>За товары</span>
+                        <p>${ finance.total_products_price_for_markets + finance.total_products_price_for_china } Р</p>
+                        <span>За товары (Общий)</span>
                     </div>
                 </div>
 
                 <div class="action">
-                    <img src="{% static 'v2/imgs/total_expenses_icon.png' %}" style="width: 35px; height: 40px">
+                    <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}" style="visibility: hidden; width: 0;">
 
                     <div class="text">
-                        <p>${ finance.total_expenses_in_ruble } Р</p>
-                        <p style="font-size: 12px; opacity: 0.6;">${ finance.total_expenses_in_tenge } тг</p>
-                        <span>Росходы</span>
+                        <p>${ finance.total_products_price_for_china } Р</p>
+                        <span>За товары (Китай)</span>
+                    </div>
+                </div>
+
+                <div class="action">
+                    <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}" style="visibility: hidden; width: 0;">
+
+                    <div class="text">
+                        <p>${ finance.total_products_price_for_markets } Р</p>
+                        <span>За товары (Базар)</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="block">
+        <div style="display: none" class="block">
             <h3>Росходы отделов</h3>
 
             <div class="actions">
@@ -79,7 +86,7 @@
             </div>
         </div>
 
-        <div class="block">
+        <div style="display: none" class="block">
             <h3>Росходы сотрудников</h3>
 
             <div class="pre_table">
