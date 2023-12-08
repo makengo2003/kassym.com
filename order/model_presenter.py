@@ -85,7 +85,8 @@ class OrderModelPresenter(BaseModelPresenter):
     @staticmethod
     def get_object_add_form_serializer_extra_fields():
         return {
-            "comments": serializers.JSONField()
+            "comments": serializers.JSONField(),
+            "order_comments": serializers.CharField()
         }
 
     def object_add_form_serializer_create(self, validated_data):
@@ -127,6 +128,7 @@ class OrderModelPresenter(BaseModelPresenter):
                                       cart_items=cart_items)
         deliveries_qr_code = validated_data.pop("deliveries_qr_code")
         paid_check_file = validated_data.pop("paid_check_file")
+        order_comments = validated_data.pop("order_comments")
 
         if hasattr(request_user, "client"):
             company_name = request_user.client.company_name
@@ -135,7 +137,7 @@ class OrderModelPresenter(BaseModelPresenter):
 
         order = Order(user=request_user, company_name=company_name,
                       deliveries_qr_code=deliveries_qr_code,
-                      selection_sheet_file=selection_sheet_file, paid_check_file=paid_check_file,
+                      selection_sheet_file=selection_sheet_file, paid_check_file=paid_check_file, comments=order_comments,
                       **validated_data, **calculated_prices)
 
         for order_items_obj in order_items:

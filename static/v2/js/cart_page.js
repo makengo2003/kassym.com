@@ -116,7 +116,7 @@ cart_app = Vue.createApp({
         go_to_payment() {
             var astana_current_time = moment.tz("Asia/Almaty").hour()
             var astana_current_time_minutes = moment.tz("Asia/Almaty").minutes()
-            this.order_making_is_available = astana_current_time < 24 && astana_current_time_minutes < 31 && astana_current_time > 8
+            this.order_making_is_available = astana_current_time < 23 && astana_current_time > 8
             this.time_is_until_18px = astana_current_time < -1 && astana_current_time > 25
 
             if (this.order_making_is_available) {
@@ -194,7 +194,8 @@ cart_app = Vue.createApp({
 
                 var data = {
                     is_express: this.express_checkbox,
-                    comments: {}, // this.comments
+                    comments: {},
+                    order_comments: this.comments,
                     deliveries_qr_code: this.uploaded_files[this.deliveries_qr_code["file"]],
                     selection_sheet_file: this.uploaded_files[this.selection_sheet["file"]],
                     paid_check_file: this.uploaded_files[this.paid_check_pdf["file"]],
@@ -250,7 +251,7 @@ cart_app = Vue.createApp({
         axios("/api/cart/get_many/").then(response => this.cart = response.data)
         var astana_current_time = moment.tz("Asia/Almaty").hour()
         var astana_current_time_minutes = moment.tz("Asia/Almaty").minutes()
-        this.order_making_is_available = astana_current_time < 24 && astana_current_time_minutes < 31 && astana_current_time > 8
+        this.order_making_is_available = astana_current_time < 23 && astana_current_time > 8
         this.time_is_until_18px = astana_current_time < -1 && astana_current_time > 25
     }
 })

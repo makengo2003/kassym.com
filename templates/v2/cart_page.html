@@ -224,17 +224,17 @@
             <hr v-if="!cart_is_empty()">
         </div>
 
-        <div v-if="!cart_is_empty()" class="comments section" style="padding-bottom: 30px;">
-            <div style="display: none" class="header">
+        <div v-if="!cart_is_empty()" class="comments section">
+            <div class="header">
                 <div class="title">
                     <img width="30" height="20" src="{% static 'v2/imgs/truck.png' %}" alt="">
                     <h3>Комментарий к заказу</h3>
                 </div>
             </div>
 
-            <textarea style="display: none" v-model="comments"></textarea>
+            <textarea v-model="comments"></textarea>
 
-            <div class="order_btn_block" style="margin-top: 0;">
+            <div class="order_btn_block">
                 <div class="btns">
                     <button class="order_btn" @click="go_to_payment()" :disabled="is_calculating_price" :style="is_calculating_price || !order_making_is_available ? 'opacity: 0.5' : 'opacity: 1'">Перейти к оплате</button>
                 </div>
@@ -351,5 +351,5 @@
 <script src="{% static 'v2/js/packages/vue.global.prod.js' %}"></script>
 <script src="{% static 'v2/js/packages/moment.js' %}"></script>
 <script src="{% static 'v2/js/packages/moment-tz.js' %}"></script>
-<script src="{% static 'v2/js/cart_page.js' %}"></script>
+<script src="{% static 'v2/js/cart_page.js' %}?v={{ server_ran_time }}"></script>
 {% endblock %}
