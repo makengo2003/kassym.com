@@ -196,7 +196,7 @@
         <div class="_window edit_order_form_window">
             <h3>Исправить Заказ<span>/${ opened_order.company_name }</span></h3>
 
-            <textarea v-model="opened_order.new_comments" placeholder="Добавить комментарии"></textarea>
+            <textarea style="display: none" v-model="opened_order.new_comments" placeholder="Добавить комментарии"></textarea>
 
             <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="cancel_edit_order()">
 
