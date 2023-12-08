@@ -59,3 +59,9 @@ class OrderViewsPresenter(BaseViewsPresenter):
     def accept_view(self, request: Request) -> Response:
         self.services.accept_order(request.data.get("id"))
         return Response({"success": True})
+
+    @method_decorator(api_view(["GET"]))
+    @get_permissions_for_view("get_many")
+    def get_order_comments_view(self, request):
+        comments = self.services.get_order_comments(request.query_params)
+        return Response(comments)

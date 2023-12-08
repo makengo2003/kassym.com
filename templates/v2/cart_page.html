@@ -92,6 +92,7 @@
                         </div>
                     </div>
 
+                    <textarea v-model="cart_item.comments" placeholder="Комментария к товару"></textarea>
                     <hr>
                 </div>
             </div>
@@ -215,7 +216,7 @@
         </div>
 
         <div v-if="!cart_is_empty()" class="express section">
-            <input :disabled="!time_is_until_18px" type="checkbox" id="express_checkbox" @change="is_confirming_cart = false" v-model="express_checkbox" style="accent-color: #007671;">
+            <input :disabled="!time_is_until_18px" type="checkbox" id="express_checkbox" v-model="express_checkbox" style="accent-color: #007671;">
             <label for="express_checkbox"><h3>Экспресс доставка</h3><span v-if="!time_is_until_18px">Скоро будет доступна</span><!-- Доступна c 09:00 до 18:00 (GMT+6, Астана). --></label>
         </div>
 
@@ -223,20 +224,19 @@
             <hr v-if="!cart_is_empty()">
         </div>
 
-        <div v-if="!cart_is_empty()" class="comments section">
-            <div class="header">
+        <div v-if="!cart_is_empty()" class="comments section" style="padding-bottom: 30px;">
+            <div style="display: none" class="header">
                 <div class="title">
                     <img width="30" height="20" src="{% static 'v2/imgs/truck.png' %}" alt="">
                     <h3>Комментарий к заказу</h3>
                 </div>
             </div>
 
-            <textarea @input="is_confirming_cart = false" v-model="comments"></textarea>
+            <textarea style="display: none" v-model="comments"></textarea>
 
-            <div class="order_btn_block">
+            <div class="order_btn_block" style="margin-top: 0;">
                 <div class="btns">
                     <button class="order_btn" @click="go_to_payment()" :disabled="is_calculating_price" :style="is_calculating_price || !order_making_is_available ? 'opacity: 0.5' : 'opacity: 1'">Перейти к оплате</button>
-                    <button class="cancel_btn" @click="go_to_cart()" v-if="is_confirming_cart && !cart_is_confirmed">Отменить</button>
                 </div>
 
                 <span v-if="!order_making_is_available">Доступна c 09:00 до 23:00 (GMT+6, Астана).</span>

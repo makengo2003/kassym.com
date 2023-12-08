@@ -1,6 +1,5 @@
 from rest_framework import serializers
-
-from order.models import Order
+from order.models import OrderItem
 
 
 class PurchaseSerializer(serializers.Serializer):
@@ -17,9 +16,9 @@ class PurchaseSerializer(serializers.Serializer):
 
 class CommentsSerializer(serializers.ModelSerializer):
     comment = serializers.CharField()
-    count = serializers.IntegerField()
     client_phone_number = serializers.CharField()
+    company_name = serializers.CharField()
 
     class Meta:
-        model = Order
+        model = OrderItem
         fields = ["comment", "company_name", "count", "client_phone_number"]

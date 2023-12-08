@@ -80,7 +80,13 @@ class OrderModelPresenter(BaseModelPresenter):
 
     @staticmethod
     def get_object_add_form_serializer_fields():
-        return ["is_express", "deliveries_qr_code", "selection_sheet_file", "comments", "paid_check_file"]
+        return ["is_express", "deliveries_qr_code", "selection_sheet_file", "paid_check_file"]
+
+    @staticmethod
+    def get_object_add_form_serializer_extra_fields():
+        return {
+            "comments": serializers.JSONField()
+        }
 
     def object_add_form_serializer_create(self, validated_data):
         request_user = getattr(settings, 'request_user', None)
@@ -88,6 +94,7 @@ class OrderModelPresenter(BaseModelPresenter):
 
         order_items = []
         files = validated_data.pop("files")
+        comments = validated_data.pop("comments", {})
         i = 0
 
         for qr_code in files:
@@ -96,9 +103,10 @@ class OrderModelPresenter(BaseModelPresenter):
                 product_price = (cart_item.product.price - cart_item.product.price *
                                  cart_item.product.discount_percentage / 100)
                 total_price = cart_item.count * product_price
+                comment = comments.get(str(cart_item.id), "")
                 order_items.append(
                     OrderItem(qr_code=files[qr_code], count=cart_item.count, product_id=cart_item.product_id,
-                              product_price=product_price, total_price=total_price))
+                              product_price=product_price, total_price=total_price, comments=comment))
                 i += 1
 
         additional_selection_lists = []

@@ -28,7 +28,8 @@ orders_app = Vue.createApp({
             opened_order: null,
             selected_change_time: null,
             websocket: new WebSocket(websocket_prefix + window.location.host + '/ws/order/'),
-            uploaded_files: []
+            uploaded_files: [],
+            comments: null,
         }
     },
     methods: {
@@ -345,6 +346,16 @@ orders_app = Vue.createApp({
             if (not_found) {
                 this.open_order(this.opened_order)
             }
+        },
+
+        get_comments() {
+            axios("/api/order/get_order_comments/", {params: {
+                order_id: this.opened_order.id,
+            }}).then(
+                (response) => {
+                    this.comments = response.data
+                }
+            )
         }
     },
     mounted() {

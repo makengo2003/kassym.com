@@ -120,12 +120,16 @@
                         <p>${ show_order_dt(opened_order) }</p>
                     </div>
                     <div class="text">
+                        <span>Комментарии</span>
+                        <p><a @click="get_comments()" style="color: blue; text-decoration: underline">Посмотреть</a></p>
+                    </div>
+                    <div class="text">
                         <span>Чек</span>
                         <p @click="open_object_file(opened_order, 'paid_check_file')"><img src="{% static 'v2/imgs/paid_check_icon.png' %}"></p>
                     </div>
                 </div>
 
-                <p class="comments" v-if="opened_order.comments">${ opened_order.comments }</p>
+                <p style="display: none" class="comments" v-if="opened_order.comments">${ opened_order.comments }</p>
             </div>
 
             <div class="table">
@@ -162,6 +166,29 @@
             </div>
 
             <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="close_order()">
+        </div>
+    </div>
+
+    <div class="window" v-if="comments != null">
+        <div class="_window" style="height: 72%; overflow-y: scroll; min-width: 300px">
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <h3>Комментарии</h3>
+            </div>
+
+            <div class="info">
+                <div class="list" style="gap: 40px; align-items: baseline">
+                    <div class="texts" v-for="comment in comments" style="justify-content: normal; gap: 5px; height: fit-content">
+                        <div class="text" style="gap: 20px; align-items: baseline">
+                            <span class="comment_product_name">${ comment.product_name }</span>
+                            <p style="opacity: 1; min-width: 55px">${ comment.count } шт.</p>
+                        </div>
+
+                        <p class="comments" style="line-break: anywhere">${ comment.comment }</p>
+                    </div>
+                </div>
+            </div>
+
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="comments = null">
         </div>
     </div>
 

@@ -150,8 +150,8 @@
         </div>
     </div>
 
-    <div class="window" v-if="comments.length != 0">
-        <div class="_window" style="height: 72%; overflow-y: scroll">
+    <div class="window" v-if="comments != null">
+        <div class="_window" style="height: 72%; overflow-y: scroll; min-width: 300px">
             <div style="display: flex; flex-direction: column; gap: 5px;">
                 <h3>Комментарии</h3>
             </div>
@@ -169,7 +169,7 @@
                 </div>
             </div>
 
-            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="comments = []">
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="comments = null">
         </div>
     </div>
 

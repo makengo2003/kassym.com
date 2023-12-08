@@ -45,3 +45,4 @@ class OrderItem(models.Model):
     qr_code = models.FileField(upload_to="products_qr_code/")
     product_price = models.PositiveIntegerField()
     total_price = models.PositiveIntegerField()
+    comments = models.TextField(null=True, blank=True)
