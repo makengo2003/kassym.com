@@ -128,8 +128,6 @@
                         <p @click="open_object_file(opened_order, 'paid_check_file')"><img src="{% static 'v2/imgs/paid_check_icon.png' %}"></p>
                     </div>
                 </div>
-
-                <p style="display: none" class="comments" v-if="opened_order.comments">${ opened_order.comments }</p>
             </div>
 
             <div class="table">
@@ -185,6 +183,14 @@
 
                         <p class="comments" style="line-break: anywhere">${ comment.comment }</p>
                     </div>
+
+                    <div class="texts" style="justify-content: normal; gap: 5px; height: fit-content">
+                        <div class="text" style="gap: 20px; align-items: baseline">
+                            <span class="comment_product_name">Комментария к заказу</span>
+                        </div>
+
+                        <p class="comments" style="line-break: anywhere">${ opened_order.comments }</p>
+                    </div>
                 </div>
             </div>
 
@@ -196,7 +202,7 @@
         <div class="_window edit_order_form_window">
             <h3>Исправить Заказ<span>/${ opened_order.company_name }</span></h3>
 
-            <textarea style="display: none" v-model="opened_order.new_comments" placeholder="Добавить комментарии"></textarea>
+            <textarea v-model="opened_order.new_comments" placeholder="Добавить комментарии"></textarea>
 
             <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="cancel_edit_order()">
 
