@@ -1,13 +1,14 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.core.files.storage import FileSystemStorage
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django_bulk_update.helper import bulk_update
 
+from order.models import Order
 from product.models import Product
 from project.utils import datetime_now
 from .models import Purchase, PURCHASE_STATUSES
-from purchase.serializers import PurchaseSerializer
+from purchase.serializers import PurchaseSerializer, CommentsSerializer
 from project import settings
 
 
@@ -155,3 +156,18 @@ class PurchaseServicesPresenter:
                            "status": "replaced"}
                           for purchase in purchases]
         }
+
+    def get_purchase_comments(self, params):
+        change_time = params.get("change_time", None)
+        status = params.get("status", None)
+        product_id = params.get("product_id", None)
+
+        comments = Order.objects.filter(
+            created_at__date=change_time, order_items__purchases__status=status, order_items__product_id=product_id
+        ).annotate(
+            client_phone_number=F("user__username"),
+            count=Count("order_items__product_id"),
+            comment=F("comments")
+        ).only("company_name").distinct()
+
+        return CommentsSerializer(comments, many=True).data
