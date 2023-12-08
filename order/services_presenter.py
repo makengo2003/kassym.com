@@ -122,6 +122,9 @@ class OrderServicesPresenter(BaseServicesPresenter):
         if new_comments:
             if order.comments:
                 order.comments += "\n"
+            else:
+                order.comments = ""
+
             order.comments += " - " + new_comments.strip()
 
         order.save()
