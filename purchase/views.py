@@ -48,3 +48,9 @@ class PurchaseViewsPresenter(BaseViewsPresenter):
     def get_is_being_considered_purchase_view(self, request):
         purchases = self.services.get_is_being_considered_purchase(request.query_params)
         return Response(purchases)
+
+    @method_decorator(api_view(["GET"]))
+    @get_permissions_for_view("get_many")
+    def get_purchase_comments_view(self, request):
+        comments = self.services.get_purchase_comments(request.query_params)
+        return Response(comments)

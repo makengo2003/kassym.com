@@ -51,6 +51,7 @@ purchases_app = Vue.createApp({
             is_being_considered_form: null,
             is_being_considered: null,
             is_submitting_is_being_considered_form: null,
+            comments: [],
         }
     },
     methods: {
@@ -337,6 +338,18 @@ purchases_app = Vue.createApp({
 
         open_product() {
             window.open("/product/?product_id=" + this.opened_purchase.product_id, "_blank")
+        },
+
+        get_comments() {
+            axios("/api/purchase/get_purchase_comments/", {params: {
+                product_id: this.opened_purchase.product_id,
+                status: this.selected_status,
+                change_time: this.reformat_selected_change_time()
+            }}).then(
+                (response) => {
+                    this.comments = response.data
+                }
+            )
         }
     },
     mounted() {
