@@ -282,7 +282,7 @@ h1, h2, h3, h4, h5, h6, b {
     position: relative;
 
     padding: 22px 30px;
-    margin: 8% auto 0px auto;
+    margin: 6% auto 0px auto;
 
     width: 1000px;
     background-color: white;
@@ -671,4 +671,8 @@ h1, h2, h3, h4, h5, h6, b {
     border: none;
     background-color: #02B0A9;
     border-radius: 5px;
+}
+
+.window ._window .info .list .text span.comment_product_name {
+    width: 365px;
 }

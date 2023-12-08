@@ -51,7 +51,7 @@ purchases_app = Vue.createApp({
             is_being_considered_form: null,
             is_being_considered: null,
             is_submitting_is_being_considered_form: null,
-            comments: [],
+            comments: null,
         }
     },
     methods: {

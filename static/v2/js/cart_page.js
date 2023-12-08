@@ -44,8 +44,6 @@ cart_app = Vue.createApp({
             });
         },
         minus_count(cart_item) {
-            this.is_confirming_cart = false
-
             cart_item.count -= 1
 
             if (cart_item.count < 1) {
@@ -55,8 +53,6 @@ cart_app = Vue.createApp({
             axios.post("/api/cart/update_fields/", {"id": cart_item.id, "count": cart_item.count}, {headers: {"X-CSRFToken": $cookies.get("csrftoken")}})
         },
         plus_count(cart_item) {
-            this.is_confirming_cart = false
-
             cart_item.count += 1
             axios.post("/api/cart/update_fields/", {"id": cart_item.id, "count": cart_item.count}, {headers: {"X-CSRFToken": $cookies.get("csrftoken")}})
         },
@@ -65,8 +61,6 @@ cart_app = Vue.createApp({
 
         },
         remove_cart_item(cart_item) {
-            this.is_confirming_cart = false
-
             axios.post("/api/cart/delete/", {id: cart_item.id}, {headers: {"X-CSRFToken": $cookies.get("csrftoken")}})
             this.cancel_file_upload(cart_item, "qr_code")
             this.cart.splice(this.cart.indexOf(cart_item), 1)
@@ -99,8 +93,6 @@ cart_app = Vue.createApp({
 
         },
         cancel_file_upload(obj, label) {
-            this.is_confirming_cart = false
-
             if (this.file_is_uploaded(obj, label)) {
                 delete this.uploaded_files[obj[label]]
                 document.getElementById(obj[label].split(":")[0]).value = null
@@ -158,10 +150,7 @@ cart_app = Vue.createApp({
                     this.cart_is_confirmed = false
                     this.is_confirming_cart = true
 
-                    Swal.fire({
-                        title: "Пожалуйста, внимательно проверьте корзину и загруженные файлы",
-                        icon: "warning"
-                    })
+                    Swal.fire("Пожалуйста", 'Прежде чем оплатить, еще раз проверьте корзину и загруженные файлы', "warning")
                 }
 
                 if (this.express_checkbox && this.time_is_until_18px) {
@@ -184,8 +173,6 @@ cart_app = Vue.createApp({
                         this.is_calculating_price = false
                     })
                 }
-            } else {
-                this.is_confirming_cart = false
             }
         },
         make_order() {
@@ -206,7 +193,7 @@ cart_app = Vue.createApp({
 
                 var data = {
                     is_express: this.express_checkbox,
-                    comments: this.comments,
+                    comments: {}, // this.comments
                     deliveries_qr_code: this.uploaded_files[this.deliveries_qr_code["file"]],
                     selection_sheet_file: this.uploaded_files[this.selection_sheet["file"]],
                     paid_check_file: this.uploaded_files[this.paid_check_pdf["file"]],
@@ -214,7 +201,10 @@ cart_app = Vue.createApp({
 
                 for (var i = 0; i < this.cart.length; i++) {
                     data[this.cart[i]["qr_code"]] = this.uploaded_files[this.cart[i]["qr_code"]]
+                    data["comments"][this.cart[i]["id"]] = this.cart[i]["comments"]
                 }
+
+                data["comments"] = JSON.stringify(data["comments"])
 
                 for (var i = 0; i < this.additional_selection_lists.length; i++) {
                     data[this.additional_selection_lists[i]["file"]] = this.uploaded_files[this.additional_selection_lists[i]["file"]]
@@ -248,11 +238,9 @@ cart_app = Vue.createApp({
         },
 
         add_selection_list() {
-            this.is_confirming_cart = false
             this.additional_selection_lists.push({id: generateUUID(), file: null})
         },
         remove_selection_list(selection_list) {
-            this.is_confirming_cart = false
             this.cancel_file_upload(selection_list, "file")
             this.additional_selection_lists.splice(this.additional_selection_lists.indexOf(selection_list), 1)
         }

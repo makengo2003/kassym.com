@@ -343,7 +343,7 @@ body {
     padding-bottom: 50px;
 }
 
-#cart_page .comments textarea {
+#cart_page textarea {
     width: calc(100% - 20px);
     height: 200px;
     background: #02B0A91A;
@@ -352,6 +352,13 @@ body {
     outline: none;
     color: #007671;
     padding: 10px;
+}
+
+#cart_page .cart_items .item textarea {
+    width: 372px;
+    height: 32px;
+    margin-bottom: 3px;
+    transform: translateX(82px);
 }
 
 #cart_page .order_btn_block .btns {

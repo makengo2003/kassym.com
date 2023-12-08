@@ -133,6 +133,12 @@
     #cart_page .tutorial_section .header br {
         display: initial;
     }
+
+    #cart_page .cart_items .item textarea {
+        transform: translateX(0);
+        width: calc(100% - 20px);
+        margin-top: 8px;
+    }
 }
 
 @media(max-width: 630px) {

@@ -5,7 +5,7 @@ from typing import Mapping, MutableMapping
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.core.files.storage import FileSystemStorage
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django.shortcuts import get_object_or_404
 
 from base_object_presenter.serializers import BaseSerializer
@@ -13,6 +13,8 @@ from base_object_presenter.services import BaseServicesPresenter
 from project import settings
 from project.utils import datetime_now
 from .model_presenter import OrderModelPresenter
+from .models import OrderItem
+from .serializers import CommentsSerializer
 
 
 class OrderServicesPresenter(BaseServicesPresenter):
@@ -130,3 +132,15 @@ class OrderServicesPresenter(BaseServicesPresenter):
                 "action": "order_changed", "order_id": order.id
             }}
         )
+
+    def get_order_comments(self, params):
+        order_id = params.get("order_id", None)
+
+        comments = OrderItem.objects.filter(
+            Q(comments__isnull=False) & ~Q(comments=""), order_id=order_id
+        ).annotate(
+            product_name=F("product__name"),
+            comment=F("comments")
+        ).only("count").distinct()
+
+        return CommentsSerializer(comments, many=True).data

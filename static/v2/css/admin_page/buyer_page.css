@@ -119,6 +119,7 @@
     min-height: 22px;
     line-break: anywhere;
     padding-right: 30px;
+    max-width: 615px;
 }
 
 .window ._window .info {
