@@ -189,10 +189,16 @@ purchases_app = Vue.createApp({
                 this.opened_purchase = purchase
                 this.websocket.send(JSON.stringify({"product_id": this.opened_purchase.product_id, "action": "open"}))
                 document.body.style.overflow = 'hidden';
+
+                if (this.comments == null) {
+                    this.comments = []
+                    this.get_comments()
+                }
             }
         },
         close_purchase_window() {
             document.body.style.overflow = '';
+            this.comments = null
 
             if (this.opened_purchase != null) {
                 this.websocket.send(JSON.stringify({"product_id": this.opened_purchase.product_id, "action": "close"}))

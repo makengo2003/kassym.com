@@ -85,7 +85,14 @@
                     </div>
                 </div>
 
-                <p class="comments" v-if="opened_order.comments">${ opened_order.comments }</p>
+                <p class="comments" v-if="opened_order.comments">
+                    <span v-for="order_item in opened_order.order_items">
+                        <span v-if="order_item.comments">
+                            ${ order_item.product.name }: <br> ${ order_item.comments } <br><br>
+                        </span>
+                    </span>
+                    <span v-if="opened_order.comments">Комментария к заказу: <br> ${ opened_order.comments } </span>
+                </p>
             </div>
 
             <div class="pre_table">

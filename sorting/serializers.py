@@ -51,7 +51,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ('qr_code', 'purchases', "product")
+        fields = ('qr_code', 'purchases', "product", "comments")
 
 
 class OrderSerializer(serializers.ModelSerializer):

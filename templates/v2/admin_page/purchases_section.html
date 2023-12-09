@@ -76,6 +76,16 @@
                 <div class="purchase_img" @click="opened_product_image = 'https://kassym.com/media/' + opened_purchase.product_poster" :style="'background-image: url(https://kassym.com/media/' + opened_purchase.product_poster + ')'"></div>
 
                 <div class="list">
+                    <p class="comments">
+                        <span v-for="comment in comments">
+                            <span v-if="comment.comment">
+                                ${ comment.company_name } (${ comment.client_phone_number }), ${ comment.count } шт: <br>
+                                ${ comment.comment } <br><br>
+                            </span>
+                            <span v-if="comment.order_comment">К заказу: <br>${ comment.order_comment } <br><br></span>
+                        </span>
+                    </p>
+
                     <div class="texts" :style="purchase_form.replaced_count > 0 ? 'height: revert-layer;' : ''">
                         <div class="text">
                             <span>Кол. товаров</span>
@@ -92,10 +102,6 @@
                         <div class="text">
                             <span>Цена в каталоге</span>
                             <p>${ opened_purchase.product_price } Р</p>
-                        </div>
-                        <div class="text">
-                            <span>Комментарии</span>
-                            <p><a @click="get_comments()" style="text-decoration: underline; color: blue">Посмотреть</a></p>
                         </div>
                         <div class="text" v-if="!purchase_actions_are_available()" :style="!purchase_actions_are_available() && selected_status != 'replaced' ? 'margin-bottom: 155px' : ''">
                             <span>Цена за шт.</span>
@@ -147,29 +153,6 @@
             </div>
 
             <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="close_purchase_window()">
-        </div>
-    </div>
-
-    <div class="window" v-if="comments != null">
-        <div class="_window" style="height: 72%; overflow-y: scroll; min-width: 300px">
-            <div style="display: flex; flex-direction: column; gap: 5px;">
-                <h3>Комментарии</h3>
-            </div>
-
-            <div class="info">
-                <div class="list" style="gap: 40px;">
-                    <div class="texts" v-for="comment in comments" style="justify-content: normal; gap: 5px; height: fit-content">
-                        <div class="text" style="gap: 20px">
-                            <span>${ comment.company_name } (${ comment.client_phone_number })</span>
-                            <p style="opacity: 1; min-width: 55px">${ comment.count } шт.</p>
-                        </div>
-
-                        <p class="comments" style="line-break: anywhere">${ comment.comment }</p>
-                    </div>
-                </div>
-            </div>
-
-            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="comments = null">
         </div>
     </div>
 
