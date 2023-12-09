@@ -301,6 +301,17 @@ sorting_app = Vue.createApp({
         sorting_disabled(purchase) {
             return this.opened_order.status != 'is_sorting' || purchase.status == 'new' || purchase.status == 'will_be_tomorrow' || purchase.status == 'not_available' || this.is_saving_changes
         },
+
+        get_previous_purchases_count(order_item_index) {
+            var order_items = this.opened_order.order_items.slice(0, order_item_index)
+            var count = 0
+
+            for (var i = 0; i < order_items.length; i++) {
+                count += order_items[i].purchases.length
+            }
+
+            return count
+        }
     },
     mounted() {
         this.websocket.addEventListener('message', this.handle_websocket_message);

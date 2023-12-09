@@ -113,7 +113,7 @@
                     <div class="rows">
                         <div class="_row" v-for="(order_item, order_item_index) in opened_order.order_items" :key="order_item_index">
                             <div class="row" v-for="(purchase, purchase_index) in order_item.purchases" :key="purchase_index" :style="purchase.status_display == 'Нет в наличий' ? 'opacity: 0.3; pointer-events: none;' : ''">
-                                <p class="index">${ order_item_index + 1 }</p>
+                                <p class="index">${ get_previous_purchases_count(order_item_index) + purchase_index + 1 }</p>
                                 <p class="name"><a :href="'/product/?product_id=' + order_item.product.id" target="_blank">${ order_item.product.name }</a></p>
 
                                 <p class="type" v-if="order_item.product.category != 7">${ order_item.product.market }</p>
