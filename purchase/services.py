@@ -167,7 +167,8 @@ class PurchaseServicesPresenter:
         ).annotate(
             client_phone_number=F("order__user__username"),
             company_name=F("order__company_name"),
-            comment=F("comments")
+            comment=F("comments"),
+            order_comment=F("order__comments")
         ).only("count").distinct()
 
         return CommentsSerializer(comments, many=True).data

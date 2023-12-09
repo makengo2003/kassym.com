@@ -108,7 +108,7 @@
 
     .window ._window {
         overflow: scroll;
-        height: 600px;
+        height: 660px;
         max-width: 375px;
     }
 
@@ -125,7 +125,7 @@
     }
 
     .window ._window .info .comments {
-        max-width: auto;
+        max-height: 120px;
         width: auto;
     }
 
@@ -140,6 +140,11 @@
 
     #sorting_section .window ._window, #delivering_section .window ._window {
         width: 300px;
+    }
+
+    .window ._window .info .list {
+        gap: 10px;
+        height: fit-content;
     }
 
     .window ._window .info .list .text p {
@@ -212,5 +217,17 @@
 
     .section .content .table .columns .is_express, .section .content .table .rows ._row .is_express {
         display: none;
+    }
+
+    #sorting_section .content .table, #delivering_section .content .table {
+        height: 555px;
+    }
+
+    #sorting_section .content .table .rows, #delivering_section .content .table .rows {
+        height: 410px;
+    }
+
+    #purchases_section .window ._window .info .comments {
+        width: 260px;
     }
 }

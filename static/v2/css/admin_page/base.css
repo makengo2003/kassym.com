@@ -382,6 +382,9 @@ h1, h2, h3, h4, h5, h6, b {
     padding: 10px 20px;
     transform: translateY(5px);
     white-space: pre-line;
+    max-height: 160px;
+    overflow-y: scroll;
+    height: fit-content;
 }
 
 .window ._window .actions {

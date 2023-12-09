@@ -16,9 +16,10 @@ class PurchaseSerializer(serializers.Serializer):
 
 class CommentsSerializer(serializers.ModelSerializer):
     comment = serializers.CharField()
+    order_comment = serializers.CharField()
     client_phone_number = serializers.CharField()
     company_name = serializers.CharField()
 
     class Meta:
         model = OrderItem
-        fields = ["comment", "company_name", "count", "client_phone_number"]
+        fields = ["comment", "company_name", "count", "client_phone_number", "order_comment"]
