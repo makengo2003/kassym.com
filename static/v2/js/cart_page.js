@@ -116,7 +116,7 @@ cart_app = Vue.createApp({
         go_to_payment() {
             var astana_current_time = moment.tz("Asia/Almaty").hour()
             var astana_current_time_minutes = moment.tz("Asia/Almaty").minutes()
-            this.order_making_is_available = astana_current_time < 23 && astana_current_time > 8
+            this.order_making_is_available = astana_current_time < 23 && astana_current_time_minutes < 31 && astana_current_time > 8
             this.time_is_until_18px = astana_current_time < -1 && astana_current_time > 25
 
             if (this.order_making_is_available) {
@@ -167,6 +167,23 @@ cart_app = Vue.createApp({
                         this.payment_info = response.data
                         this.current_page = "payment"
                         window.scrollTo({top: 0, behavior: "smooth"});
+
+                        if (response.data["is_same_with_last_order"]) {
+                            Swal.fire({
+                                title: "Внимание",
+                                text: "Текущая корзина абсолютно идентична вашему последнему заказу.\nПродолжить заказ?",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "Продолжить",
+                                cancelButtonText: "Отменить"
+                            }).then((result) => {
+                                if (!result.isConfirmed) {
+                                    this.go_to_cart()
+                                }
+                            })
+                        }
                     }).catch((err) => {
                         this.is_confirming_cart = true
                         Swal.fire("Ошибка", "Свяжитесь с менеджерами", "error")
@@ -251,7 +268,7 @@ cart_app = Vue.createApp({
         axios("/api/cart/get_many/").then(response => this.cart = response.data)
         var astana_current_time = moment.tz("Asia/Almaty").hour()
         var astana_current_time_minutes = moment.tz("Asia/Almaty").minutes()
-        this.order_making_is_available = astana_current_time < 23 && astana_current_time > 8
+        this.order_making_is_available = astana_current_time < 23 && astana_current_time_minutes < 31 && astana_current_time > 8
         this.time_is_until_18px = astana_current_time < -1 && astana_current_time > 25
     }
 })
