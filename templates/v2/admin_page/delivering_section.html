@@ -88,6 +88,7 @@
             <div class="pre_table">
                 <div class="table">
                     <div class="columns">
+                        <p class="index">№</p>
                         <p class="name">Товар</p>
                         <p class="type">Тип</p>
                         <p class="buyer">Закупщик</p>
@@ -97,8 +98,9 @@
                     <hr>
 
                     <div class="rows">
-                        <div class="_row" v-for="order_item in opened_order.order_items">
+                        <div class="_row" v-for="(order_item, order_item_index) in opened_order.order_items" :key="order_item_index">
                             <div class="row" v-for="purchase in order_item.purchases" :style="purchase.status_display == 'Нет в наличий' ? 'opacity: 0.3' : ''">
+                                <p class="index">${ order_item_index + 1 }</p>
                                 <p class="name"><a :href="'/product/?product_id=' + order_item.product.id" target="_blank">${ order_item.product.name }</a></p>
 
                                 <p class="type" v-if="order_item.product.category != 7">${ order_item.product.market }</p>

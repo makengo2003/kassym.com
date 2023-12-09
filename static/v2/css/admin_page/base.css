@@ -450,6 +450,11 @@ h1, h2, h3, h4, h5, h6, b {
     border-radius: 5px;
 }
 
+.window ._window .table .columns .index, .window ._window .table .rows .row .index {
+    width: 20px;
+    margin-right: 35px;
+}
+
 .window ._window .table .columns .name, .window ._window .table .rows .row .name {
     width: 250px;
     margin-right: 50px;

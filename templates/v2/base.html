@@ -298,7 +298,7 @@
 	<script src="{% static 'v2/js/packages/pagination.js' %}"></script>
 	<script src="{% static 'v2/js/packages/sweetalert2.all.min.js' %}"></script>
 
-	<script src="{% static 'v2/js/base.js' %}"></script>
+	<script src="{% static 'v2/js/base.js' %}?v={{ server_ran_time }}"></script>
 	{% block scripts %}
     {% endblock %}
 </body>

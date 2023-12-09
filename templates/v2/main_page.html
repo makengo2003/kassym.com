@@ -67,6 +67,6 @@
 
 {% block scripts %}
 <script src="{% static 'v2/js/packages/flickity.pkgd.min.js' %}"></script>
-<script src="{% static 'v2/js/main_page.js' %}"></script>
-<script src="{% static 'v2/js/products.js' %}"></script>
+<script src="{% static 'v2/js/main_page.js' %}?v={{ server_ran_time }}"></script>
+<script src="{% static 'v2/js/products.js' %}?v={{ server_ran_time }}"></script>
 {% endblock %}
