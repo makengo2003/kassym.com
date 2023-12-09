@@ -132,6 +132,17 @@ delivering_app = Vue.createApp({
             if (not_found) {
                 this.open_order(this.opened_order)
             }
+        },
+
+        get_previous_purchases_count(order_item_index) {
+            var order_items = this.opened_order.order_items.slice(0, order_item_index)
+            var count = 0
+
+            for (var i = 0; i < order_items.length; i++) {
+                count += order_items[i].purchases.length
+            }
+
+            return count
         }
     },
     mounted() {
