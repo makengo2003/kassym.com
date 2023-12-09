@@ -81,14 +81,14 @@
         <script src="{% static 'v2/js/packages/sweetalert2.all.min.js' %}"></script>
 
 
-        <script src="{% static 'v2/js/admin_page/base.js' %}"></script>
-        <script src="{% static 'v2/js/admin_page/buyer.js' %}"></script>
-        <script src="{% static 'v2/js/admin_page/sorting.js' %}"></script>
-        <script src="{% static 'v2/js/admin_page/delivering.js' %}"></script>
-        <script src="{% static 'v2/js/admin_page/finance.js' %}"></script>
-        <script src="{% static 'v2/js/admin_page/expenses.js' %}"></script>
+        <script src="{% static 'v2/js/admin_page/base.js' %}?v={{ server_ran_time }}"></script>
+        <script src="{% static 'v2/js/admin_page/buyer.js' %}?v={{ server_ran_time }}"></script>
+        <script src="{% static 'v2/js/admin_page/sorting.js' %}?v={{ server_ran_time }}"></script>
+        <script src="{% static 'v2/js/admin_page/delivering.js' %}?v={{ server_ran_time }}"></script>
+        <script src="{% static 'v2/js/admin_page/finance.js' %}?v={{ server_ran_time }}"></script>
+        <script src="{% static 'v2/js/admin_page/expenses.js' %}?v={{ server_ran_time }}"></script>
 
-        <script src="{% static 'v2/js/admin_page/sidebar.js' %}"></script>
+        <script src="{% static 'v2/js/admin_page/sidebar.js' %}?v={{ server_ran_time }}"></script>
 
         <script>
             function open_burger() {
