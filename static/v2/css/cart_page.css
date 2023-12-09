@@ -394,6 +394,7 @@ body {
 #cart_page .order_page {
     padding: 40px 60px;
     width: calc(1100px - 120px);
+    background: white;
 }
 
 #cart_page .order_page hr {
