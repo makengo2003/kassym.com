@@ -18,6 +18,7 @@ from order.models import Order, OrderItem
 from product.models import Product
 from product.serializers import ProductsSerializer
 from project.settings import BOT_TOKEN
+from purchase.models import Purchase
 from site_settings.models import Contact
 from .models import FavouriteProduct, Client, UserRequest
 from .serializers import ChangePasswordSerializer, ClientSerializer, ClientFormSerializer
@@ -225,47 +226,47 @@ def get_finance(change_time):
     finance = Order.objects.filter(~Q(status="new"), created_at__date=change_time).aggregate(
         total_price=Sum("total_sum_in_tenge"),
     )
-    order_items = OrderItem.objects.filter(~Q(order__status="new"), order__created_at__date=change_time).select_related("product")
+    purchases = Purchase.objects.filter(last_modified__date=change_time).select_related("order_item__product")
 
     total_products_price_for_markets = 0
     total_products_price_for_china = 0
 
-    for order_item in order_items:
-        if order_item.product.category_id == 7:
-            total_products_price_for_china += order_item.total_price
+    for purchase in purchases:
+        if purchase.order_item.product.category_id == 7:
+            total_products_price_for_china += purchase.order_item.product_price
         else:
-            total_products_price_for_markets += order_item.total_price
+            total_products_price_for_markets += purchase.order_item.product_price
 
     total_price = int(finance["total_price"] or 0)
     total_products_price_for_markets = int(total_products_price_for_markets or 0)
     total_products_price_for_china = int(total_products_price_for_china or 0)
 
-    total_expenses_in_ruble = 0
-    total_expenses_in_tenge = 0
-    total_managers_expenses_in_ruble = 0
-    total_managers_expenses_in_tenge = 0
-    total_buyers_expenses_in_ruble = 0
-    total_buyers_expenses_in_tenge = 0
-    total_sorters_expenses_in_ruble = 0
-    total_sorters_expenses_in_tenge = 0
-
-    expenses = [{
-        "staff_fullname": "adqweqwd",
-        "sum": 123,
-        "description": "adrkpoegjifn oajnesio njinaksd ",
-    }] * 20
+    # total_expenses_in_ruble = 0
+    # total_expenses_in_tenge = 0
+    # total_managers_expenses_in_ruble = 0
+    # total_managers_expenses_in_tenge = 0
+    # total_buyers_expenses_in_ruble = 0
+    # total_buyers_expenses_in_tenge = 0
+    # total_sorters_expenses_in_ruble = 0
+    # total_sorters_expenses_in_tenge = 0
+    #
+    # expenses = [{
+    #     "staff_fullname": "adqweqwd",
+    #     "sum": 123,
+    #     "description": "adrkpoegjifn oajnesio njinaksd ",
+    # }] * 20
 
     return {
         "total_price": total_price,
         "total_products_price_for_markets": total_products_price_for_markets,
         "total_products_price_for_china": total_products_price_for_china,
-        "total_expenses_in_ruble": total_expenses_in_ruble,
-        "total_expenses_in_tenge": total_expenses_in_tenge,
-        "total_managers_expenses_in_ruble": total_managers_expenses_in_ruble,
-        "total_managers_expenses_in_tenge": total_managers_expenses_in_tenge,
-        "total_buyers_expenses_in_ruble": total_buyers_expenses_in_ruble,
-        "total_buyers_expenses_in_tenge": total_buyers_expenses_in_tenge,
-        "total_sorters_expenses_in_ruble": total_sorters_expenses_in_ruble,
-        "total_sorters_expenses_in_tenge": total_sorters_expenses_in_tenge,
-        "expenses": expenses
+        # "total_expenses_in_ruble": total_expenses_in_ruble,
+        # "total_expenses_in_tenge": total_expenses_in_tenge,
+        # "total_managers_expenses_in_ruble": total_managers_expenses_in_ruble,
+        # "total_managers_expenses_in_tenge": total_managers_expenses_in_tenge,
+        # "total_buyers_expenses_in_ruble": total_buyers_expenses_in_ruble,
+        # "total_buyers_expenses_in_tenge": total_buyers_expenses_in_tenge,
+        # "total_sorters_expenses_in_ruble": total_sorters_expenses_in_ruble,
+        # "total_sorters_expenses_in_tenge": total_sorters_expenses_in_tenge,
+        # "expenses": expenses
     }

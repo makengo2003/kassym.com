@@ -23,6 +23,7 @@ def finish_change_time():
 
     Purchase.objects.filter(Q(status="will_be_tomorrow") | Q(status="new")).update(status="new",
                                                                                    last_modified=last_change_time.dt)
+    Purchase.objects.filter(Q(status="is_being_considered")).update(last_modified=last_change_time.dt)
 
     ChangeTime.objects.create(dt=last_change_time.dt + relativedelta(days=1))
 
