@@ -39,16 +39,33 @@ orders_app = Vue.createApp({
             }
         },
         close_section() {},
+
+        get_change_time_dt_lte_and_gt(change_time) {
+            var dt_gt = moment(change_time)
+            var dt_lte = moment(change_time)
+
+            dt_gt.minutes(20)
+            dt_gt.hours(0)
+            dt_lte.minutes(20)
+            dt_lte.hours(0)
+
+            dt_lte.add(1, "day")
+            dt_gt = dt_gt.format('YYYY-MM-DDTHH:mm:ss')
+            dt_lte = dt_lte.format('YYYY-MM-DDTHH:mm:ss')
+
+            return [dt_gt, dt_lte]
+        },
         open_category(category) {
             this.opened_category = category
 
             var status = category.slice(0, -7)
             var selected_change_time = this.selected_change_time.split(".").reverse().join("-")
+            var [dt_gt, dt_lte] = this.get_change_time_dt_lte_and_gt(selected_change_time)
 
             if (status == "all") {
-                var filtration = {created_at__date: selected_change_time}
+                var filtration = {created_at__gt: dt_gt, created_at__lte: dt_lte}
             } else {
-                var filtration = {"status": status, created_at__date: selected_change_time}
+                var filtration = {"status": status, created_at__gt: dt_gt, created_at__lte: dt_lte}
             }
 
             if (this.search_input) {
@@ -72,8 +89,9 @@ orders_app = Vue.createApp({
         },
         set_orders_counts() {
             var selected_change_time = this.selected_change_time.split(".").reverse().join("-")
+            var [dt_gt, dt_lte] = this.get_change_time_dt_lte_and_gt(selected_change_time)
 
-            axios("/api/order/get_orders_counts/", {params: {created_at__date: selected_change_time}}).then((response) => {
+            axios("/api/order/get_orders_counts/", {params: {change_time: JSON.stringify({created_at__gt: dt_gt, created_at__lte: dt_lte})}}).then((response) => {
                 this.orders_counts = response.data
             })
         },
@@ -152,6 +170,52 @@ orders_app = Vue.createApp({
 
         },
 
+        cancel_order() {
+            Swal.fire({
+                title: "Отменить заказ?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Да",
+                cancelButtonText: "Нет"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Причина отмены",
+                        input: "text",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Продолжить",
+                        cancelButtonText: "Назад",
+                        showLoaderOnConfirm: true,
+                        allowOutsideClick: () => !Swal.isLoading(),
+                        preConfirm: async (login) => {
+                            var inputted_text = login.replace(" ", "")
+                            if (inputted_text) {
+                                return login
+                            } else {
+                                Swal.showValidationMessage("Напишите причину отказа");
+                            }
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.post("/api/order/cancel/", {
+                                id: this.opened_order.id, reason: result.value
+                            }, {
+                                headers: {
+                                    "X-CSRFToken": $cookies.get("csrftoken"),
+                                }
+                            }).then((response) => {
+                                Swal.fire("Заказ отменен", "Причина: " + result.value, "success")
+                                this.close_order()
+                            })
+                        }
+                    })
+                }
+            })
+        },
         accept_order(order) {
             Swal.fire({
                 title: "Принять заказ?",
