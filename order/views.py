@@ -51,7 +51,7 @@ class OrderViewsPresenter(BaseViewsPresenter):
     @method_decorator(api_view(["GET"]))
     @get_permissions_for_view("get_orders_counts")
     def get_orders_counts_view(self, request):
-        orders_counts = self.services.get_orders_counts(request.query_params.get("created_at__date"))
+        orders_counts = self.services.get_orders_counts(request.query_params.get("change_time"))
         return Response(orders_counts)
 
     @method_decorator(api_view(["POST"]))
@@ -65,3 +65,9 @@ class OrderViewsPresenter(BaseViewsPresenter):
     def get_order_comments_view(self, request):
         comments = self.services.get_order_comments(request.query_params)
         return Response(comments)
+
+    @method_decorator(api_view(["POST"]))
+    @get_permissions_for_view("accept")
+    def cancel_view(self, request: Request) -> Response:
+        self.services.cancel_order(request.data.get("id"), request.data.get("reason"))
+        return Response({"success": True})

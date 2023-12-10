@@ -65,7 +65,7 @@ class OrderServicesPresenter(BaseServicesPresenter):
 
         request_user = getattr(settings, 'request_user', None)
         if hasattr(request_user, "manager") and filtration.get("status", None) == "accepted":
-            accepted_status_q = ~Q(status="new")
+            accepted_status_q = ~Q(status="new") & ~Q(status="canceled")
             del filtration["status"]
         else:
             accepted_status_q = Q()
@@ -82,10 +82,12 @@ class OrderServicesPresenter(BaseServicesPresenter):
 
         return self.serializers["objects"](objects, many=True)
 
-    def get_orders_counts(self, created_at__date):
-        orders_counts = self.model_presenter.model.objects.filter(created_at__date=created_at__date).aggregate(
+    def get_orders_counts(self, query_params):
+        query_params = json.loads(query_params)
+        orders_counts = self.model_presenter.model.objects.filter(**query_params).aggregate(
             new_orders_count=Count("id", filter=Q(status="new")),
-            accepted_orders_count=Count("id", filter=~Q(status="new"))
+            canceled_orders_count=Count("id", filter=Q(status="canceled")),
+            accepted_orders_count=Count("id", filter=~Q(status="new") & ~Q(status="canceled")),
         )
 
         return orders_counts
@@ -147,3 +149,14 @@ class OrderServicesPresenter(BaseServicesPresenter):
         ).only("count").distinct()
 
         return CommentsSerializer(comments, many=True).data
+
+    def cancel_order(self, order_id, reason):
+        request_user = getattr(settings, 'request_user', None)
+        self.model_presenter.model.objects.filter(id=order_id).update(status="canceled", manager=request_user.manager,
+                                                                      accepted_dt=datetime_now(),
+                                                                      cancellation_reason=reason)
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            "managers_room", {"type": "managers_message", "message": {"action": "orders_count_changed",
+                                                                      "order_id": order_id}}
+        )
