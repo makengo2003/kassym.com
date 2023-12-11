@@ -46,7 +46,7 @@ def calculate(user, data, cart_items=None):
     if last_order:
         for order_item in last_order.order_items.all():
             if order_item.product.id in products_ids:
-                found_count += 1  # order_item.count == products_ids[order_item.product.id]
+                found_count += order_item.count == products_ids[order_item.product.id]
 
     return {
         "is_same_with_last_order": len(products_ids) == found_count,
