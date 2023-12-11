@@ -299,7 +299,7 @@ sorting_app = Vue.createApp({
         },
 
         sorting_disabled(purchase) {
-            return this.opened_order.status != 'is_sorting' || purchase.status != 'purchased' || purchase.status != 'replaced' || this.is_saving_changes
+            return this.opened_order.status != 'is_sorting' || purchase.status == 'new' || purchase.status == 'will_be_tomorrow' || purchase.status == 'not_available' || purchase.status == "is_being_considered" || this.is_saving_changes
         },
 
         get_previous_purchases_count(order_item_index) {
