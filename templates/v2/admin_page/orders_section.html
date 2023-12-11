@@ -41,11 +41,11 @@
                     <span>Принятые заказы</span>
                 </div>
             </div>
-            <div class="action" @click="open_category('all_orders')" :style="opened_category == 'all_orders' ? 'border-color: #14C25A' : ''">
+            <div class="action" @click="open_category('canceled_orders')" :style="opened_category == 'canceled_orders' ? 'border-color: #14C25A' : ''">
                 <img src="{% static 'v2/imgs/all_orders_icon.png' %}">
                 <div class="text">
-                    <p>${ orders_counts.new_orders_count + orders_counts.accepted_orders_count }</p>
-                    <span>Все заказы</span>
+                    <p>${ orders_counts.canceled_orders_count }</p>
+                    <span>Отмененные заказы</span>
                 </div>
             </div>
             <div class="action" style="display: none;" :style="opened_category == 'add_order' ? 'border-color: gray' : ''">
@@ -63,29 +63,27 @@
                     <p class="is_express"></p>
                     <p class="comments">Номер заказа</p>
                     <p class="company_name">ИП</p>
-                    <p class="count">Кол. товаров</p>
-                    <p class="sum">Сумма</p>
-                    <p class="time">Время</p>
-                    <p class="comments">Комментарий</p>
-                    <p class="paid_check">Чек</p>
-                    <p class="status"></p>
+                    <p v-if="opened_category == 'canceled_orders'" class="cancellation_reason">Причина отмены</p>
+                    <p v-if="opened_category != 'canceled_orders'" class="count">Кол. товаров</p>
+                    <p v-if="opened_category != 'canceled_orders'" class="sum">Сумма</p>
+                    <p v-if="opened_category != 'canceled_orders'" class="time">Время</p>
+                    <p v-if="opened_category != 'canceled_orders'" class="comments">Комментарий</p>
+                    <p v-if="opened_category != 'canceled_orders'" class="paid_check">Чек</p>
                 </div>
 
                 <div class="rows">
                     <div class="row" v-for="order in orders">
                         <hr>
-                        <div class="_row">
+                        <div class="_row" style="align-items: baseline;">
                             <p class="is_express"><img v-if="order.is_express" src="{% static 'v2/imgs/is_express_icon.png' %}"></p>
                             <p class="comments" @click="open_order(order)"><a style="text-decoration: underline;">#${ order.id }</a></p>
                             <p class="company_name" style="text-decoration: none;">${ order.company_name }</p>
-                            <p class="count">${ order.total_products_count } шт</p>
-                            <p class="sum">${ order.total_sum_in_tenge } тг</p>
-                            <p class="time">${ show_order_dt(order) }</p>
-                            <p class="comments" v-if="order.comments">Есть</p>
-                            <p class="comments" v-else=""></p>
-                            <p class="paid_check" @click="open_object_file(order, 'paid_check_file')"><img src="{% static 'v2/imgs/paid_check_icon.png' %}"></p>
-                            <p class="status" v-if="order.status == 'new'" style="color: red">В обработке</p>
-                            <p class="status" v-else="" style="color: green">Принят</p>
+                            <p v-if="opened_category == 'canceled_orders'" class="cancellation_reason" style="width: 650px; display: block;">${ order.cancellation_reason }</p>
+                            <p v-if="opened_category != 'canceled_orders'" class="count">${ order.total_products_count } шт</p>
+                            <p v-if="opened_category != 'canceled_orders'" class="sum">${ order.total_sum_in_tenge } тг</p>
+                            <p v-if="opened_category != 'canceled_orders'" class="time">${ show_order_dt(order) }</p>
+                            <p v-if="opened_category != 'canceled_orders'" class="comments"><span v-if="order.comments">Есть</span></p>
+                            <p v-if="opened_category != 'canceled_orders'" class="paid_check" @click="open_object_file(order, 'paid_check_file')"><img src="{% static 'v2/imgs/paid_check_icon.png' %}"></p>
                         </div>
                     </div>
                 </div>
@@ -98,15 +96,17 @@
             <div class="header_and_actions">
                 <h3>Заказ<span>/${ opened_order.company_name }</span></h3>
 
-                <div class="actions" v-if="opened_order.status == 'new'">
-                    <button @click="accept_order()">Принять</button>
+                <div class="actions">
+                    <button v-if="opened_order.status != 'accepted'" @click="accept_order()">Принять</button>
+                    <button v-if="opened_order.status != 'canceled'" @click="cancel_order()" style="background-color: #E63152">Отменить</button>
                     <button @click="edit_order()">Исправить</button>
                     <p class="opened_by_other_fullname">${ get_opened_by_other_fullname() }</p>
                 </div>
             </div>
 
             <div class="info">
-                <div class="list">
+                <div class="list" style="align-items: baseline">
+                    <p class="opened_by_other_fullname" v-if="opened_order.is_same_with_last_order">Текущая корзина абсолютно идентична предыдущему заказу клиента</p>
                     <div class="text">
                         <span>Кол. товаров</span>
                         <p>${ opened_order.total_products_count } шт</p>

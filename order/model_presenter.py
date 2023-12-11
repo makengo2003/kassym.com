@@ -1,4 +1,5 @@
 from datetime import datetime
+from threading import Thread
 
 import PyPDF2
 from asgiref.sync import async_to_sync
@@ -55,18 +56,16 @@ class OrderModelPresenter(BaseModelPresenter):
                 "user_phone_number": F('user__username')
             },
             "only": ["id", "created_at", "status", "company_name", "deliveries_qr_code", "selection_sheet_file",
-                     "is_express",
-                     "comments", "paid_check_file", "total_products_count",
-                     "total_sum_in_tenge"],
+                     "is_express", "comments", "paid_check_file", "total_products_count",
+                     "total_sum_in_tenge", "is_same_with_last_order", "cancellation_reason", "sorted_report"],
             "filtration": filtration
         }
 
     @staticmethod
     def get_objects_serializer_fields():
         return ["id", "created_at", "status", "company_name", "deliveries_qr_code", "selection_sheet_file",
-                "is_express",
-                "comments", "paid_check_file", "total_products_count",
-                "total_sum_in_tenge"]
+                "is_express", "comments", "paid_check_file", "total_products_count",
+                "total_sum_in_tenge", "is_same_with_last_order", "cancellation_reason", "sorted_report"]
 
     @staticmethod
     def get_objects_serializer_extra_fields():
@@ -151,22 +150,22 @@ class OrderModelPresenter(BaseModelPresenter):
 
         for order_item in order_items:
             purchase = Purchase(order_item=order_item)
-
-            if order_item.product.category_id == 7:
-                purchase.status = "purchased"
-
             purchases += [purchase] * order_item.count
 
         Purchase.objects.bulk_create(purchases)
         CartItem.objects.filter(user=request_user).delete()
 
+        Thread(target=self.after_making_order, args=(order,)).start()
+
+        return order
+
+    @staticmethod
+    def after_making_order(order):
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             "managers_room", {"type": "managers_message", "message": {"action": "orders_count_changed",
                                                                       "order_id": order.id}}
         )
-
-        return order
 
     @staticmethod
     def get_updatable_fields():

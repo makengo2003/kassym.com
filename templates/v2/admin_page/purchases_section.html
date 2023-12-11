@@ -31,6 +31,14 @@
                     <span v-else="">0 товаров</span>
                 </div>
             </div>
+            <div class="action" @click="open_market('china')" :style="opened_market == 'china' ? 'border-color: green' : ''">
+                <img src="{% static 'v2/imgs/china_market_icon.png' %}">
+                <div class="text">
+                    <p>Китай</p>
+                    <span v-if="purchases_counts.china > 0">${ purchases_counts.china } позиции</span>
+                    <span v-else="">0 товаров</span>
+                </div>
+            </div>
         </div>
 
         <div class="table">
@@ -50,8 +58,8 @@
                     <div class="text">
                         <p>${ purchase.product_name }</p>
                         <p>${ purchase.count } шт.</p>
-                        <p>${ purchase.product_vendor_number }</p>
-                        <p>${ purchase.product_boutique }</p>
+                        <p v-if="opened_market != 'china'">${ purchase.product_vendor_number }</p>
+                        <p v-if="opened_market != 'china'">${ purchase.product_boutique }</p>
                     </div>
                 </div>
             </div>
@@ -86,24 +94,24 @@
                         </span>
                     </p>
 
-                    <div class="texts" :style="purchase_form.replaced_count > 0 ? 'height: revert-layer;' : ''">
+                    <div class="texts" :style="purchase_form.replaced_count > 0 && opened_market != 'china' ? 'height: revert-layer;' : (opened_market === 'china' ? 'height: fit-content; row-gap: 15px;' : '')">
                         <div class="text">
                             <span>Кол. товаров</span>
                             <p>${ opened_purchase.count } шт.</p>
                         </div>
-                        <div class="text">
+                        <div class="text" v-if="opened_market != 'china'">
                             <span>Номер поставщика</span>
                             <p>${ opened_purchase.product_vendor_number }</p>
                         </div>
-                        <div class="text">
+                        <div class="text" v-if="opened_market != 'china'">
                             <span>Бутик</span>
                             <p>${ opened_purchase.product_boutique }</p>
                         </div>
-                        <div class="text">
+                        <div class="text" v-if="opened_market != 'china'">
                             <span>Цена в каталоге</span>
                             <p>${ opened_purchase.product_price } Р</p>
                         </div>
-                        <div class="text" v-if="!purchase_actions_are_available()" :style="!purchase_actions_are_available() && selected_status != 'replaced' ? 'margin-bottom: 155px' : ''">
+                        <div class="text" v-if="!purchase_actions_are_available() && opened_market != 'china'" :style="!purchase_actions_are_available() && selected_status != 'replaced' ? 'margin-bottom: 155px' : ''">
                             <span>Цена за шт.</span>
                             <p>${ opened_purchase.price_per_count } Р</p>
                         </div>
@@ -111,7 +119,7 @@
                             <span>Фото заменён</span>
                             <p><a target="_blank" style="color: blue; text-decoration: underline;" @click="opened_product_image = '/media/' + opened_purchase.replaced_by_product_image">Посмотреть</a></p>
                         </div>
-                        <div class="text" v-if="purchase_actions_are_available()" style="margin-top: 20px;">
+                        <div class="text" v-if="purchase_actions_are_available() && opened_market != 'china'" style="margin-top: 20px;">
                             <span>Цена за шт.</span>
                             <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.price_per_count">
                         </div>
@@ -127,7 +135,7 @@
                             <span>Количество "Нет в наличий"</span>
                             <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.not_available_count">
                         </div>
-                        <div class="text" v-if="purchase_actions_are_available()">
+                        <div class="text" v-if="purchase_actions_are_available() && opened_market != 'china'">
                             <span>Количество "Будет завтра"</span>
                             <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.will_be_tomorrow_count">
                         </div>
@@ -194,20 +202,31 @@
                 <div class="purchase_img" @click="opened_product_image = 'https://kassym.com' + is_being_considered_form.product_poster" :style="'background-image: url(https://kassym.com' + is_being_considered_form.product_poster + ')'"></div>
 
                 <div class="list">
+                    <p class="comments" style="min-height: 120px;">
+                        <span v-for="comment in comments">
+                            <span v-if="comment.comment">
+                                ${ comment.company_name } (${ comment.client_phone_number }), ${ comment.count } шт: <br>
+                                ${ comment.comment } <br><br>
+                            </span>
+                            <span v-if="comment.order_comment">К заказу: <br>${ comment.order_comment } <br><br></span>
+                        </span>
+                    </p>
+
+
                     <div class="texts">
                         <div class="text">
                             <span>Кол. товаров</span>
                             <p>${ is_being_considered_form.count } шт.</p>
                         </div>
-                        <div class="text">
+                        <div class="text" v-if="opened_market != 'china'">
                             <span>Номер поставщика</span>
                             <p>${ is_being_considered_form.product_vendor_number }</p>
                         </div>
-                        <div class="text">
+                        <div class="text" v-if="opened_market != 'china'">
                             <span>Бутик</span>
                             <p>${ is_being_considered_form.product_boutique }</p>
                         </div>
-                        <div class="text">
+                        <div class="text" v-if="opened_market != 'china'">
                             <span>Цена в каталоге</span>
                             <p>${ is_being_considered_form.product_price } Р</p>
                         </div>
@@ -215,7 +234,7 @@
                             <span>Фото заменён</span>
                             <p><a target="_blank" style="color: blue; text-decoration: underline;" @click="opened_product_image = is_being_considered_form.replaced_by_product_image">Посмотреть</a></p>
                         </div>
-                        <div class="text">
+                        <div class="text" v-if="opened_market != 'china'">
                             <span>Цена за шт.</span>
                             <input type="number" v-model="is_being_considered_form.price_per_count" :disabled="is_being_considered">
                         </div>
@@ -246,4 +265,3 @@
         </div>
     </div>
 </div>
-

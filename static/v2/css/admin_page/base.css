@@ -333,12 +333,12 @@ h1, h2, h3, h4, h5, h6, b {
     border: none;
     border-radius: 5px;
     color: white;
-    background-color: #14C25A;
+    background-color: #E63152;
     font-size: 14px;
 }
 
-.window ._window .header_and_actions .actions button:nth-child(2n) {
-    background-color: #E63152;
+.window ._window .header_and_actions .actions button:nth-child(1) {
+    background-color: #14C25A;
 }
 
 .window ._window .info {

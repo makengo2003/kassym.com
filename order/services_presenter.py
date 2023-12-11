@@ -153,7 +153,7 @@ class OrderServicesPresenter(BaseServicesPresenter):
     def cancel_order(self, order_id, reason):
         request_user = getattr(settings, 'request_user', None)
         self.model_presenter.model.objects.filter(id=order_id).update(status="canceled", manager=request_user.manager,
-                                                                      accepted_dt=datetime_now(),
+                                                                      canceled_dt=datetime_now(),
                                                                       cancellation_reason=reason)
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(

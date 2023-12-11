@@ -104,7 +104,6 @@
                         <p class="qr_code">QR Code</p>
                         <p class="buyer">Закупщик</p>
                         <p class="status">Статус</p>
-                        <p class="replaced_column">Заменён</p>
                         <p class="is_sorted">Сортирован</p>
                     </div>
 
@@ -124,26 +123,12 @@
                                 <p class="buyer" v-if="purchase.buyer">${ purchase.buyer.first_name } ${ purchase.buyer.last_name }</p>
                                 <p class="buyer" v-else=""></p>
 
-                                <p :class="'status ' + purchase.status" v-if="order_item.product.category == 7">
-                                    <select :class="purchase.status" v-model="purchase.status" :disabled="(purchase.status == 'replaced' && purchase_was_replaced_by(purchase)) || opened_order.status != 'is_sorting'">
-                                        <option value="purchased">В наличий</option>
-                                        <option value="not_available">Нет в наличий</option>
-                                        <option value="replaced">Заменён</option>
-                                    </select>
+                                <p :class="'status ' + purchase.status">
+                                    <span v-if="purchase.status == 'replaced'">
+                                        <a target="_blank" :href="purchase.replaced_by_product_image" style="color: blue; text-decoration: underline">${ purchase.status_display }</a>
+                                    </span>
+                                    <span v-else="">${ purchase.status_display }</span>
                                 </p>
-                                <p :class="'status ' + purchase.status" v-else="">${ purchase.status_display }</p>
-
-                                <div class="replaced_column" v-if="purchase.status == 'replaced'">
-                                    <p v-if="purchase_was_replaced_by(purchase)"><a :href="purchase.replaced_by_product_image" target="_blank">Посмотреть</a></p>
-
-                                    <div v-else="" class="upload_replaced_by">
-                                        <input class="replaced_by_product_image_upload_input" :disabled="sorting_disabled(purchase)" @change="handle_replaced_by_upload($event, purchase, order_item_index, purchase_index)" type="file" style="display: none" :id="'purchase_replaced_input_' + order_item_index + '_' + purchase_index">
-                                        <span style="opacity: 0.5">${ get_uploaded_replaced_by_image(purchase) }</span>
-                                        <span v-if="get_uploaded_replaced_by_image(purchase)" style="text-decoration: underline;" @click="delete_uploaded_replaced_by(purchase)">Удалить</span>
-                                        <label v-else="" :style="sorting_disabled(purchase) ? 'opacity: 0.5' : ''" style="text-decoration: underline;" :for="'purchase_replaced_input_' + order_item_index + '_' + purchase_index">Загрузить</label>
-                                    </div>
-                                </div>
-                                <p class="replaced_column" v-else=""></p>
 
                                 <p class="is_sorted"><input :disabled="sorting_disabled(purchase)" type="checkbox" v-model="purchase.is_sorted"></p>
                             </div>
