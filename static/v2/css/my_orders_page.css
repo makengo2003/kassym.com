@@ -46,7 +46,7 @@ body {
     text-decoration: none;
     color: black;
     display: flex;
-    align-items: center;
+    align-items: baseline;
     flex-wrap: wrap;
     row-gap: 10px;
     justify-content: space-between;
@@ -84,7 +84,7 @@ body {
     color: green;
 }
 
-#my_orders_page .orders .order .text p.order_status.new {
+#my_orders_page .orders .order .text p.order_status.new, #my_orders_page .orders .order .text p.order_status.canceled {
     color: red;
 }
 
@@ -93,6 +93,58 @@ body {
     color: black;
 }
 
+.window {
+    display: none;
+    background: rgb(164 164 164 / 40%);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.window.product_image_window {
+    z-index: 11;
+}
+
+.window.product_image_window ._window {
+    background: none;
+    display: flex;
+
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    align-items: center;
+    justify-content: center;
+}
+
+@-webkit-keyframes zoom {
+  from {-webkit-transform:scale(0)}
+  to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+.window .product_image {
+    max-height: 85vh;
+    max-width: 85vw;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+.window ._window .close_window_btn {
+    position: absolute;
+    right: 22px;
+    top: 22px;
+    cursor: pointer;
+}
 
 
 
@@ -109,7 +161,7 @@ body {
     }
 
     #my_orders_page .orders .order {
-        row-gap: 15px;
+        row-gap: 20px;
     }
 }
 

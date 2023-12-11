@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 class Order(models.Model):
     created_at = models.DateTimeField(default=datetime_now, editable=False)
-    status = models.CharField(max_length=100, default="new", choices=(("new", "В обработке"), ("accepted", "Принят"), ("is_sorting", "Сортируется"), ("sorted", "Сортирован"), ("delivered", "Отправлен")),
+    status = models.CharField(max_length=100, default="new", choices=(("new", "В обработке"), ("accepted", "Принят"), ("is_sorting", "Сортируется"), ("sorted", "Сортирован"), ("delivered", "Отправлен"), ("canceled", "Отменен")),
                               blank=True)
     company_name = models.CharField(max_length=255, null=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -34,8 +34,12 @@ class Order(models.Model):
     delivered_by = models.CharField(max_length=500, null=True, blank=True)
     sorted_dt = models.DateTimeField(null=True, blank=True)
     accepted_dt = models.DateTimeField(null=True, blank=True)
+    canceled_dt = models.DateTimeField(null=True, blank=True)
     delivered_dt = models.DateTimeField(null=True, blank=True)
     sorted_report = models.ImageField(upload_to="order_is_sorted_reports/", null=True, blank=True)
+
+    is_same_with_last_order = models.BooleanField(default=False, null=True, blank=True)
+    cancellation_reason = models.TextField(null=True, blank=True)
 
 
 class OrderItem(models.Model):

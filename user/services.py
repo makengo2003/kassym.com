@@ -223,10 +223,10 @@ def get_favourite_products(user):
 
 
 def get_finance(change_time):
-    finance = Order.objects.filter(~Q(status="new"), created_at__date=change_time).aggregate(
+    finance = Order.objects.filter(~Q(status="new") & ~Q(status="canceled"), created_at__date=change_time).aggregate(
         total_price=Sum("total_sum_in_tenge"),
     )
-    purchases = Purchase.objects.filter(last_modified__date=change_time).select_related("order_item__product")
+    purchases = Purchase.objects.filter(~Q(order_item__order__status="canceled"), last_modified__date=change_time).select_related("order_item__product")
 
     total_products_price_for_markets = 0
     total_products_price_for_china = 0

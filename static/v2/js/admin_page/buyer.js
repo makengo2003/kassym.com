@@ -157,7 +157,7 @@ purchases_app = Vue.createApp({
                 if (purchase["status"] == "replaced") {
                     this.is_being_considered_form["request_data"]["replaced_purchases_ids"].push(purchase.id)
 
-                    if (!(this.is_being_considered_form["price_per_count"] > 0)) {
+                    if (!(this.is_being_considered_form["price_per_count"] > 0) && this.opened_market != "china") {
                         Swal.fire("Вы забыли указать цену за штук", "", "error")
                         return
                     }
@@ -184,6 +184,11 @@ purchases_app = Vue.createApp({
                     this.is_being_considered_form = response.data
                     this.is_being_considered_form["product_id"] = purchase.product_id
                     document.body.style.overflow = 'hidden';
+
+                    if (this.comments == null) {
+                        this.comments = []
+                        this.get_comments()
+                    }
                 })
             } else {
                 this.opened_purchase = purchase
@@ -234,7 +239,7 @@ purchases_app = Vue.createApp({
                 return
             }
 
-            if (!(this.purchase_form["price_per_count"] > 0)) {
+            if (!(this.purchase_form["price_per_count"] > 0) && this.opened_market != "china") {
                 Swal.fire("Вы забыли указать цену за штук", "", "error")
                 return
             }
@@ -329,7 +334,7 @@ purchases_app = Vue.createApp({
             });
         },
         purchase_actions_are_available() {
-            return this.selected_change_time_is_today() && this.selected_status != "purchased" && this.selected_status != "replaced"
+            return this.selected_status != "purchased" && this.selected_status != "replaced"
 
         },
 
@@ -347,8 +352,14 @@ purchases_app = Vue.createApp({
         },
 
         get_comments() {
+            if (this.opened_purchase) {
+                var product_id = this.opened_purchase.product_id
+            } else {
+                var product_id = this.is_being_considered_form.product_id
+            }
+
             axios("/api/purchase/get_purchase_comments/", {params: {
-                product_id: this.opened_purchase.product_id,
+                product_id: product_id,
                 status: this.selected_status,
                 change_time: this.reformat_selected_change_time()
             }}).then(

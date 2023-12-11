@@ -16,8 +16,7 @@ class PurchaseServicesPresenter:
     @staticmethod
     def get_purchases_counts(change_time):
         markets_count = Purchase.objects.filter(
-            ~Q(order_item__product__category=7),
-            last_modified__date=change_time
+            ~Q(order_item__order__status="canceled"), last_modified__date=change_time
         ).values("order_item__product__market", "order_item__product__id", "status", "price_per_count",
                  "replaced_by_product_image").annotate(
             count=Count('order_item__product__id')
@@ -26,15 +25,27 @@ class PurchaseServicesPresenter:
         purchases_count = {}
 
         for market_count in markets_count:
-            purchases_count[market_count['order_item__product__market']] = \
-                purchases_count.get(market_count['order_item__product__market'], 0) + 1
+            market = market_count['order_item__product__market']
+
+            if not market:
+                market = "china"
+
+            purchases_count[market] = \
+                purchases_count.get(market, 0) + 1
 
         return purchases_count
 
     @staticmethod
     def get_purchases(change_time, market, status):
+        category = Q()
+
+        if market == "china":
+            category = Q(order_item__product__category_id=7)
+            market = None
+
         products = Purchase.objects.filter(
-            ~Q(order_item__product__category=7),
+            category,
+            ~Q(order_item__order__status="canceled"),
             order_item__product__market=market,
             status=status,
             last_modified__date=change_time,
@@ -51,10 +62,10 @@ class PurchaseServicesPresenter:
     @staticmethod
     def make_purchase(data, files):
         last_modified = data["change_time"]
-        purchases = list(Purchase.objects.filter(
-            order_item__product_id=int(data["product_id"]), status=data["status"],
-            last_modified__date=last_modified
-        ).prefetch_related(
+        purchases = list(Purchase.objects.filter(~Q(order_item__order__status="canceled"),
+                                                 order_item__product_id=int(data["product_id"]), status=data["status"],
+                                                 last_modified__date=last_modified
+                                                 ).prefetch_related(
             "order_item__order__user__client"
         ).only("id", "status", "is_purchased_by", "price_per_count", "last_modified", "replaced_by_product_image"))
 
@@ -121,8 +132,10 @@ class PurchaseServicesPresenter:
         return {"success": True}
 
     def save_is_being_considered_purchases(self, data):
-        Purchase.objects.filter(id__in=data["replaced_purchases_ids"]).update(status="replaced", price_per_count=int(data["price_per_count"]))
-        Purchase.objects.filter(id__in=data["not_available_purchases_ids"]).update(status="not_available", replaced_by_product_image=None)
+        Purchase.objects.filter(id__in=data["replaced_purchases_ids"]).update(status="replaced", price_per_count=int(
+            data["price_per_count"]))
+        Purchase.objects.filter(id__in=data["not_available_purchases_ids"]).update(status="not_available",
+                                                                                   replaced_by_product_image=None)
 
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
@@ -135,9 +148,10 @@ class PurchaseServicesPresenter:
         change_time = query_params.get("change_time")
 
         product = Product.objects.filter(id=product_id).values("poster", "vendor_number", "boutique", "price").first()
-        purchases = Purchase.objects.filter(
-            order_item__product__id=product_id, last_modified=change_time, status="is_being_considered"
-        ).prefetch_related("order_item__order__user__client").only(
+        purchases = Purchase.objects.filter(~Q(order_item__order__status="canceled"),
+                                            order_item__product__id=product_id, last_modified=change_time,
+                                            status="is_being_considered"
+                                            ).prefetch_related("order_item__order__user__client").only(
             "id", "order_item__order__user__username", "order_item__order__user__client__fullname",
             "replaced_by_product_image"
         )
@@ -162,8 +176,9 @@ class PurchaseServicesPresenter:
         status = params.get("status", None)
         product_id = params.get("product_id", None)
 
-        comments = OrderItem.objects.filter(
-            Q(comments__isnull=False) & ~Q(comments=""), order__created_at__date=change_time, purchases__status=status, product_id=product_id
+        comments = OrderItem.objects.filter(~Q(order__status="canceled"),
+            Q(comments__isnull=False) & ~Q(comments=""), order__created_at__date=change_time, purchases__status=status,
+            product_id=product_id
         ).annotate(
             client_phone_number=F("order__user__username"),
             company_name=F("order__company_name"),
