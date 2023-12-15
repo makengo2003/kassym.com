@@ -13,6 +13,13 @@ def get_orders_view(request):
     return Response(orders)
 
 
+@api_view(["GET"])
+@permission_classes([IsBuyer])
+def get_order_view(request):
+    order = services.get_order(request.query_params.get("id", 0))
+    return Response(order)
+
+
 @api_view(["POST"])
 @permission_classes([IsBuyer])
 def start_to_sort_view(request):

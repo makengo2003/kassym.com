@@ -53,10 +53,14 @@ sorting_app = Vue.createApp({
         },
 
         open_order(order) {
-            this.opened_order = order
+            this.opened_order = {}
             this.is_saving_changes = false
 
             document.body.style.overflow = 'hidden';
+
+            axios("/api/sorting/get_order/", {params: {id: order.id}}).then((response) => {
+                this.opened_order = response.data
+            })
         },
         close_order() {
             if (this.opened_order != null) {
@@ -292,8 +296,8 @@ sorting_app = Vue.createApp({
                 this.get_orders()
                 if (this.opened_order) {
                     if (data["order_id"] == this.opened_order.id) {
-                        axios("/api/sorting/get_orders/", {params: {id: data["order_id"]}}).then((response) => {
-                            this.opened_order = response.data[0]
+                        axios("/api/sorting/get_order/", {params: {id: data["order_id"]}}).then((response) => {
+                            this.opened_order = response.data
                         })
                     }
                 }

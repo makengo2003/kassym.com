@@ -1,41 +1,58 @@
 import json
-import time
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from django.core.files.storage import FileSystemStorage
-from django.db.models import Q
-from django_bulk_update.helper import bulk_update
+from django.db.models import Q, Case, When, Count, F, Value, BooleanField
 
 from change_time.models import ChangeTime
 from order.models import Order, OrderReport
 from project import settings
 from project.utils import datetime_now
 from purchase.models import Purchase
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, OrdersSerializer
 
 
-def get_orders(status, id):
-    filtration = {}
-    purchase_status_filtration = None
+def get_orders(status, order_id):
+    if order_id:
+        order_id_filtration = Q(id=order_id)
+        has_no_available_product_filtration = Q()
+    else:
+        order_id_filtration = Q()
+        has_no_available_product_filtration = Q(has_no_available_product=False)
 
-    if status:
-        filtration["status"] = status
-        purchase_status_filtration = Q()
+    orders = Order.objects.annotate(
+        has_no_available_product=Case(
+            When(
+                total_products_count=Count(
+                    Case(
+                        When(
+                            order_items__purchases__status='not_available',
+                            then=F('order_items__purchases__id')
+                        ),
+                        default=None
+                    )
+                ),
+                then=Value(True)
+            ),
+            default=Value(False),
+            output_field=BooleanField()
+        )
+    ).filter(
+        order_id_filtration, has_no_available_product_filtration, status=status,
+        created_at__date__lt=ChangeTime.objects.last().dt
+    ).order_by("-is_express", "id")
 
-    if id:
-        filtration["id"] = id
-        purchase_status_filtration = Q()
+    return OrdersSerializer(orders, many=True).data
 
-    orders = Order.objects.filter(
-        purchase_status_filtration, **filtration, created_at__date__lt=ChangeTime.objects.last().dt
-    ).prefetch_related(
+
+def get_order(order_id):
+    order = Order.objects.filter(id=order_id).prefetch_related(
         "order_items", "order_items__purchases", "order_items__product",
         "order_items__purchases__is_purchased_by__account",
         "manager", "user", "reports"
-    ).select_related("manager", "user").order_by("-is_express", "id").distinct()
+    ).select_related("manager", "user").first()
 
-    return OrderSerializer(orders, many=True).data
+    return OrderSerializer(order).data
 
 
 def start_to_sort(id, fullname):

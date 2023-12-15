@@ -5,7 +5,7 @@ import PyPDF2
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.core.files.storage import FileSystemStorage
-from django.db.models import Prefetch, Case, When, F, Value, CharField
+from django.db.models import Prefetch, Case, When, F, Value, CharField, Count, BooleanField
 from django.db.models.functions import Concat
 from rest_framework import serializers
 
@@ -53,7 +53,23 @@ class OrderModelPresenter(BaseModelPresenter):
                     default=Concat(F('user__first_name'), Value(" "), F('user__last_name')),
                     output_field=CharField()
                 ),
-                "user_phone_number": F('user__username')
+                "user_phone_number": F('user__username'),
+                "has_no_available_product": Case(
+                    When(
+                        total_products_count=Count(
+                            Case(
+                                When(
+                                    order_items__purchases__status='not_available',
+                                    then=F('order_items__purchases__id')
+                                ),
+                                default=None
+                            )
+                        ),
+                        then=Value(True)
+                    ),
+                    default=Value(False),
+                    output_field=BooleanField()
+                )
             },
             "only": ["id", "created_at", "status", "company_name", "deliveries_qr_code", "selection_sheet_file",
                      "is_express", "comments", "paid_check_file", "total_products_count",
@@ -74,7 +90,8 @@ class OrderModelPresenter(BaseModelPresenter):
             "user_fullname": serializers.CharField(max_length=255),
             "user_phone_number": serializers.CharField(max_length=55),
             "created_at": FormattedDateTimeField(),
-            "status_display": serializers.CharField(source="get_status_display")
+            "status_display": serializers.CharField(source="get_status_display"),
+            "has_no_available_product": serializers.BooleanField()
         }
 
     @staticmethod
