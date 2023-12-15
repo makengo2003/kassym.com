@@ -9,7 +9,6 @@ sorting_app = Vue.createApp({
     data() {
         return {
             orders: [],
-            opened_by_others: [],
             search_input: "",
             searched: false,
 
@@ -17,8 +16,9 @@ sorting_app = Vue.createApp({
             websocket: new WebSocket(websocket_prefix + window.location.host + '/ws/sorting/'),
             opened_order: null,
             finish_sorting_requesting: false,
-            uploaded_replaced_by_images: [],
-            is_saving_changes: false
+            is_saving_changes: false,
+            uploaded_reports: {},
+            opened_image: null,
         }
     },
     methods: {
@@ -54,26 +54,16 @@ sorting_app = Vue.createApp({
 
         open_order(order) {
             this.opened_order = order
-            this.websocket.send(JSON.stringify({"order_id": this.opened_order.id, "action": "open"}))
-
-            var file_inputs = document.getElementsByClassName('replaced_by_product_image_upload_input')
-            for (var i = 0; i < file_inputs.length; i++) {
-                file_inputs[i].value = null
-            }
-
-            this.uploaded_replaced_by_images = []
             this.is_saving_changes = false
 
             document.body.style.overflow = 'hidden';
         },
         close_order() {
             if (this.opened_order != null) {
-                this.websocket.send(JSON.stringify({"order_id": this.opened_order.id, "action": "close"}))
                 this.opened_order = null
             }
             document.body.style.overflow = '';
         },
-
         start_to_sort() {
             Swal.fire({
                 title: "Начать сортировку?",
@@ -89,33 +79,35 @@ sorting_app = Vue.createApp({
                 }
             });
         },
+
         check_sorting() {
             this.opened_order["save_sorting_form"] = {
-                "replaced": [],
                 "sorted": [],
-                "not_available": [],
+                "reports": [],
             }
 
             for (var i = 0; i < this.opened_order.order_items.length; i++) {
                 for (var j = 0; j < this.opened_order.order_items[i].purchases.length; j++) {
-                    if (this.opened_order.order_items[i].product.category == 7 && this.opened_order.order_items[i].purchases[j].status == "replaced" && !this.purchase_was_replaced_by(this.opened_order.order_items[i].purchases[j])) {
-                        if (!this.get_uploaded_replaced_by_image(this.opened_order.order_items[i].purchases[j])) {
-                            Swal.fire("Фото товара(заменён) не найдена", "", "error")
-                            return
-                        } else {
-                            this.opened_order["save_sorting_form"]["replaced"].push(this.opened_order.order_items[i].purchases[j].id)
-                            this.opened_order["save_sorting_form"]["replaced_" + this.opened_order.order_items[i].purchases[j].id] = this.uploaded_replaced_by_images[this.opened_order.order_items[i].purchases[j].replaced_by_product_image]
-                        }
-                    }
-
                     if (this.opened_order.order_items[i].purchases[j].is_sorted) {
                         this.opened_order["save_sorting_form"]["sorted"].push(this.opened_order.order_items[i].purchases[j].id)
                     }
-
-                    if (this.opened_order.order_items[i].product.category == 7 && this.opened_order.order_items[i].purchases[j].status == "not_available") {
-                        this.opened_order["save_sorting_form"]["not_available"].push(this.opened_order.order_items[i].purchases[j].id)
-                    }
                 }
+            }
+
+            for (var i = 0; i < this.opened_order.reports.length; i++) {
+                 if (this.report_is_new(this.opened_order.reports[i])) {
+                    if (this.report_is_uploaded(this.opened_order.reports[i])) {
+                        this.opened_order["save_sorting_form"]["reports"].push(this.opened_order.reports[i])
+                    } else {
+                        Swal.fire("Фото отчет не загружен", "", "warning")
+                        return false
+                    }
+                 }
+            }
+
+            if (this.opened_order["save_sorting_form"]["sorted"].length == 0) {
+                Swal.fire("Выберите сортированный товар", "", "warning")
+                return false
             }
 
             return true
@@ -124,16 +116,11 @@ sorting_app = Vue.createApp({
             var data = {
                 order_id: this.opened_order.id,
                 sorted_purchases: JSON.stringify(this.opened_order["save_sorting_form"]["sorted"]),
-                replaced_purchases: JSON.stringify(this.opened_order["save_sorting_form"]["replaced"]),
-                not_available_purchases: JSON.stringify(this.opened_order["save_sorting_form"]["not_available"]),
+                reports: JSON.stringify(this.opened_order["save_sorting_form"]["reports"]),
             }
 
-            for (var key in this.opened_order["save_sorting_form"]) {
-                if (key == "sorted" || key == "replaced" || key == "not_available") {
-                    continue
-                }
-
-                data[key] = this.opened_order["save_sorting_form"][key]
+            for (var i = 0; i < this.opened_order["save_sorting_form"]["reports"].length; i++) {
+                data[this.opened_order["save_sorting_form"]["reports"][i]] = this.uploaded_reports[this.opened_order["save_sorting_form"]["reports"][i]]
             }
 
             return data
@@ -145,19 +132,31 @@ sorting_app = Vue.createApp({
                     this.is_saving_changes = true
                 }
             } else {
-                var data = this.get_save_sorting_form()
+                Swal.fire({
+                    title: "Сохранение...",
+                    text: "Не закрывайте страницу",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        window.addEventListener('beforeunload', this.window_close_warning);
 
-                axios.post("/api/sorting/save_sorting/", data, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        "X-CSRFToken": $cookies.get("csrftoken"),
+                        var data = this.get_save_sorting_form()
+
+                        axios.post("/api/sorting/save_sorting/", data, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                                "X-CSRFToken": $cookies.get("csrftoken"),
+                            }
+                        }).then((response) => {
+                            Swal.fire("Сохранено", "", "success")
+                        }).catch((error) => {
+                            Swal.fire("Ошибка", "", "error")
+                        }).finally(() => {
+                            this.is_saving_changes = false
+                            window.removeEventListener('beforeunload', this.window_close_warning);
+                        })
                     }
-                }).then((response) => {
-                    Swal.fire("Сохранено", "", "success")
-                }).catch((error) => {
-                    Swal.fire("Ошибка", "", "error")
-                }).finally(() => {
-                    this.is_saving_changes = false
                 })
             }
         },
@@ -174,6 +173,11 @@ sorting_app = Vue.createApp({
                     }
                 }
 
+                if (this.opened_order.reports.length == 0) {
+                    Swal.fire("Требуется фотоотчет", "", "warning")
+                    return
+                }
+
                 if (!this.finish_sorting_requesting) {
                     Swal.fire({
                         title: "Завершить сортировку?",
@@ -185,48 +189,98 @@ sorting_app = Vue.createApp({
                         cancelButtonText: "Нет"
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            document.getElementById("sorted_report_upload_input").click()
+                            Swal.fire({
+                                title: "Сохранение...",
+                                text: "Не закрывайте страницу",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                    window.addEventListener('beforeunload', this.window_close_warning);
+
+                                    this.finish_sorting_requesting = true
+                                    var data = this.get_save_sorting_form()
+
+                                    axios.post("/api/sorting/save_sorting/", data, {
+                                        headers: {
+                                            'Content-Type': 'multipart/form-data',
+                                            "X-CSRFToken": $cookies.get("csrftoken"),
+                                        }
+                                    }).then((response) => {
+                                        axios.post("/api/sorting/finish_sorting/",
+                                        {
+                                            id: this.opened_order.id,
+                                        },
+                                        {
+                                            headers: {
+                                                "X-CSRFToken": $cookies.get("csrftoken"),
+                                            }
+                                        }).then((response) => {
+                                            Swal.fire("Сортирован", "", "success")
+                                        }).catch((error) => {
+                                            Swal.fire("Ошибка", "", "error")
+                                        }).finally(() => {
+                                            this.finish_sorting_requesting = false
+                                            window.removeEventListener('beforeunload', this.window_close_warning);
+                                        })
+                                    }).catch((error) => {
+                                        Swal.fire("Ошибка", "", "error")
+                                    }).finally(() => {
+                                        this.finish_sorting_requesting = false
+                                        window.removeEventListener('beforeunload', this.window_close_warning);
+                                    })
+                                }
+                            })
                         }
-                    });
+                    })
                 }
             }
         },
 
-        handle_sorted_report_upload_input($event) {
+        window_close_warning(event) {
+            if (typeof event == 'undefined') {
+                event = window.event;
+            }
+            if (event) {
+                event.returnValue = 'Изменения сохраняется...';
+            }
+        },
+
+        get_order_reports() {
+            if (this.opened_order.reports) {
+                return this.opened_order.reports
+            }
+            return []
+        },
+        add_report() {
+            if (this.opened_order.reports) {
+                this.opened_order.reports.push("")
+            } else {
+                this.opened_order.reports = [""]
+            }
+        },
+        remove_report(report_index) {
+            delete this.uploaded_reports[this.opened_order.reports[report_index]]
+            this.opened_order.reports.splice(report_index, 1)
+        },
+        report_is_new(report) {
+            return !report.startsWith("/media/")
+
+        },
+        report_is_uploaded(report) {
+            return report != ""
+
+        },
+        handle_report_upload(event, report_index) {
             var file = event.target.files[0]
 
             if (file) {
-                this.finish_sorting_requesting = true
+                if (this.opened_order.reports[report_index] != "") {
+                    delete this.uploaded_reports[this.opened_order.reports[report_index]]
+                }
 
-                var data = this.get_save_sorting_form()
-                axios.post("/api/sorting/save_sorting/", data, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        "X-CSRFToken": $cookies.get("csrftoken"),
-                    }
-                }).then((response) => {
-                    axios.post("/api/sorting/finish_sorting/",
-                    {
-                        id: this.opened_order.id,
-                        sorted_report: file
-                    },
-                    {
-                        headers: {
-                            "X-CSRFToken": $cookies.get("csrftoken"),
-                            'Content-Type': 'multipart/form-data',
-                        }
-                    }).then((response) => {
-                        Swal.fire("Сортирован", "", "success")
-                    }).catch((error) => {
-                        Swal.fire("Ошибка", "", "error")
-                    }).finally(() => {
-                        this.finish_sorting_requesting = false
-                    })
-                }).catch((error) => {
-                    Swal.fire("Ошибка", "", "error")
-                }).finally(() => {
-                    this.finish_sorting_requesting = false
-                })
+                this.opened_order.reports[report_index] = file.name
+                this.uploaded_reports[file.name] = file
             }
         },
 
@@ -243,8 +297,6 @@ sorting_app = Vue.createApp({
                         })
                     }
                 }
-            } else {
-                this.opened_by_others = data
             }
         },
         handle_websocket_close(event=null) {
@@ -256,52 +308,10 @@ sorting_app = Vue.createApp({
             });
         },
 
-        get_opened_by_other_fullname() {
-            var not_found = true
-
-            for (var i = 0; i < this.opened_by_others.length; i++) {
-                if (this.opened_by_others[i].order_id == this.opened_order.id && this.opened_by_others[i].user_id != user_id) {
-                    return this.opened_by_others[i].user_fullname
-                }
-            }
-
-            if (not_found) {
-                this.open_order(this.opened_order)
-            }
-        },
-
-        purchase_was_replaced_by(purchase) {
-            if (purchase.replaced_by_product_image) {
-                return purchase.replaced_by_product_image.startsWith("/media/")
-            }
-        },
-
-        get_uploaded_replaced_by_image(purchase) {
-            if (purchase.replaced_by_product_image) {
-                return purchase.replaced_by_product_image.split(": ")[1]
-            }
-        },
-
-        handle_replaced_by_upload(event, purchase, order_item_index, purchase_index) {
-            var file = event.target.files[0]
-
-            if (file) {
-                var label = order_item_index + "_" + purchase_index + ": " + file.name
-                purchase["replaced_by_product_image"] = label
-                this.uploaded_replaced_by_images[label] = file
-            }
-        },
-
-        delete_uploaded_replaced_by(purchase) {
-            delete this.uploaded_replaced_by_images[purchase["replaced_by_product_image"]]
-            document.getElementById('purchase_replaced_input_' + purchase["replaced_by_product_image"].split(":")[0]).value = null
-            purchase["replaced_by_product_image"] = ""
-        },
-
         sorting_disabled(purchase) {
             return this.opened_order.status != 'is_sorting' || purchase.status == 'new' || purchase.status == 'will_be_tomorrow' || purchase.status == 'not_available' || purchase.status == "is_being_considered" || this.is_saving_changes
-        },
 
+        },
         get_previous_purchases_count(order_item_index) {
             var order_items = this.opened_order.order_items.slice(0, order_item_index)
             var count = 0
@@ -311,6 +321,17 @@ sorting_app = Vue.createApp({
             }
 
             return count
+        },
+        start_to_sort_available() {
+            for (var i = 0; i < this.opened_order.order_items.length; i++) {
+                for (var j = 0; j < this.opened_order.order_items[i].purchases.length; j++) {
+                    if (this.opened_order.order_items[i].purchases[j].status == "purchased" || this.opened_order.order_items[i].purchases[j].status == "replaced") {
+                        return true
+                    }
+                }
+            }
+
+            return false
         }
     },
     mounted() {

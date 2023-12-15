@@ -25,14 +25,12 @@ def start_to_sort_view(request):
 @permission_classes([IsBuyer])
 def save_sorting_view(request):
     services.save_sorting(request.data.get("order_id"), request.data.get("sorted_purchases"),
-                          request.data.get("replaced_purchases"),
-                          request.data.get("not_available_purchases"), request.FILES)
+                          request.data.get("reports"), request.FILES)
     return Response({"success": True})
 
 
 @api_view(["POST"])
-@parser_classes([MultiPartParser, FormParser])
 @permission_classes([IsBuyer])
 def finish_sorting_view(request):
-    services.finish_sorting(request.data.get("id"), request.data.get("sorted_report"))
+    services.finish_sorting(request.data.get("id"))
     return Response({"success": True})

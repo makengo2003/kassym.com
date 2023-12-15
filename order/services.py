@@ -71,5 +71,5 @@ def get_ruble_rate():
 
 
 def get_order(user, order_id):
-    order = Order.objects.filter(user=user, id=order_id).prefetch_related("order_items", "order_items__purchases").first()
+    order = Order.objects.filter(user=user, id=order_id).prefetch_related("reports", "order_items", "order_items__purchases").first()
     return order

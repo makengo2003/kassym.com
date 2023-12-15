@@ -230,4 +230,9 @@
     #purchases_section .window ._window .info .comments {
         width: 260px;
     }
+
+    #sorting_section .window.product_image_window ._window {
+        width: 100%;
+        max-width: 100%;
+    }
 }

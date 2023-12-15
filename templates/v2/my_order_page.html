@@ -32,6 +32,9 @@
 
         <div class="title">
             <h2>Заказ #{{ order.id }}</h2>
+            {% if order.sorted_report or order.reports.all|length > 0 %}
+            <a style="text-decoration: underline; color: blue" onclick='document.getElementById("report_window").style.display = "block"'>Посмотреть фотоотчеты</a>
+            {% endif %}
         </div>
 
         <div class="products_list">
@@ -56,6 +59,28 @@
                     </div>
                 </a>
                 {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="window product_image_window" id="report_window">
+    <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" onclick='document.getElementById("report_window").style.display = "none"'>
+    <div class="_window">
+        <button class="go_left_btn" onclick="scroll_left()">
+            <div class="bar-btt"></div>
+            <div class="bar-ttb"></div>
+        </button>
+
+        <button class="go_right_btn" onclick="scroll_right()">
+            <div class="bar-ttb"></div>
+            <div class="bar-btt"></div>
+        </button>
+
+        <div class="images" id="report_images">
+            <img class="product_image" src="/media/{{ order.sorted_report }}">
+            {% for report in order.reports.all %}
+            <img class="product_image" src="{{ report.report.url }}">
             {% endfor %}
         </div>
     </div>
