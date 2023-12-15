@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from order.models import Order, OrderItem
+from order.models import Order, OrderItem, OrderReport
 from product.models import Product
 from purchase.models import Purchase, Buyer
 
@@ -55,14 +55,18 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    reports = serializers.SerializerMethodField("get_reports")
     order_items = OrderItemSerializer(many=True, read_only=True)
     client_phone_number = serializers.CharField(max_length=50, source="user.username")
     manager_phone_number = serializers.CharField(max_length=50, source="manager.account.username")
     manager_first_name = serializers.CharField(max_length=50, source="manager.account.first_name")
     manager_last_name = serializers.CharField(max_length=50, source="manager.account.last_name")
 
+    def get_reports(self, obj):
+        return [report.report.url for report in obj.reports.all()]
+
     class Meta:
         model = Order
         fields = ["id", "deliveries_qr_code", "selection_sheet_file", "company_name", "is_express", "comments",
                   "status", "is_sorting_by", "total_products_count", "order_items", "client_phone_number",
-                  "manager_phone_number", "manager_first_name", "manager_last_name", "sorted_report"]
+                  "manager_phone_number", "manager_first_name", "manager_last_name", "sorted_report", "reports"]

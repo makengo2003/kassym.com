@@ -42,6 +42,13 @@
         </div>
     </div>
 
+    <div class="window product_image_window" v-if="opened_image">
+        <div class="_window">
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="opened_image = ''">
+            <img class="product_image" :src="opened_image">
+        </div>
+    </div>
+
     <div class="window" v-if="opened_order != null">
         <div class="_window">
             <div class="header_and_actions">
@@ -78,10 +85,6 @@
                     <div class="text">
                         <span>QR поставки</span>
                         <p><a @click="open_object_file(opened_order, 'deliveries_qr_code')" style="text-decoration: underline">Посмотреть</a></p>
-                    </div>
-                    <div class="text" v-if="opened_order.status == 'sorted'">
-                        <span>Фото отчет</span>
-                        <p><a @click="open_object_file(opened_order, 'sorted_report')" style="text-decoration: underline">Посмотреть</a></p>
                     </div>
                 </div>
 
@@ -133,12 +136,32 @@
                                 <p class="is_sorted"><input :disabled="sorting_disabled(purchase)" type="checkbox" v-model="purchase.is_sorted"></p>
                             </div>
                         </div>
+
+                        <div class="reports" v-if="opened_order.status != 'accepted'">
+                            <div class="report" style="display: flex; gap: 25px; margin-top: 15px" v-for="(report, report_index) in get_order_reports()" :key="report_index">
+                                <span style="opacity: 0.6; width: 170px; height: 40px; overflow: hidden; line-break: anywhere;">Фото отчет #${ report_index + 1 }<br><span v-if="report_is_new(report)">${ report }</span></span>
+                                <a v-if="!report_is_new(report)" style="text-decoration: underline" @click="opened_image=report">Посмотреть</a>
+
+                                <div v-else-if="!is_saving_changes" class="upload" style="display: flex; flex-direction: column; gap: 5px">
+                                    <input :disabled="is_saving_changes" type="file" style="display: none" :id="'report_upload_' + report_index" @change="handle_report_upload($event, report_index)">
+
+                                    <label :for="'report_upload_' + report_index">
+                                        <a v-if="!report_is_uploaded(report)" style="text-decoration: underline">Загрузить</a>
+                                        <a v-else="" style="text-decoration: underline">Заменить</a>
+                                    </label>
+
+                                    <a style="text-decoration: underline" @click="remove_report(report_index)">Удалить</a>
+                                </div>
+                            </div>
+
+                            <p v-if="opened_order.status == 'is_sorting' && !is_saving_changes" style="margin: 15px 0;"><a @click="add_report()" style="text-decoration: underline;">+1 Фото отчет</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="actions">
-                <button v-if="!is_saving_changes && opened_order.status == 'accepted'" @click="start_to_sort()">Приступить к сортировке</button>
+                <button v-if="!is_saving_changes && opened_order.status == 'accepted' && start_to_sort_available()" @click="start_to_sort()">Приступить к сортировке</button>
                 <button v-if="!is_saving_changes && opened_order.status == 'is_sorting'" @click="finish_sorting()">Cортирован</button>
                 <button v-if="!is_saving_changes && opened_order.status == 'is_sorting'" @click="save_sorting()">Cохранить изменения</button>
                 <button v-if="is_saving_changes" @click="save_sorting()">Сохранить</button>

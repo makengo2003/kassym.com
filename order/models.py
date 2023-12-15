@@ -50,3 +50,8 @@ class OrderItem(models.Model):
     product_price = models.PositiveIntegerField()
     total_price = models.PositiveIntegerField()
     comments = models.TextField(null=True, blank=True)
+
+
+class OrderReport(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="reports")
+    report = models.FileField(upload_to="order_reports/")

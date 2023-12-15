@@ -346,7 +346,7 @@
     z-index: 11;
 }
 
-.window.product_image_window ._window {
+.window.product_image_window ._window, #sorting_section .window.product_image_window ._window {
     background: none;
     display: flex;
 

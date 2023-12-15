@@ -30,9 +30,6 @@
                     <div class="text">
                         <span>Статус</span>
                         <p class="order_status {{ order.status }}">{{ order.status_display }}</p>
-                        {% if order.status == "sorted" or order.status == "delivered" %}
-                        <span onclick="event.preventDefault(); open_report('{{ order.sorted_report }}')" style="color: blue; text-decoration: underline">Фото отчёт</span>
-                        {% endif %}
                     </div>
 
                     {% if order.is_express %}
@@ -65,13 +62,6 @@
             </div>
             {% endif %}
         </div>
-    </div>
-</div>
-
-<div class="window product_image_window" id="report_window">
-    <div class="_window">
-        <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" onclick='document.getElementById("report_window").style.display = "none"'>
-        <img id="report_image" class="product_image">
     </div>
 </div>
 {% endblock %}

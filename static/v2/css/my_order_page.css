@@ -24,7 +24,8 @@
     display: flex;
     align-items: center;
     margin: 12px 0px 30px 0px;
-    gap: 10px;
+    gap: 20px;
+    row-gap: 10px;
     flex-wrap: wrap;
 }
 
@@ -236,4 +237,106 @@
     #my_order_page .products_list .product_card {
         height: 300px;
     }
+}
+
+
+.window.product_image_window {
+    display: none;
+    background: rgb(164 164 164 / 40%);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.window.product_image_window {
+    z-index: 11;
+}
+
+.window.product_image_window ._window {
+    margin: 150px auto;
+
+    width: 350px;
+    height: 467px;
+
+    position: relative;
+}
+
+.window.product_image_window ._window .images {
+    display: flex;
+    justify-content: start;
+    scroll-behavior: smooth;
+
+    overflow: scroll;
+    width: 350px;
+    height: 467px;
+}
+
+.window.product_image_window .go_left_btn, .window.product_image_window .go_right_btn {
+    position: absolute;
+    top: 44.5%;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    border: 0.2px solid gray;
+    background: white;
+}
+
+.window.product_image_window .bar-btt, .window.product_image_window .bar-ttb {
+    width: 15px;
+    height: 3px;
+    background-color: black;
+    margin: 7px 0;
+    transform: rotate(-45deg) translate(3px, 4px);
+}
+
+.window.product_image_window .bar-ttb {
+    transform: rotate(45deg) translate(3px, -4px);
+}
+
+.window.product_image_window .go_right_btn .bar-btt, .window.product_image_window .go_right_btn .bar-ttb {
+    width: 15px;
+    height: 3px;
+    background-color: black;
+    margin: 7px 0;
+    transform: rotate(-45deg) translate(6px, 5px);
+}
+
+.window.product_image_window .go_right_btn .bar-ttb {
+    transform: rotate(45deg) translate(6px, -5px);
+}
+
+.window.product_image_window .go_left_btn {
+    left: -20px;
+}
+
+.window.product_image_window .go_right_btn {
+    right: -20px;
+    padding-left: 5px;
+}
+
+@-webkit-keyframes zoom {
+  from {-webkit-transform:scale(0)}
+  to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+.window.product_image_window .product_image {
+    max-height: 85vh;
+    max-width: 350px;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+.window.product_image_window .close_window_btn {
+    position: absolute;
+    right: 22px;
+    top: 22px;
+    cursor: pointer;
 }
