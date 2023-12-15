@@ -21,7 +21,7 @@ def get_orders(status, id):
 
     if status:
         filtration["status"] = status
-        purchase_status_filtration = Q(order_items__purchases__status="purchased") | Q(order_items__purchases__status="replaced")
+        purchase_status_filtration = Q()
 
     if id:
         filtration["id"] = id
