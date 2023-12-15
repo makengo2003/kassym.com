@@ -40,7 +40,7 @@ def get_orders(status, order_id):
     ).filter(
         order_id_filtration, has_no_available_product_filtration, status=status,
         created_at__date__lt=ChangeTime.objects.last().dt
-    ).order_by("-is_express", "id")
+    ).only("id", "company_name").order_by("-is_express", "id")
 
     return OrdersSerializer(orders, many=True).data
 
