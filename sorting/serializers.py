@@ -70,3 +70,9 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ["id", "deliveries_qr_code", "selection_sheet_file", "company_name", "is_express", "comments",
                   "status", "is_sorting_by", "total_products_count", "order_items", "client_phone_number",
                   "manager_phone_number", "manager_first_name", "manager_last_name", "sorted_report", "reports"]
+
+
+class OrdersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ["id", "company_name"]
