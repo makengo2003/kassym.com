@@ -138,6 +138,11 @@
                         </div>
 
                         <div class="reports" v-if="opened_order.status != 'accepted'">
+                            <div class="report" style="display: flex; gap: 25px; margin-top: 15px" v-if="opened_order.sorted_report">
+                                <span style="opacity: 0.6; width: 170px; height: 40px; overflow: hidden; line-break: anywhere;">Фото отчет заказа</span>
+                                <a style="text-decoration: underline" @click="opened_image=opened_order.sorted_report">Посмотреть</a>
+                            </div>
+
                             <div class="report" style="display: flex; gap: 25px; margin-top: 15px" v-for="(report, report_index) in get_order_reports()" :key="report_index">
                                 <span style="opacity: 0.6; width: 170px; height: 40px; overflow: hidden; line-break: anywhere;">Фото отчет #${ report_index + 1 }<br><span v-if="report_is_new(report)">${ report }</span></span>
                                 <a v-if="!report_is_new(report)" style="text-decoration: underline" @click="opened_image=report">Посмотреть</a>
