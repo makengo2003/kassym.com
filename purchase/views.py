@@ -5,14 +5,14 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from base_object_presenter.views import BaseViewsPresenter, get_permissions_for_view
-from .permissions import IsBuyer
+from .permissions import IsBuyer, IsBuyerOrManager
 from .services import PurchaseServicesPresenter
 
 
 class PurchaseViewsPresenter(BaseViewsPresenter):
     services = PurchaseServicesPresenter()
     permissions = {
-        "get_many": [IsBuyer],
+        "get_many": [IsBuyerOrManager],
         "get_purchases_counts": [IsBuyer],
         "make": [IsBuyer],
     }
@@ -23,6 +23,15 @@ class PurchaseViewsPresenter(BaseViewsPresenter):
         purchases = self.services.get_purchases(request.query_params.get("change_time"),
                                                 request.query_params.get("market"), request.query_params.get("status"))
         return Response(purchases.data)
+
+    @method_decorator(api_view(["GET"]))
+    @get_permissions_for_view("get_many")
+    def get_purchase_for_manager_view(self, request: Request) -> Response:
+        purchase = self.services.get_purchase_for_manager(request.query_params.get("product_id", 0),
+                                                          request.query_params.get("change_time"),
+                                                          request.query_params.get("status"))
+        return Response(purchase)
+
 
     @method_decorator(api_view(["GET"]))
     @get_permissions_for_view("get_purchases_counts")

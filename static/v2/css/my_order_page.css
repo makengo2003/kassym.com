@@ -336,7 +336,8 @@
 
 .window.product_image_window .close_window_btn {
     position: absolute;
-    right: 22px;
-    top: 22px;
+    right: 10px;
+    top: 10px;
     cursor: pointer;
+    filter: invert(1);
 }

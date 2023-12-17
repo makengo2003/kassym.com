@@ -1,0 +1,75 @@
+{% load static %}
+
+<div id="is_being_considered_section" class="section">
+    <div class="header">
+        <h3>Рассматривается</h3>
+
+        <hr>
+
+        <div class="sub_header">
+            <select @change="select_change_time()" v-model="selected_change_time">
+                <option v-for="change_time in change_times" :value="change_time.dt">Смена: ${ change_time.dt }</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="table">
+            <div class="statuses">
+                <p @click="select_status('not_available')" :class="selected_status == 'not_available' ? 'active': ''">Нет в наличии</p>
+                <p @click="select_status('is_being_considered')" :class="selected_status == 'is_being_considered' ? 'active': ''">Рассматривается</p>
+            </div>
+
+            <div class="list">
+                <div class="card" v-for="purchase in purchases" @click="open_purchase(purchase)">
+                    <div class="purchase_img" :style="'background-image: url(https://kassym.com/media/' + purchase.product_poster + ')'"></div>
+
+                    <div class="text">
+                        <p>${ purchase.product_name }</p>
+                        <p>${ purchase.count } шт.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window product_image_window" v-if="opened_product_image">
+        <div class="_window">
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="opened_product_image = ''">
+            <img class="product_image" :src="opened_product_image">
+        </div>
+    </div>
+
+    <div class="window" v-if="opened_purchase != null">
+        <div class="_window">
+            <h3 v-if="selected_status == 'is_being_considered'">Замена для следующих ИП</h3>
+            <h3 v-else="">Нет в наличии для следующих ИП</h3>
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="opened_purchase = null">
+
+            <div class="info">
+                <div class="purchase_img" @click="opened_product_image = 'https://kassym.com' + opened_purchase.product_poster" :style="'background-image: url(https://kassym.com' + opened_purchase.product_poster + ')'"></div>
+
+                <div class="list" style="overflow: initial">
+                    <div class="texts" style="justify-content: normal; gap: 15px; height: fit-content; overflow-y: scroll">
+                        <div class="text">
+                            <span>Товар</span>
+                            <p><a target="_blank" :href="'/product/?product_id=' + opened_purchase.product_id">Посмотреть</a></p>
+                        </div>
+                        <div class="text" v-if="selected_status == 'is_being_considered'">
+                            <span>Фото заменён</span>
+                            <p><a style="text-decoration: underline; color: blue" @click="opened_product_image = opened_purchase.replaced_by_product_image">Посмотреть</a></p>
+                        </div>
+                        <div class="text" v-for="client in opened_purchase.clients" style="align-items: baseline">
+                            <div class="client" style="display: flex; flex-direction: column">
+                                <span>${ client.phone_number }</span>
+                                <span>${ client.fullname }</span>
+                            </div>
+
+                            <p>${ client.product_count } шт</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
