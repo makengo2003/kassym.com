@@ -1,7 +1,7 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.core.files.storage import FileSystemStorage
-from django.db.models import Count, Q, F
+from django.db.models import Count, Q, F, Case, When, Value
 from django_bulk_update.helper import bulk_update
 
 from order.models import Order, OrderItem
@@ -37,25 +37,34 @@ class PurchaseServicesPresenter:
 
     @staticmethod
     def get_purchases(change_time, market, status):
-        category = Q()
+        request_user = getattr(settings, 'request_user', None)
+        change_time_filtration = Q(last_modified__date=change_time)
 
-        if market == "china":
-            category = Q(order_item__product__category_id=7)
-            market = None
+        if hasattr(request_user, "manager"):
+            category = Q()
+            market_filtration = Q()
+        else:
+            if market == "china":
+                category = Q(order_item__product__category_id=7)
+                market_filtration = Q(order_item__product__market=None)
+            else:
+                category = Q()
+                market_filtration = Q(order_item__product__market=market)
 
         products = Purchase.objects.filter(
             category,
             ~Q(order_item__order__status="canceled"),
-            order_item__product__market=market,
+            market_filtration,
+            change_time_filtration,
             status=status,
-            last_modified__date=change_time,
         ).values(
             "order_item__product__id", "order_item__order__is_express",
             "order_item__product__boutique", "order_item__product__poster", "order_item__product__name",
             "order_item__product__vendor_number", "order_item__product__price", "price_per_count",
             "replaced_by_product_image"
         ).annotate(count=Count("id")).distinct().order_by("-order_item__order__is_express",
-                                                          'order_item__product__boutique', '-order_item__product__id')
+                                                          'order_item__product__boutique',
+                                                          '-order_item__product__id')
 
         return PurchaseSerializer(products, many=True)
 
@@ -177,7 +186,7 @@ class PurchaseServicesPresenter:
         product_id = params.get("product_id", None)
 
         comments = OrderItem.objects.filter(~Q(order__status="canceled"),
-            Q(comments__isnull=False) & ~Q(comments=""), order__created_at__date=change_time, purchases__status=status,
+            Q(comments__isnull=False) & ~Q(comments=""), purchases__last_modified__date=change_time, purchases__status=status,
             product_id=product_id
         ).annotate(
             client_phone_number=F("order__user__username"),
@@ -187,3 +196,28 @@ class PurchaseServicesPresenter:
         ).only("count").distinct()
 
         return CommentsSerializer(comments, many=True).data
+
+    def get_purchase_for_manager(self, product_id, change_time, status):
+        product = Product.objects.filter(id=product_id).values("id", "poster", "name").first()
+        orders = Order.objects.filter(
+            ~Q(status="canceled"),
+            order_items__purchases__last_modified=change_time,
+            order_items__purchases__status=status,
+            order_items__product__id=product_id,
+        ).annotate(
+            product_count=Count("order_items__purchases__id", filter=Q(order_items__purchases__status=status))
+        ).prefetch_related("user", "user__client").distinct()
+
+        result = {
+            "product_id": product["id"],
+            "product_poster": "/media/" + product["poster"],
+            "product_name": product["name"],
+            "clients": [{"fullname": order.user.client.fullname,
+                         "phone_number": order.user.username, "product_count": order.product_count}
+                        for order in orders]
+        }
+
+        if status == "is_being_considered":
+            result["replaced_by_product_image"] = Purchase.objects.filter(order_item__order_id=orders[0].id, status="is_being_considered").only("replaced_by_product_image").first().replaced_by_product_image.url
+
+        return result

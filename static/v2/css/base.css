@@ -651,9 +651,11 @@ body {
 .navbar-container .authentication .profile_dropdown_btn .fullname {
     font-family: Gilroy-Medium;
     font-size: 14px;
+    line-break: anywhere;
 }
 
 .navbar-container .authentication .profile_dropdown_btn .company_name {
+    line-break: anywhere;
     font-family: Gilroy-Regular;
     font-size: 13px;
     opacity: 0.5;

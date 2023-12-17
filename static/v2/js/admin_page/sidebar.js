@@ -12,6 +12,7 @@ sidebar_app = Vue.createApp({
                 "sorting": mounted_sorting_app,
                 "delivering": mounted_delivering_app,
                 "finance": mounted_finance_app,
+                "is_being_considered": mounted_is_being_considered_app,
                 "expenses": mounted_expenses_app,
             }
         }
