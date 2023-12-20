@@ -29,9 +29,9 @@
                 </div>
 
                 <div class="availability">
-                    {% if product.is_available %}
-                    <span class="product_is_available">В наличии</span>
-                        {% if product.category_id == 7 and product.count > 0 %}
+                    {% if product.is_available or product.count > 0 %}
+                        <span class="product_is_available">В наличии</span>
+                        {% if product.count > 0 %}
                         <span class="product_count">{{ product.count }} шт</span>
                         {% endif %}
                     {% else %}

@@ -49,10 +49,7 @@
             </div>
 
             <div class="text">
-                <h5>Номер поставщика: </h5>
-                <p>{{ product.vendor_number }}</p>
-
-                <h5 style="margin-top: 15px;">Характеристика</h5>
+                <h5>Характеристика</h5>
                 <ul>
                     <li>Высота: {{ product.height }}</li>
                     <li>Ширина: {{ product.width }}</li>
@@ -86,11 +83,11 @@
                     </div>
 
                     <div class="availability">
-                        {% if product.is_available %}
-                        <p class="is_available">В наличии</p>
-                        {% if product.category_id == 7 and product.count > 0 %}
-                        <p class="count">{{ product.count }} шт</p>
-                        {% endif %}
+                        {% if product.is_available or product.count > 0 %}
+                            <p class="is_available">В наличии</p>
+                            {% if product.count > 0 %}
+                            <p class="count">{{ product.count }} шт</p>
+                            {% endif %}
                         {% else %}
                         <p class="is_not_available">Нет в наличии</p>
                         {% endif %}

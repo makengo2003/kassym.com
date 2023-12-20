@@ -46,8 +46,16 @@ def get_product(user: User, product_id: int) -> ProductSerializer:
         is_favourite_case = Case(When(id__gt=0, then=False))
 
     try:
-        product = Product.objects.filter(id=product_id).prefetch_related("options__values", "images").annotate(
-            is_favourite=is_favourite_case, category_name=F("category__name")).distinct()[0]
+        if hasattr(user, "supplier") or user.is_superuser:
+            status_filtration = Q()
+        else:
+            status_filtration = Q(status="accepted")
+
+        product = Product.objects.filter(status_filtration, id=product_id).select_related(
+            "supplier", "supplier__account"
+        ).prefetch_related("options__values", "images").annotate(
+            is_favourite=is_favourite_case, category_name=F("category__name")
+        ).distinct()[0]
     except:
         return ProductSerializer()
 
@@ -112,20 +120,25 @@ def _get_products(user: User, order_by: str = "-id", last_obj_id: Sequence = Non
         q_filter = q_filter & combined_filter
         del filter_query["search_input"]
 
+    if "status" in filter_query:
+        status_filtration = Q(status=filter_query["status"])
+    else:
+        status_filtration = Q(status="accepted")
+
     if user.is_superuser:
-        products = Product.objects.filter(q_filter, **filter_query).annotate(
+        products = Product.objects.filter(q_filter, status_filtration, **filter_query).annotate(
             image=F("poster"),
             is_favourite=is_favourite_case,
             category_name=F("category__name"),
         ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster", "discount_percentage")[index_starts_at:index_starts_at+40]
     elif searching:
-        products = Product.objects.filter(q_filter, **filter_query).annotate(
+        products = Product.objects.filter(q_filter, status_filtration, **filter_query).annotate(
             image=F("poster"),
             is_favourite=is_favourite_case,
             category_name=F("category__name"),
         ).order_by(order_by, "-id").distinct().only("name", "price", "code", "is_available", "count", "currency", "poster", "discount_percentage")
     else:
-        products = Product.objects.filter(q_filter, **filter_query).annotate(
+        products = Product.objects.filter(q_filter, status_filtration, **filter_query).annotate(
             image=F("poster"),
             is_favourite=is_favourite_case,
             category_name=F("category__name"),
@@ -161,7 +174,7 @@ def get_top_5_products_of_each_category(user):
     for category in categories:
         for product in category.products.annotate(
             is_favourite=is_favourite_case
-        ).filter(~Q(poster=None) & ~Q(poster='')).order_by("-id")[:3]:
+        ).filter(~Q(poster=None) & ~Q(poster=''), status="accepted").order_by("-id")[:3]:
             products.append({
                 "id": product.id,
                 "name": product.name,
@@ -218,8 +231,8 @@ def get_many(user, get_many_request_schema):
         Exists(favourite_subquery), Value(False), output_field=BooleanField()
     )
 
-    count = Product.objects.filter(q_filter, **filtration).count()
-    products = Product.objects.filter(q_filter, **filtration).annotate(
+    count = Product.objects.filter(q_filter, **filtration, status="accepted").count()
+    products = Product.objects.filter(q_filter, **filtration, status="accepted").annotate(
         is_favourite=is_favourite_case,
         image=F("poster"),
         category_name=F("category__name"),

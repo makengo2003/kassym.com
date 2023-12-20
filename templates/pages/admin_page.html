@@ -92,6 +92,10 @@
 						<input type="radio" name="main_container_section" id="categories" value="categories" v-model="current_section" @change="open_section()">
 						<label for="categories">Ниши</label>
 					</div>
+					<div class="main_container_section">
+						<input type="radio" name="main_container_section" id="requests" value="requests" v-model="current_section" @change="open_section()">
+						<label for="requests">Заявки</label>
+					</div>
 				</div>
 
 				<div class="categories_container">
@@ -122,7 +126,7 @@
 								<a @click="search_products()">Поиск</a>
 								<span v-if="admin_searched_products" @click="cancel_searching" style="color: #175145; margin-left: 10px">Отменить поиск</span>
 							</div>
-							<a @click="open_product_form()">Добавить товар</a>
+							<a @click="open_product_form()" v-if="current_section != 'requests'">Добавить товар</a>
 							<span v-if="current_section != 'categories'" style="display: flex; align-items: center;">${ get_total_count_of_products() } шт</span>
 						</div>
 						<div class="categories_cards_parts">
@@ -146,7 +150,7 @@
 								<span>Ниша</span>
 							</div>
 
-							<div class="categories_availability">
+							<div class="categories_availability" :style="current_section == 'requests' ? 'visibility: hidden' : ''">
 								<span>В наличии</span>
 							</div>
 
@@ -177,15 +181,19 @@
 								<input type="text" :value="product.category_name" disabled>
 							</div>
 
-							<div class="categories_availability">
+							<div class="categories_availability" :style="current_section == 'requests' ? 'visibility: hidden' : ''">
 								<input type="checkbox" :checked="product.is_available" @change="change_product_is_available_status(product)">
 							</div>
 
-							<div class="categories_edit">
+							<div class="categories_edit" v-if="current_section == 'requests'" style="margin-left: auto">
+								<a @click="open_product_form(product)">Посмотреть</a>
+							</div>
+
+							<div class="categories_edit" v-else="" style="margin-left: auto">
 								<a @click="open_product_form(product)">Изменить</a>
 							</div>
 
-							<div class="categories_edit">
+							<div class="categories_edit" style="display: none;">
 								<a @click="open_order_form(product)">Заказать</a>
 							</div>
 						</div>
@@ -249,11 +257,22 @@
 								<b>Описание</b>
 								<div id="product_form_description_editor"></div>
 							</div>
-							<div class="add_product block_css">
-								<b>Цена продукта:</b>
-								<input type="number" placeholder="Цена продукта" required v-model="product_form['price']">
+							<div class="add_product block_css" v-if="!product_form['product_id']">
+								<b>Цена у поставщика:</b>
+								<input type="number" placeholder="Цена у поставщика" required v-model="product_form['supplier_price']">
 							</div>
-							<div class="add_product block_css">
+							<div class="add_product block_css" v-if="!product_form['supplier']">
+								<b>Поставщик:</b>
+								<input type="text" placeholder="Поставщик" v-model="product_form['supplier_input']" list="suppliers_list">
+								<datalist id="suppliers_list">
+									<option v-for="supplier in suppliers" :value="supplier.phone_number + ', ' + supplier.first_name + ' ' + supplier.last_name + ', ' + supplier.rating + '/5 рейтинг'">
+								</datalist>
+							</div>
+							<div class="add_product block_css" v-else="" style="margin: 30px 0;">
+								<b style="margin-right: 10px;">Поставщик:</b>
+								<b>${ product_form["supplier"]['phone_number'] }, ${ product_form["supplier"]['first_name'] } ${ product_form["supplier"]['last_name'] }, ${ product_form["supplier"]['rating'] }/5 рейтинг</b>
+							</div>
+							<div class="add_product block_css" v-if="product_form['category_id'] == main_category_id">
 								<b>Скидка:</b>
 								<input type="number" placeholder="Скидка" required v-model="product_form['discount_percentage']">
 							</div>
@@ -280,13 +299,9 @@
 								<b>Длина:</b>
 								<input type="text" placeholder="Длина" v-model="product_form['length']">
 							</div>
-							<div class="add_product">
+							<div class="add_product" v-if="current_section != 'requests'">
 								<input type="checkbox" id="product_form_product_is_available_checkbox" v-model="product_form['is_available']">
 								<label for="product_form_product_is_available_checkbox">Продукт в наличии</label>
-							</div>
-							<div class="add_product block_css">
-								<b>Номер поставщика:</b>
-								<input type="text" placeholder="Номер поставщика" v-model="product_form['vendor_number']">
 							</div>
 							<div class="add_product product_imgs_inputs">
 								<b>Загрузите фотографии продукта:</b>
@@ -301,6 +316,10 @@
 							<div class="add_product btns">
 								<div v-if="product_form['product_id'] == 0">
 									<button class="add_btn" type="submit">Сохранить</button>
+								</div>
+								<div v-else-if="current_section == 'requests'">
+									<button class="add_btn" type="submit" @click="product_form['status'] = 'accepted'">Принять</button>
+									<button class="delete_btn" type="submit" @click="product_form['status'] = 'canceled'">Отклонить</button>
 								</div>
 								<div v-else>
 									<button class="add_btn" type="submit">Сохранить</button>

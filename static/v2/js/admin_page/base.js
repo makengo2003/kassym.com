@@ -63,9 +63,9 @@ orders_app = Vue.createApp({
             var [dt_gt, dt_lte] = this.get_change_time_dt_lte_and_gt(selected_change_time)
 
             if (status == "all") {
-                var filtration = {created_at__gt: dt_gt, created_at__lte: dt_lte}
+                var filtration = {created_at__date: selected_change_time}  // created_at__gt: dt_gt, created_at__lte: dt_lte
             } else {
-                var filtration = {"status": status, created_at__gt: dt_gt, created_at__lte: dt_lte}
+                var filtration = {"status": status, created_at__date: selected_change_time}  // created_at__gt: dt_gt, created_at__lte: dt_lte
             }
 
             if (this.search_input) {
@@ -91,7 +91,8 @@ orders_app = Vue.createApp({
             var selected_change_time = this.selected_change_time.split(".").reverse().join("-")
             var [dt_gt, dt_lte] = this.get_change_time_dt_lte_and_gt(selected_change_time)
 
-            axios("/api/order/get_orders_counts/", {params: {change_time: JSON.stringify({created_at__gt: dt_gt, created_at__lte: dt_lte})}}).then((response) => {
+            // created_at__gt: dt_gt, created_at__lte: dt_lte
+            axios("/api/order/get_orders_counts/", {params: {change_time: JSON.stringify({created_at__date: selected_change_time})}}).then((response) => {
                 this.orders_counts = response.data
             })
         },

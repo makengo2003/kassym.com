@@ -18,6 +18,7 @@ urlpatterns = [
     path("manager/", manager_page_view, name="manager_page"),
     path("buyer/", buyer_page_view, name="buyer_page"),
     path("super_admin/", super_admin_page_view, name="super_admin_page"),
+    path("supplier/", supplier_page_view, name="supplier_page"),
 
     path("about_us/", about_us_view, name="about_us"),
     path("agreement/", guarantee_view, name="guarantee"),

@@ -14,6 +14,8 @@ sidebar_app = Vue.createApp({
                 "finance": mounted_finance_app,
                 "is_being_considered": mounted_is_being_considered_app,
                 "expenses": mounted_expenses_app,
+                "supplier": mounted_supplier_app,
+                "suppliers": mounted_suppliers_app,
             }
         }
     },
@@ -39,6 +41,8 @@ sidebar_app = Vue.createApp({
         } else {
             if (window.location.href.includes("buyer")) {
                 this.open_section("purchases")
+            } else if (window.location.href.includes("supplier")) {
+                this.open_section("supplier")
             } else {
                 this.open_section("orders")
             }

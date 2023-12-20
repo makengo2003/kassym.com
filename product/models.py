@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.contrib.auth.models import User
 
 
 class Product(models.Model):
@@ -9,9 +10,9 @@ class Product(models.Model):
     name_lower = models.CharField(max_length=500, null=True, editable=False, blank=True)
     code_lower = models.CharField(max_length=500, null=True, editable=False, blank=True)
     description = models.TextField()
-    price = models.PositiveIntegerField()
+    price = models.PositiveIntegerField(editable=False)
     discount_percentage = models.PositiveIntegerField(blank=True, default=0)
-    is_available = models.BooleanField(default=False)
+    is_available = models.BooleanField(default=True)
     code = models.CharField(max_length=50, default="", blank=True)
     vendor_number = models.CharField(max_length=50, null=True, blank=True)
     boutique = models.CharField(max_length=500, null=True, blank=True)
@@ -22,6 +23,10 @@ class Product(models.Model):
     currency = models.CharField(max_length=10, default="ru", choices=(("kz", "KZ"), ("ru", "RU")))
     poster = models.ImageField(upload_to="products_posters/", null=True, editable=False, blank=True)
     market = models.CharField(max_length=255, null=True, blank=True, choices=(("sadovod", "Садовод"), ("yuzhnye_vorota", "Южные ворота")))
+    status = models.CharField(max_length=255, default="new", choices=(("new", "В обработке"), ("accepted", "Активный"), ("canceled", "Отклоненный")), null=True, blank=True)
+    supplier = models.ForeignKey("supplier.Supplier", on_delete=models.PROTECT, null=True, blank=True, related_name="products")
+    card_manager = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+    supplier_price = models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.name_lower = self.name.lower() if self.name else None

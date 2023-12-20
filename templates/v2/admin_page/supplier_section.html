@@ -1,0 +1,114 @@
+{% load static %}
+
+<div id="supplier_section" class="section">
+    <div class="header">
+        <div class="_header">
+            <h3>Мои товары</h3>
+            <p>Общ. ${ total_products_count } товаров</p>
+        </div>
+
+        <hr>
+
+        <div class="sub_header">
+            <form class="searching" @submit.prevent="get_products()">
+                <input type="text" v-model="search_input">
+                <button type="submit">Поиск</button>
+                <span v-if="searched" style="cursor: pointer" @click="search_input=''; get_products()">Отменить поиск</span>
+            </form>
+
+            <div>
+                <button class="active" style="background-color: #1D1D42" @click="open_product()">Добавить товар</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="table">
+            <div class="list" id="supplier_products_list">
+                <div class="card" v-for="product in products" @click="open_product(product)">
+                    <div class="purchase_img" :style="'background-image: url(' + product.poster + ')'"></div>
+
+                    <div class="text">
+                        <p>${ product.name }</p>
+                        <p>Арт. ${ product.code }</p>
+                        <p>${ product.count } шт.</p>
+                        <p :class="'status ' + product.status">${ product.status_display }</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window product_window">
+        <div class="_window" style="height: 600px; overflow: scroll;">
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="close_product()">
+
+            <form @submit.prevent="save_product()" class="info">
+                <div class="input">
+                    <h4>Название ниши</h4>
+                    <select v-model="opened_product.category_id" required>
+                        <option v-for="category in categories" :value="category.id">${ category.name }</option>
+                    </select>
+                </div>
+
+                <div class="input">
+                    <h4>Артикул</h4>
+                    <input type="text" v-model="opened_product.code" required>
+                </div>
+
+                <div class="input">
+                    <h4>Название продукта</h4>
+                    <input type="text" v-model="opened_product.name" required>
+                </div>
+
+                <div class="input">
+                    <h4>Количество</h4>
+                    <input type="number" v-model="opened_product.count" required>
+                </div>
+
+                <div class="input quill_editor_block">
+                    <h4>Описание</h4>
+                    <p id="quill_editor" style="height: fit-content"></p>
+                </div>
+
+                <div class="input">
+                    <h4>Цена продукта (рубль)</h4>
+                    <input type="number" v-model="opened_product.supplier_price" required>
+                </div>
+
+                <div class="input">
+                    <h4>Высота</h4>
+                    <input type="text" v-model="opened_product.height" required>
+                </div>
+
+                <div class="input">
+                    <h4>Ширина</h4>
+                    <input type="text" v-model="opened_product.width" required>
+                </div>
+
+                <div class="input">
+                    <h4>Длина</h4>
+                    <input type="text" v-model="opened_product.length" required>
+                </div>
+
+                <div class="input images_block">
+                    <h4>Загрузите фотографии продукта</h4>
+                    <div class="product_images">
+                        <div class="product_img" style="margin-bottom: 15px" v-for="(image, image_index) in opened_product.images" :key="image_index">
+                            <input class="product_image_upload" style="font-size: 15px" type="file" @change="handle_product_image_upload($event, image, image_index)" :id="'product_image_upload_' + image_index" :required="!current_product_image(image)">
+                            <p style="font-size: 15px;" v-if="current_product_image(image)">Текущий: <a :href="image.image">${ get_current_product_image(image) }</a></p>
+
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button v-if="opened_product.id" type="submit">Сохранить</button>
+                    <button v-else="" type="submit">Добавить</button>
+                    <button v-if="opened_product.id" @click="delete_product()" type="button">Удалить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
