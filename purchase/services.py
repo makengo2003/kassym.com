@@ -233,3 +233,15 @@ class PurchaseServicesPresenter:
             result["replaced_by_product_image"] = Purchase.objects.filter(order_item__order_id=orders[0].id, status="is_being_considered").only("replaced_by_product_image").first().replaced_by_product_image.url
 
         return result
+
+    def get_purchased_product_orders(self, product_id, status, change_time):
+        filtration = Q(order_items__purchases__status=status) & Q(order_items__product__id=product_id) & Q(order_items__purchases__last_modified__date=change_time)
+
+        orders = Order.objects.filter(
+            ~Q(status="canceled"),
+            filtration,
+        ).annotate(
+            product_count=Count("order_items__purchases__id", filter=filtration)
+        ).distinct()
+
+        return [{"id": order.id, "product_count": order.product_count} for order in orders]

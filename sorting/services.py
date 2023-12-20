@@ -99,8 +99,14 @@ def finish_sorting(order_id):
     )
 
 
-def get_not_sorted_products():
+def get_not_sorted_products(search_input):
+    if search_input:
+        search_filtration = Q(order_item__product__name_lower__icontains=search_input.strip().lower()) | Q(order_item__product__code_lower__icontains=search_input.strip().lower())
+    else:
+        search_filtration = Q()
+
     products = Purchase.objects.filter(
+        search_filtration,
         ~Q(order_item__order__status="canceled"),
         (Q(status="purchased") | Q(status="replaced")),
         is_sorted=False

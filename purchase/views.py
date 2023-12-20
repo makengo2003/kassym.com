@@ -63,3 +63,11 @@ class PurchaseViewsPresenter(BaseViewsPresenter):
     def get_purchase_comments_view(self, request):
         comments = self.services.get_purchase_comments(request.query_params)
         return Response(comments)
+
+    @method_decorator(api_view(["GET"]))
+    @get_permissions_for_view("get_many")
+    def get_purchased_product_orders_view(self, request):
+        orders = self.services.get_purchased_product_orders(request.query_params.get("product_id"),
+                                                            request.query_params.get("status"),
+                                                            request.query_params.get("change_time"))
+        return Response(orders)

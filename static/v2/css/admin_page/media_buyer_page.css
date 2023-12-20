@@ -223,6 +223,10 @@
         height: 555px;
     }
 
+    #sorting_section .content .table, #sorting_section .header, #delivering_section .content .table, #delivering_section .header {
+        padding: 20px;
+    }
+
     #sorting_section .content .table .rows, #delivering_section .content .table .rows {
         height: 410px;
     }

@@ -7,10 +7,10 @@
         <hr>
 
         <div class="sub_header">
-            <form class="searching" @submit.prevent="get_orders()">
+            <form class="searching" @submit.prevent="search()">
                 <input type="text" v-model="search_input">
                 <button type="submit">Поиск</button>
-                <span v-if="searched" style="cursor: pointer" @click="search_input=''; get_orders()">Отменить поиск</span>
+                <span v-if="searched" style="cursor: pointer" @click="search_input=''; search()">Отменить поиск</span>
             </form>
         </div>
     </div>
@@ -71,7 +71,7 @@
                         </div>
 
                         <div class="text" v-for="order in opened_purchase.orders">
-                            <span>#${ order.id }</span>
+                            <span @click="open_order(order)" style="text-decoration: underline; cursor: pointer">#${ order.id }</span>
                             <p>${ order.product_count } шт.</p>
                         </div>
                     </div>

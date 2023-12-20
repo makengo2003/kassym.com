@@ -204,6 +204,18 @@ purchases_app = Vue.createApp({
                     this.purchase_form["price_per_count"] = this.opened_purchase.price_per_count
                 }
             }
+
+            if (this.selected_status == "purchased" || this.selected_status == "replaced") {
+                var filtration = {
+                    status: this.selected_status,
+                    product_id: purchase.product_id,
+                    change_time: this.reformat_selected_change_time(),
+                }
+
+                axios("/api/purchase/get_purchased_product_orders/", {params: filtration}).then((response) => {
+                    this.opened_purchase["orders"] = response.data
+                })
+            }
         },
         close_purchase_window() {
             document.body.style.overflow = '';
