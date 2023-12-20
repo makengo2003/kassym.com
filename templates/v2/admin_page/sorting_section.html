@@ -20,16 +20,17 @@
             <div class="statuses">
                 <p @click="select_status('accepted')" :class="selected_status == 'accepted' ? 'active': ''">Новые</p>
                 <p @click="select_status('is_sorting')" :class="selected_status == 'is_sorting' ? 'active': ''">В процессе</p>
+                <p @click="select_status('not_sorted_products')" :class="selected_status == 'not_sorted_products' ? 'active': ''">Товары к сортировке</p>
                 <p @click="select_status('sorted')" :class="selected_status == 'sorted' ? 'active': ''">Сортирован</p>
             </div>
 
-            <div class="columns">
+            <div class="columns" v-if="selected_status != 'not_sorted_products'">
                 <p class="is_express"></p>
                 <p class="comments">Номер заказа</p>
                 <p class="company_name">ИП</p>
             </div>
 
-            <div class="rows">
+            <div class="rows" v-if="selected_status != 'not_sorted_products'">
                 <div class="row" v-for="order in orders">
                     <hr>
                     <div class="_row" @click="open_order(order)" style="cursor: pointer;">
@@ -39,6 +40,45 @@
                     </div>
                 </div>
             </div>
+
+            <div class="list" v-if="selected_status == 'not_sorted_products'">
+                <div class="card" v-for="purchase in purchases" @click="open_purchase(purchase)">
+                    <div class="purchase_img" :style="'background-image: url(https://kassym.com/media/' + purchase.product_poster + ')'"></div>
+
+                    <div class="text">
+                        <p>${ purchase.product_name }</p>
+                        <p>${ purchase.count } шт.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window" v-if="opened_purchase != null">
+        <div class="_window" style="width: fit-content">
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <h3>${ opened_purchase.product_name }</h3>
+            </div>
+
+            <div class="info">
+                <div class="purchase_img" @click="opened_product_image = 'https://kassym.com/media/' + opened_purchase.product_poster" :style="'background-image: url(https://kassym.com/media/' + opened_purchase.product_poster + ')'"></div>
+
+                <div class="list">
+                    <div class="texts" style="height: revert-layer; justify-content: normal; gap: 15px;">
+                        <div class="text" v-if="opened_purchase.replaced_by_product_image">
+                            <span>Фото заменён</span>
+                            <p><a target="_blank" :href="'/media/' + opened_purchase.replaced_by_product_image">Посмотреть</a></p>
+                        </div>
+
+                        <div class="text" v-for="order in opened_purchase.orders">
+                            <span>#${ order.id }</span>
+                            <p>${ order.product_count } шт.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="close_purchase_window()">
         </div>
     </div>
 

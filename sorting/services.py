@@ -6,9 +6,11 @@ from django.db.models import Q, Case, When, Count, F, Value, BooleanField
 
 from change_time.models import ChangeTime
 from order.models import Order, OrderReport
+from product.models import Product
 from project import settings
 from project.utils import datetime_now
 from purchase.models import Purchase
+from purchase.serializers import PurchaseSerializer
 from .serializers import OrderSerializer, OrdersSerializer
 
 
@@ -95,3 +97,34 @@ def finish_sorting(order_id):
         "sorters_room", {"type": "sorters_message", "message": {"action": "orders_count_changed",
                                                                 "order_id": order_id}}
     )
+
+
+def get_not_sorted_products():
+    products = Purchase.objects.filter(
+        ~Q(order_item__order__status="canceled"),
+        (Q(status="purchased") | Q(status="replaced")),
+        is_sorted=False
+    ).values(
+        "order_item__product__id", "order_item__order__is_express",
+        "order_item__product__boutique", "order_item__product__poster", "order_item__product__name",
+        "order_item__product__vendor_number", "order_item__product__price", "price_per_count",
+        "replaced_by_product_image"
+    ).annotate(count=Count("id")).distinct().order_by("-order_item__order__is_express",
+                                                      'order_item__product__boutique',
+                                                      '-order_item__product__id')
+
+    return PurchaseSerializer(products, many=True)
+
+
+def get_not_sorted_product(product_id):
+    filtration = ((Q(order_items__purchases__status="purchased") | Q(order_items__purchases__status="replaced")) &
+              (Q(order_items__purchases__is_sorted=False) & Q(order_items__product__id=product_id)))
+
+    orders = Order.objects.filter(
+        ~Q(status="canceled"),
+        filtration,
+    ).annotate(
+        product_count=Count("order_items__purchases__id", filter=filtration)
+    ).distinct()
+
+    return [{"id": order.id, "product_count": order.product_count} for order in orders]
