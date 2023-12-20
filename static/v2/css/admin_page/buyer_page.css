@@ -196,7 +196,6 @@
 
 #sorting_section .content .table, #delivering_section .content .table {
     height: 630px;
-    padding-right: 0;
 }
 
 #sorting_section .content .table .rows, #delivering_section .content .table .rows {

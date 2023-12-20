@@ -41,9 +41,24 @@ sorting_app = Vue.createApp({
             }
         },
 
+        search() {
+            if (this.selected_status != "not_sorted_products") {
+                this.get_orders()
+            } else {
+                this.get_not_sorted_products()
+            }
+        },
         get_not_sorted_products() {
-            axios("/api/sorting/get_not_sorted_products/").then((response) => {this.purchases = response.data})
+            var filtration = {}
 
+            if (this.search_input) {
+                filtration["search_input"] = this.search_input
+                this.searched = true
+            } else {
+                this.searched = false
+            }
+
+            axios("/api/sorting/get_not_sorted_products/", {params: filtration}).then((response) => {this.purchases = response.data})
         },
         get_orders() {
             var filtration = {status: this.selected_status}

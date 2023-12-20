@@ -46,7 +46,7 @@ def finish_sorting_view(request):
 @api_view(["GET"])
 @permission_classes([IsBuyer])
 def get_not_sorted_products_view(request):
-    products = services.get_not_sorted_products()
+    products = services.get_not_sorted_products(request.query_params.get("search_input", None))
     return Response(products.data)
 
 
