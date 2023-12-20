@@ -129,7 +129,9 @@ class OrderModelPresenter(BaseModelPresenter):
 
                 if cart_item.product.count < 0:
                     cart_item.product.count = 0
-                    cart_item.product.is_available = False
+
+                    if cart_item.product.supplier_id != None:
+                        cart_item.product.is_available = False
 
                 cart_item.product.save(update_fields=["count", "is_available"])
 
