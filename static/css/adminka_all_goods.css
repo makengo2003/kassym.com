@@ -96,7 +96,15 @@ body{
 	display: flex;
 	align-items: center;
 	padding: 29px 10px 27px 40px;
-	width: 270px;
+	width: fit-content;
+}
+
+#products .categories_card_block {
+    justify-content: normal;
+}
+
+#products .categories_card_block input {
+    padding: 0;
 }
 
 .main_container_section{

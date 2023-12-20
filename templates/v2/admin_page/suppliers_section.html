@@ -1,0 +1,45 @@
+{% load static %}
+
+<div id="suppliers_section" class="section">
+    <div class="header">
+        <h3>Поставщики</h3>
+    </div>
+
+    <div class="content">
+        <div class="block">
+            <div class="pre_table">
+                <div class="table">
+                    <div class="columns">
+                        <p class="is_express"></p>
+                        <p class="company_name">Поставщик</p>
+                        <p class="company_name">Номер телефона</p>
+                        <p class="company_name">Базар</p>
+                        <p class="company_name">Бутик</p>
+                        <p class="count">Рейтинг</p>
+                        <p class="count">Кол. успешных покупок</p>
+                        <p class="count">Кол. замечании</p>
+                        <p class="is_express"></p>
+                    </div>
+
+                    <div class="rows">
+                        <div class="row" v-for="supplier in suppliers">
+                            <hr>
+                            <div class="_row">
+                                <p class="is_express"></p>
+                                <p style="text-decoration: none" class="company_name">${ supplier.first_name } ${ supplier.last_name }</p>
+                                <p style="text-decoration: none" class="company_name">${ supplier.phone_number }</p>
+                                <p style="text-decoration: none" class="company_name">${ supplier.market_display }</p>
+                                <p style="text-decoration: none" class="company_name">${ supplier.boutique }</p>
+                                <p class="count">${ supplier.rating }</p>
+                                <p class="count">${ supplier.good_remarks_count }</p>
+                                <p class="count">${ supplier.bad_remarks_count }</p>
+                                <p class="is_express"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

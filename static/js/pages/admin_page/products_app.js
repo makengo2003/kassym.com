@@ -87,6 +87,10 @@ products_app = Vue.createApp({
                 CategoryServices.get_categories().then((data) => {
                     this.categories = data
                 })
+
+                axios("/api/supplier/get_suppliers/").then((response) => {
+                    this.suppliers = response.data
+                })
             }
 
             if (this.current_section == "all_products") {
@@ -109,8 +113,14 @@ products_app = Vue.createApp({
                 }
 
                 if (this.current_category) {
+                    if (this.current_section == "requests") {
+                        var filtration = {"status": "new"}
+                    } else {
+                        var filtration = {category_id: this.current_category.id}
+                    }
+
                     ProductServices.get_products({
-                        products_filtration: JSON.stringify({category_id: this.current_category.id})
+                        products_filtration: JSON.stringify(filtration)
                     }).then((response) => {
                         if (response["data"].length == 0) {
                             this.there_is_no_more_products = true
@@ -204,7 +214,8 @@ products_app = Vue.createApp({
                         height: data["height"],
                         width: data["width"],
                         length: data["length"],
-                        currency: data["currency"]
+                        currency: data["currency"],
+                        supplier: data["supplier"],
                     }
 
                     if (this.product_form_description_editor == null) {
@@ -389,6 +400,7 @@ products_app = Vue.createApp({
                     }
                 })
             } else {
+                this.product_form["id"] = this.product_form["product_id"]
                 ProductServices.edit_product(this.product_form).then((result) => {
                     if (result["success"]) {
                         document.getElementById("product_form_window").style.display = "none"
@@ -401,7 +413,11 @@ products_app = Vue.createApp({
                             this.products.splice(this.products.length - 1, 1)
                             for (var i = 0; i < this.products.length; i++) {
                                 if (this.products[i]["id"] == this.product_form["product_id"]) {
-                                    this.products[i] = response["data"][0]
+                                    if (this.current_section != "requests") {
+                                        this.products[i] = response["data"][0]
+                                    } else {
+                                        this.products.splice(i, 1)
+                                    }
                                     break
                                 }
                             }
@@ -478,8 +494,11 @@ products_app = Vue.createApp({
         handle_file_upload(image, event) {
             var file = event.target.files[0]
             if (file) {
-                image["image"] = file.name
-                this.product_form["image: " + file.name] = file
+                image["image"] = (this.product_form["images"].indexOf(image) + 1) + "_" + file.name
+                this.product_form[image["image"]] = file
+            } else {
+                delete this.product_form[image["image"]]
+                image["image"] = ""
             }
         },
         handle_category_poster_upload(event) {
@@ -597,7 +616,11 @@ products_app = Vue.createApp({
                 var get_products_request_schema = {}
 
                 if (this.current_section != "all_products") {
-                    get_products_request_schema["products_filtration"] = JSON.stringify({category_id: this.current_category.id})
+                    if (this.current_section == "requests") {
+                        get_products_request_schema["products_filtration"] = JSON.stringify({status: "new"})
+                    } else {
+                        get_products_request_schema["products_filtration"] = JSON.stringify({category_id: this.current_category.id})
+                    }
                 }
 
                 ProductServices.get_products(get_products_request_schema).then((response) => {

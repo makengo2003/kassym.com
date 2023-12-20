@@ -111,17 +111,17 @@
                             <span>Цена в каталоге</span>
                             <p>${ opened_purchase.product_price } Р</p>
                         </div>
-                        <div class="text" v-if="!purchase_actions_are_available() && opened_market != 'china'" :style="!purchase_actions_are_available() && selected_status != 'replaced' ? 'margin-bottom: 155px' : ''">
+                        <div class="text" v-if="opened_purchase.price_per_count != 0" :style="!purchase_actions_are_available() && selected_status != 'replaced' ? 'margin-bottom: 155px' : ''">
                             <span>Цена за шт.</span>
                             <p>${ opened_purchase.price_per_count } Р</p>
+                        </div>
+                        <div class="text" v-else="" style="margin-top: 20px;">
+                            <span>Цена за шт.</span>
+                            <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.price_per_count">
                         </div>
                         <div class="text" v-if="!purchase_actions_are_available() && selected_status == 'replaced'" :style="!purchase_actions_are_available() ? 'margin-bottom: 129px' : ''">
                             <span>Фото заменён</span>
                             <p><a target="_blank" style="color: blue; text-decoration: underline;" @click="opened_product_image = '/media/' + opened_purchase.replaced_by_product_image">Посмотреть</a></p>
-                        </div>
-                        <div class="text" v-if="purchase_actions_are_available() && opened_market != 'china'" style="margin-top: 20px;">
-                            <span>Цена за шт.</span>
-                            <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.price_per_count">
                         </div>
                         <div class="text" v-if="purchase_actions_are_available()">
                             <span>Количество купленных</span>

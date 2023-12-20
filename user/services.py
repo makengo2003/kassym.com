@@ -214,7 +214,7 @@ def leave_request(data):
 
 
 def get_favourite_products(user):
-    products = Product.objects.filter(favourites__user__username=user.username).annotate(
+    products = Product.objects.filter(favourites__user__username=user.username, status="accepted").annotate(
         is_favourite=Case(When(id__gt=0, then=True)),
         image=F("poster"),
         category_name=F("category__name"),

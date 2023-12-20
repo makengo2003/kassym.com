@@ -107,6 +107,9 @@ def profile_page_view(request):
         elif hasattr(request.user, "super_admin"):
             return redirect("/super_admin/")
 
+        elif hasattr(request.user, "supplier"):
+            return redirect("/supplier/")
+
         if request.user.is_superuser or request.user.is_staff:
             return redirect("/admin/")
         return render(request, "v2/profile_page.html")
@@ -175,4 +178,10 @@ def my_order_page_view(request):
     if hasattr(request.user, "client"):
         order = order_services.get_order(request.user, int(request.GET.get("id", 0)))
         return render(request, "v2/my_order_page.html", {"order": order})
+    return redirect("/")
+
+
+def supplier_page_view(request):
+    if hasattr(request.user, "supplier"):
+        return render(request, "v2/admin_page/index.html")
     return redirect("/")

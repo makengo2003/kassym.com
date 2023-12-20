@@ -16,6 +16,21 @@
     <link rel="stylesheet" href="{% static 'v2/css/admin_page/media_buyer_page.css' %}?v={{ server_ran_time }}">
     <link rel="stylesheet" href="{% static 'v2/css/admin_page/finance_section.css' %}?v={{ server_ran_time }}">
     <link rel="stylesheet" href="{% static 'v2/css/admin_page/expenses_section.css' %}?v={{ server_ran_time }}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/supplier.css' %}?v={{ server_ran_time }}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/quill.snow.css' %}?v={{ server_ran_time }}">
+
+    <style>
+        #suppliers_section .content .table {
+            height: 700px;
+        }
+
+        @media (max-width: 630px) {
+            #suppliers_section .content .table, #suppliers_section .content .table .list {
+                height: 100%;
+                max-height: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="burger_btn" id="burger_btn" onclick="open_burger()">
@@ -44,8 +59,13 @@
 
         {% if request.user.super_admin %}
         <p :style="opened_section == 'finance' ? 'color: #00FFF5;' : ''" @click="open_section('finance')"><img :src="opened_section == 'finance' ? '{% static 'v2/imgs/blue_finance_icon.png' %}' : '{% static 'v2/imgs/finance_icon.png' %}'"><span>Финансы</span></p>
-        {% else %}
+        <p :style="opened_section == 'suppliers' ? 'color: #00FFF5;' : ''" @click="open_section('suppliers')"><img :src="opened_section == 'suppliers' ? '{% static 'v2/imgs/blue_finance_icon.png' %}' : '{% static 'v2/imgs/finance_icon.png' %}'"><span>Поставщики</span></p>
+        {% elif not request.user.supplier %}
         <p :style="opened_section == 'expenses' ? 'color: #00FFF5;' : ''" @click="open_section('expenses')"><img :src="opened_section == 'expenses' ? '{% static 'v2/imgs/blue_expenses_icon.png' %}' : '{% static 'v2/imgs/expenses_icon.png' %}'"><span>Расходы</span></p>
+        {% endif %}
+
+        {% if request.user.supplier %}
+        <p :style="opened_section == 'supplier' ? 'color: #00FFF5;' : ''" @click="open_section('supplier')"><img :src="opened_section == 'supplier' ? '{% static 'v2/imgs/blue_orders_icon.png' %}' : '{% static 'v2/imgs/orders_icon.png' %}'"><span>Мои товары</span></p>
         {% endif %}
 
         <hr>
@@ -67,8 +87,13 @@
 
     {% if request.user.super_admin %}
         {% include 'v2/admin_page/finance_section.html' %}
+        {% include 'v2/admin_page/suppliers_section.html' %}
     {% else %}
         {% include 'v2/admin_page/expenses_section.html' %}
+    {% endif %}
+
+    {% if request.user.supplier %}
+    {% include 'v2/admin_page/supplier_section.html' %}
     {% endif %}
 
     {% include 'v2/admin_page/settings_section.html' %}
@@ -82,13 +107,17 @@
         <script src="{% static 'v2/js/packages/pagination.js' %}"></script>
         <script src="{% static 'v2/js/packages/sweetalert2.all.min.js' %}"></script>
         <script src="{% static 'v2/js/packages/moment.js' %}"></script>
+    	<script src="{% static 'v2/js/packages/highlight.min.js' %}"></script>
+        <script src="{% static 'v2/js/packages/quill.js' %}"></script>
 
 
         <script src="{% static 'v2/js/admin_page/base.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/buyer.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/sorting.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/delivering.js' %}?v={{ server_ran_time }}"></script>
+        <script src="{% static 'v2/js/admin_page/supplier.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/finance.js' %}?v={{ server_ran_time }}"></script>
+        <script src="{% static 'v2/js/admin_page/suppliers.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/is_being_considered.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/expenses.js' %}?v={{ server_ran_time }}"></script>
 

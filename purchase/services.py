@@ -7,6 +7,7 @@ from django_bulk_update.helper import bulk_update
 from order.models import Order, OrderItem
 from product.models import Product
 from project.utils import datetime_now
+from supplier.models import Supplier
 from .models import Purchase, PURCHASE_STATUSES
 from purchase.serializers import PurchaseSerializer, CommentsSerializer
 from project import settings
@@ -95,9 +96,15 @@ class PurchaseServicesPresenter:
         i = 0
         replaced_found = False
         request_user = getattr(settings, 'request_user', None)
+        bad_remark = False
 
         for status in PURCHASE_STATUSES:
             for j in range(int(data.get(status[0] + "_count", 0))):
+                if status[0] == "replaced" or status[0] == "not_available":
+                    bad_remark = True
+                elif status[0] == "purchased":
+                    bad_remark = False
+
                 purchases[i].is_purchased_by = request_user.buyer
                 purchases[i].price_per_count = data["price_per_count"]
                 purchases[i].last_modified = last_modified
@@ -122,6 +129,11 @@ class PurchaseServicesPresenter:
 
         bulk_update(purchases, update_fields=["status", "price_per_count", "replaced_by_product_image", "last_modified",
                                               "is_purchased_by"])
+
+        if bad_remark:
+            Supplier.objects.filter(products__id=data["product_id"]).update(bad_remarks_count=F("bad_remarks_count") + Value(1))
+        else:
+            Supplier.objects.filter(products__id=data["product_id"]).update(good_remarks_count=F("good_remarks_count") + Value(1))
 
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(

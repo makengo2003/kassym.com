@@ -124,6 +124,15 @@ class OrderModelPresenter(BaseModelPresenter):
                 order_items.append(
                     OrderItem(qr_code=files[qr_code], count=cart_item.count, product_id=cart_item.product_id,
                               product_price=product_price, total_price=total_price, comments=comment))
+
+                cart_item.product.count -= cart_item.count
+
+                if cart_item.product.count < 0:
+                    cart_item.product.count = 0
+                    cart_item.product.is_available = False
+
+                cart_item.product.save(update_fields=["count", "is_available"])
+
                 i += 1
 
         additional_selection_lists = []
@@ -162,11 +171,16 @@ class OrderModelPresenter(BaseModelPresenter):
         order.save()
         OrderItem.objects.bulk_create(order_items)
 
-        order_items = OrderItem.objects.filter(order=order)
+        order_items = OrderItem.objects.filter(order=order).select_related("product")
         purchases = []
 
         for order_item in order_items:
-            purchase = Purchase(order_item=order_item)
+            supplier_price = {}
+
+            if order_item.product.supplier_price:
+                supplier_price["price_per_count"] = order_item.product.supplier_price
+
+            purchase = Purchase(**supplier_price, order_item=order_item)
             purchases += [purchase] * order_item.count
 
         Purchase.objects.bulk_create(purchases)

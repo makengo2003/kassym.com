@@ -199,6 +199,10 @@ purchases_app = Vue.createApp({
                     this.comments = []
                     this.get_comments()
                 }
+
+                if (this.opened_purchase.price_per_count) {
+                    this.purchase_form["price_per_count"] = this.opened_purchase.price_per_count
+                }
             }
         },
         close_purchase_window() {
@@ -334,7 +338,7 @@ purchases_app = Vue.createApp({
             });
         },
         purchase_actions_are_available() {
-            return this.selected_status != "purchased" && this.selected_status != "replaced"
+            return this.selected_status != "purchased" && this.selected_status != "replaced" && this.selected_change_time == this.change_times[0]["dt"]
 
         },
 
