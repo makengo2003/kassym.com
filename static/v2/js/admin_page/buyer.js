@@ -213,7 +213,9 @@ purchases_app = Vue.createApp({
                 }
 
                 axios("/api/purchase/get_purchased_product_orders/", {params: filtration}).then((response) => {
-                    this.opened_purchase["orders"] = response.data
+                    if (this.opened_purchase) {
+                        this.opened_purchase["orders"] = response.data
+                    }
                 })
             }
         },
@@ -319,10 +321,6 @@ purchases_app = Vue.createApp({
                 if (this.opened_by_others[i].product_id == this.opened_purchase.product_id && this.opened_by_others[i].user_id != user_id) {
                     return this.opened_by_others[i].user_fullname + " рассматривает товар!"
                 }
-            }
-
-            if (not_found) {
-                this.open_purchase(this.opened_purchase)
             }
         },
         handle_websocket_message(event) {
