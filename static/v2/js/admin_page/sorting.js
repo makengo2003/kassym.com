@@ -19,6 +19,9 @@ sorting_app = Vue.createApp({
             is_saving_changes: false,
             uploaded_reports: {},
             opened_image: null,
+
+            purchases: [],
+            opened_purchase: null
         }
     },
     methods: {
@@ -30,7 +33,17 @@ sorting_app = Vue.createApp({
 
         select_status(status) {
             this.selected_status = status
-            this.get_orders()
+
+            if (this.selected_status != "not_sorted_products") {
+                this.get_orders()
+            } else {
+                this.get_not_sorted_products()
+            }
+        },
+
+        get_not_sorted_products() {
+            axios("/api/sorting/get_not_sorted_products/").then((response) => {this.purchases = response.data})
+
         },
         get_orders() {
             var filtration = {status: this.selected_status}
@@ -52,6 +65,15 @@ sorting_app = Vue.createApp({
 
         },
 
+        close_purchase_window() {
+            this.opened_purchase = null
+        },
+        open_purchase(purchase) {
+            this.opened_purchase = purchase
+            axios("/api/sorting/get_not_sorted_product/", {params: {product_id: purchase.product_id}}).then((response) => {
+                this.opened_purchase["orders"] = response.data
+            })
+        },
         open_order(order) {
             this.opened_order = {}
             this.is_saving_changes = false

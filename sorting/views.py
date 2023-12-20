@@ -41,3 +41,17 @@ def save_sorting_view(request):
 def finish_sorting_view(request):
     services.finish_sorting(request.data.get("id"))
     return Response({"success": True})
+
+
+@api_view(["GET"])
+@permission_classes([IsBuyer])
+def get_not_sorted_products_view(request):
+    products = services.get_not_sorted_products()
+    return Response(products.data)
+
+
+@api_view(["GET"])
+@permission_classes([IsBuyer])
+def get_not_sorted_product_view(request):
+    product = services.get_not_sorted_product(request.query_params.get("product_id"))
+    return Response(product)
