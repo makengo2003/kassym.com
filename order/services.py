@@ -21,7 +21,7 @@ def calculate(user, data, cart_items=None):
         total_products_price += cart_item.count * (cart_item.product.price - cart_item.product.price * cart_item.product.discount_percentage / 100)
         total_products_count += cart_item.count
 
-        if cart_item.product_id == 7810 or cart_item.product_id == 714:
+        if cart_item.product_id in [7810, 714, 8433, 8432, 8431, 8429, 8428, 8424, 8423, 8413]:
             total_service_price += price_for_specific_product * cart_item.count
             specific_product = True
             specific_products_count += cart_item.count
