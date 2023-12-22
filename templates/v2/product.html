@@ -86,7 +86,7 @@
                     </div>
 
                     <div class="availability">
-                        {% if product.is_available or product.count > 0 %}
+                        {% if product.is_available %}
                             <p class="is_available">В наличии</p>
                             {% if product.count > 0 %}
                             <p class="count">{{ product.count }} шт</p>
@@ -101,10 +101,10 @@
 
                         <div class="availability">
                             {% if product.is_available %}
-                            <p class="is_available">В наличии</p>
-                            {% if product.category_id == 7 and product.count > 0 %}
-                            <p class="count">{{ product.count }} шт</p>
-                            {% endif %}
+                                <p class="is_available">В наличии</p>
+                                {% if product.count > 0 %}
+                                <p class="count">{{ product.count }} шт</p>
+                                {% endif %}
                             {% else %}
                             <p class="is_not_available">Нет в наличии</p>
                             {% endif %}

@@ -55,7 +55,10 @@ products_app = Vue.createApp({
                 images: [{image: "", "default": true}, {image: "", "default": false}, {image: "", "default": false}, {image: "", "default": false}],
                 options: [],
                 on_submit: false,
-                category_filtration: []
+                category_filtration: [],
+                supplier_price: "0",
+                supplier_input: "",
+                supplier: null,
             },
             product_form_description_editor: null,
             product_form_short_description_editor: null,
@@ -216,6 +219,8 @@ products_app = Vue.createApp({
                         length: data["length"],
                         currency: data["currency"],
                         supplier: data["supplier"],
+                        supplier_price: data["supplier_price"],
+                        supplier_input: data["vendor_number"],
                     }
 
                     if (this.product_form_description_editor == null) {
@@ -263,7 +268,10 @@ products_app = Vue.createApp({
                         images: [{image: "", "default": true}, {image: "", "default": false}, {image: "", "default": false}, {image: "", "default": false}],
                         options: [],
                         on_submit: false,
-                        category_filtration: []
+                        category_filtration: [],
+                        supplier_price: "0",
+                        supplier_input: "",
+                        supplier: null,
                     }
                 }
 
@@ -394,13 +402,17 @@ products_app = Vue.createApp({
                                 images: [{image: "", "default": true}, {image: "", "default": false}, {image: "", "default": false}, {image: "", "default": false}],
                                 options: [],
                                 on_submit: false,
-                                category_filtration: []
+                                category_filtration: [],
+                                supplier_price: "0",
+                                supplier_input: "",
+                                supplier: null,
                             }
                         })
                     }
                 })
             } else {
                 this.product_form["id"] = this.product_form["product_id"]
+                this.product_form["supplier_price"] = 0
                 ProductServices.edit_product(this.product_form).then((result) => {
                     if (result["success"]) {
                         document.getElementById("product_form_window").style.display = "none"
@@ -437,7 +449,10 @@ products_app = Vue.createApp({
                                 images: [{image: "", "default": true}, {image: "", "default": false}, {image: "", "default": false}, {image: "", "default": false}],
                                 options: [],
                                 on_submit: false,
-                                category_filtration: []
+                                category_filtration: [],
+                                supplier_price: "0",
+                                supplier_input: "",
+                                supplier: null,
                             }
                         })
                     }
@@ -596,7 +611,10 @@ products_app = Vue.createApp({
                             images: [{image: "", "default": true}, {image: "", "default": false}, {image: "", "default": false}, {image: "", "default": false}],
                             options: [],
                             on_submit: false,
-                            category_filtration: []
+                            category_filtration: [],
+                            supplier_price: "0",
+                            supplier_input: "",
+                            supplier: null,
                         }
                     })
                 }

@@ -67,7 +67,7 @@ def get_ruble_rate():
     response = requests.get("https://mig.kz/api/v1/gadget/html")
     soup = BeautifulSoup(response.text, 'html.parser')
     rub_row = soup.find('td', class_='currency', text='RUB').find_parent('tr')
-    return float(rub_row.find('td', class_='sell delta-neutral').text) + 0.5
+    return float(rub_row.find('td', class_='sell').text) + 0.5
 
 
 def get_order(user, order_id):
