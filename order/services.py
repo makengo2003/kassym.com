@@ -22,7 +22,12 @@ def calculate(user, data, cart_items=None):
         total_products_count += cart_item.count
 
         if cart_item.product_id in [7810, 714, 8433, 8432, 8431, 8429, 8428, 8424, 8423, 8413]:
-            total_service_price += price_for_specific_product * cart_item.count
+            if cart_item.product_id in [8433, 8432, 8431, 8429, 8428, 8424, 8423, 8413]:
+                _price_for_specific_product = 150
+            else:
+                _price_for_specific_product = 100
+
+            total_service_price += _price_for_specific_product * cart_item.count
             specific_product = True
             specific_products_count += cart_item.count
 
