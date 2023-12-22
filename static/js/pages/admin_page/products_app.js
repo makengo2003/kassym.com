@@ -367,6 +367,8 @@ products_app = Vue.createApp({
 
             this.product_form["on_submit"] = true
             this.product_form["description"] = this.product_form_description_editor.root.innerHTML
+            this.product_form["supplier_price"] = 0
+
             if (this.product_form["product_id"] == 0) {
                 ProductServices.add_product(this.product_form).then((result) => {
                     if (result["success"]) {
@@ -412,7 +414,6 @@ products_app = Vue.createApp({
                 })
             } else {
                 this.product_form["id"] = this.product_form["product_id"]
-                this.product_form["supplier_price"] = 0
                 ProductServices.edit_product(this.product_form).then((result) => {
                     if (result["success"]) {
                         document.getElementById("product_form_window").style.display = "none"
