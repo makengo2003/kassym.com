@@ -97,29 +97,37 @@ class ProductFormSerializer(serializers.ModelSerializer):
     images = serializers.JSONField(required=False)
     category_id = serializers.IntegerField()
     supplier_input = serializers.CharField(max_length=255, required=False)
+    price = serializers.IntegerField(required=False)
 
     class Meta:
         model = Product
-        exclude = ["category", "supplier"]
+        exclude = ["category", "supplier", "vendor_number", "market", "boutique", "name_lower", "code_lower", "poster"]
 
     def get_price(self, supplier_price):
         return supplier_price + 50
 
     def create(self, validated_data: MutableMapping) -> Product:
         validated_data["currency"] = "ru"
-        validated_images = validated_data.pop("images", [])
-        files = validated_data.pop("files", {})
-        images = list()
-
-        supplier_price = validated_data.get("supplier_price")
-        supplier_input = validated_data.pop("supplier_input", None)
-        price = self.get_price(supplier_price)
-        product = Product(**validated_data, price=price)
         fs = FileSystemStorage(location=settings.MEDIA_ROOT)
 
+        files = validated_data.pop("files", {})
+        uploaded_images = validated_data.pop("images", [])
+        images = list()
+        supplier_input = validated_data.pop("supplier_input", None)
+        request_user = getattr(settings, 'request_user', None)
+
+        if hasattr(request_user, "supplier"):
+            supplier_price = validated_data.pop("supplier_price")
+            price = self.get_price(supplier_price)
+        else:
+            price = validated_data.pop("price")
+            supplier_price = validated_data.pop("supplier_price")
+
+        product = Product(**validated_data, price=price, supplier_price=supplier_price)
+
         i = 0
-        for image in validated_images:
-            img = image.get("image")
+        for image in uploaded_images:
+            img = image.pop("image")
             img = files.get(img)
 
             file_name = fs.save("products_images/" + img.name, img)
@@ -128,10 +136,11 @@ class ProductFormSerializer(serializers.ModelSerializer):
                 product.poster = file_name
                 i += 1
 
-            image.pop("image")
             images.append(ProductImage(**image, product=product, image=file_name))
 
-        request_user = getattr(settings, 'request_user', None)
+        validated_data["name_lower"] = validated_data["name"].lower()
+        validated_data["code_lower"] = validated_data["code"].lower()
+
         if hasattr(request_user, "supplier"):
             supplier = Supplier.objects.get(account=request_user)
             product.supplier = supplier
@@ -139,21 +148,22 @@ class ProductFormSerializer(serializers.ModelSerializer):
             product.boutique = supplier.boutique
             product.vendor_number = request_user.username
         else:
-            product.market = "sadovod"
             product.status = "accepted"
 
             if supplier_input:
                 phone_number = supplier_input.split(", ")[0]
                 supplier = Supplier.objects.filter(account__username=phone_number).first()
+
                 if supplier:
                     product.supplier = supplier
+                    product.market = supplier.market
+                    product.boutique = supplier.boutique
+                    product.vendor_number = supplier.account.username
                 else:
                     product.vendor_number = phone_number
-
-        if validated_data["count"] > 0:
-            product.is_available = True
-        else:
-            product.is_available = False
+                    product.market = "sadovod"
+            else:
+                product.market = "sadovod"
 
         product.save()
         ProductImage.objects.bulk_create(images)
@@ -162,14 +172,26 @@ class ProductFormSerializer(serializers.ModelSerializer):
 
     def update(self, product: Product, validated_data: MutableMapping) -> Product:
         validated_data["currency"] = "ru"
-        images = validated_data.pop("images", [])
-        files = validated_data.pop("files", {})
-
-        i = 0
-        product_images = list(product.images.all())
         fs = FileSystemStorage(location=settings.MEDIA_ROOT)
 
-        for image in images:
+        files = validated_data.pop("files", {})
+        product_images = list(product.images.all())
+
+        request_user = getattr(settings, 'request_user', None)
+        product_form = {}
+
+        if validated_data["category_id"] == 7 or not product.supplier:
+            price = validated_data.get("price")
+            supplier_price = validated_data.get("supplier_price")
+        elif hasattr(request_user, "supplier"):
+            supplier_price = validated_data.get("supplier_price")
+            price = self.get_price(supplier_price)
+        else:
+            price = product.price
+            supplier_price = product.supplier_price
+
+        i = 0
+        for image in validated_data.pop("images", []):
             img = files.pop(image['image'], False)
 
             if img:
@@ -186,41 +208,44 @@ class ProductFormSerializer(serializers.ModelSerializer):
         validated_data["name_lower"] = validated_data["name"].lower()
         validated_data["code_lower"] = validated_data["code"].lower()
 
-        request_user = getattr(settings, 'request_user', None)
-        supplier_input = validated_data.pop("supplier_input", None)
-
-        if supplier_input:
-            supplier = Supplier.objects.filter(account__username=supplier_input.split(", ")[0]).first()
-            validated_data["market"] = supplier.market
-            validated_data["boutique"] = supplier.boutique
-            validated_data["vendor_number"] = request_user.username
-        else:
-            supplier = product.supplier
-
-        validated_data.pop("price", None)
         if hasattr(request_user, "supplier"):
-            price = self.get_price(validated_data["supplier_price"])
-            count = validated_data["count"]
-
-            if count > 0:
-                is_available = True
-            else:
-                is_available = False
-
-            supplier = request_user.supplier
+            supplier = Supplier.objects.get(account=request_user)
+            product_form["supplier"] = supplier
+            product_form["market"] = supplier.market
+            product_form["boutique"] = supplier.boutique
+            product_form["vendor_number"] = request_user.username
         else:
-            price = product.price
-            count = product.count
-            is_available = validated_data.pop("is_available", None)
+            supplier_input = validated_data.pop("supplier_input", None)
+
+            if supplier_input:
+                phone_number = supplier_input.split(", ")[0]
+                supplier = Supplier.objects.filter(account__username=phone_number).first()
+
+                if supplier:
+                    product_form["supplier"] = supplier
+                    product_form["market"] = supplier.market
+                    product_form["boutique"] = supplier.boutique
+                    product_form["vendor_number"] = supplier.account.username
+                else:
+                    product_form["vendor_number"] = phone_number
+                    product_form["market"] = "sadovod"
+                    product_form["boutique"] = None
+                    product_form["supplier"] = None
+            else:
+                product_form["market"] = "sadovod"
+                product_form["vendor_number"] = None
+                product_form["boutique"] = None
+                product_form["supplier"] = None
 
         status = validated_data.pop("status", None)
         if not status:
             status = product.status
 
-        validated_data.pop("count", None)
-        validated_data.pop("is_available", None)
+        validated_data.pop("supplier_price", None)
+        validated_data.pop("price", None)
+
         bulk_update(product_images, update_fields=["image"])
-        Product.objects.filter(id=product.pk).update(**validated_data, price=price, supplier=supplier, status=status,
-                                                     count=count, is_available=is_available)
+        Product.objects.filter(id=product.pk).update(**validated_data, **product_form, price=price,
+                                                     supplier_price=supplier_price, status=status)
 
         return product

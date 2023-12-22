@@ -257,18 +257,22 @@
 								<b>Описание</b>
 								<div id="product_form_description_editor"></div>
 							</div>
-							<div class="add_product block_css" v-if="!product_form['product_id']">
+							<div class="add_product block_css" v-if="product_form['category_id'] != main_category_id">
 								<b>Цена у поставщика:</b>
-								<input type="number" placeholder="Цена у поставщика" required v-model="product_form['supplier_price']">
+								<input type="number" placeholder="Цена у поставщика" v-model="product_form['supplier_price']">
 							</div>
-							<div class="add_product block_css" v-if="!product_form['supplier']">
+							<div class="add_product block_css">
+								<b>Цена:</b>
+								<input type="number" placeholder="Цена" required v-model="product_form['price']">
+							</div>
+							<div class="add_product block_css" v-if="!product_form['supplier'] && product_form['category_id'] != main_category_id">
 								<b>Поставщик:</b>
 								<input type="text" placeholder="Поставщик" v-model="product_form['supplier_input']" list="suppliers_list">
 								<datalist id="suppliers_list">
 									<option v-for="supplier in suppliers" :value="supplier.phone_number + ', ' + supplier.first_name + ' ' + supplier.last_name + ', ' + supplier.rating + '/5 рейтинг'">
 								</datalist>
 							</div>
-							<div class="add_product block_css" v-else="" style="margin: 30px 0;">
+							<div class="add_product block_css" v-else-if="product_form['category_id'] != main_category_id" style="margin: 30px 0;">
 								<b style="margin-right: 10px;">Поставщик:</b>
 								<b>${ product_form["supplier"]['phone_number'] }, ${ product_form["supplier"]['first_name'] } ${ product_form["supplier"]['last_name'] }, ${ product_form["supplier"]['rating'] }/5 рейтинг</b>
 							</div>
@@ -276,13 +280,6 @@
 								<b>Скидка:</b>
 								<input type="number" placeholder="Скидка" required v-model="product_form['discount_percentage']">
 							</div>
-<!--							<div class="add_product block_css" v-if="product_form['category_id'] == main_category_id">-->
-<!--								<b>Валюта:</b>-->
-<!--								<select v-model="product_form['currency']" required>-->
-<!--									<option value="kz">Тенге</option>-->
-<!--									<option value="ru">Рубль</option>-->
-<!--								</select>-->
-<!--							</div>-->
 							<div v-if="product_form['category_id'] == main_category_id" class="add_product block_css">
 								<b>Количество продукта:</b>
 								<input type="number" placeholder="Количество продукта" :required="product_form['category_id'] == main_category_id" v-model="product_form['count']">

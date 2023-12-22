@@ -27,6 +27,7 @@ var base_opened_product = {
     code: null,
     name: null,
     count: null,
+    is_available: null,
     description: "",
     supplier_price: null,
     height: null,
@@ -202,9 +203,11 @@ supplier_app = Vue.createApp({
                 }
 
                 this.opened_product["description"] = this.quill_editor.root.innerHTML
-                this.opened_product["images"] = JSON.stringify(this.opened_product.images)
 
-                axios.post("/api/product" + url, this.opened_product, {
+                data = Object.assign({}, this.opened_product)
+                data["images"] = JSON.stringify(this.opened_product.images)
+
+                axios.post("/api/product" + url, data, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         "X-CSRFToken": $cookies.get("csrftoken"),
@@ -268,6 +271,18 @@ supplier_app = Vue.createApp({
                     })
                 }
             })
+        },
+
+        get_categories_for_selecting() {
+            var categories = []
+
+            for (var i = 0; i < this.categories.length; i++) {
+                if (this.categories[i].id != 7) {
+                    categories.push(this.categories[i])
+                }
+            }
+
+            return categories
         }
     },
     mounted() {

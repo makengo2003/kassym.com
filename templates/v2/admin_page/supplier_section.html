@@ -47,7 +47,7 @@
                 <div class="input">
                     <h4>Название ниши</h4>
                     <select v-model="opened_product.category_id" required>
-                        <option v-for="category in categories" :value="category.id">${ category.name }</option>
+                        <option v-for="category in get_categories_for_selecting()" :value="category.id">${ category.name }</option>
                     </select>
                 </div>
 
@@ -59,6 +59,11 @@
                 <div class="input">
                     <h4>Название продукта</h4>
                     <input type="text" v-model="opened_product.name" required>
+                </div>
+
+                <div class="input" style="display: flex; align-items: center; gap: 7px">
+                    <input type="checkbox" v-model="opened_product.is_available" style="width: 15px; height: 15px;">
+                    <h4 style="margin: 0">Продукт в наличии</h4>
                 </div>
 
                 <div class="input">
