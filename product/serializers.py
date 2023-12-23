@@ -101,10 +101,11 @@ class ProductFormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        exclude = ["category", "supplier", "vendor_number", "market", "boutique", "name_lower", "code_lower", "poster"]
+        exclude = ["category", "supplier", "code", "vendor_number", "market", "boutique", "name_lower", "code_lower",
+                   "poster"]
 
     def get_price(self, supplier_price):
-        return supplier_price + 50
+        return supplier_price + (supplier_price * 0.05)
 
     def create(self, validated_data: MutableMapping) -> Product:
         validated_data["currency"] = "ru"
@@ -139,7 +140,6 @@ class ProductFormSerializer(serializers.ModelSerializer):
             images.append(ProductImage(**image, product=product, image=file_name))
 
         validated_data["name_lower"] = validated_data["name"].lower()
-        validated_data["code_lower"] = validated_data["code"].lower()
 
         if hasattr(request_user, "supplier"):
             supplier = Supplier.objects.get(account=request_user)
@@ -166,6 +166,11 @@ class ProductFormSerializer(serializers.ModelSerializer):
                 product.market = "sadovod"
 
         product.save()
+
+        product.code = str(product.id).zfill(6)
+        product.code_lower = product.code.lower()
+        product.save(update_fields=["code", "code_lower"])
+
         ProductImage.objects.bulk_create(images)
 
         return product
@@ -206,7 +211,6 @@ class ProductFormSerializer(serializers.ModelSerializer):
             i += 1
 
         validated_data["name_lower"] = validated_data["name"].lower()
-        validated_data["code_lower"] = validated_data["code"].lower()
 
         if hasattr(request_user, "supplier"):
             supplier = Supplier.objects.get(account=request_user)

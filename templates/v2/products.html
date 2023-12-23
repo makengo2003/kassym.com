@@ -39,7 +39,9 @@
                     {% endif %}
                 </div>
 
-                {% if request.user.is_authenticated or user.is_authenticated %}
+                {% if not product.is_available %}
+                <button class="add_to_cart_btn" onclick="event.preventDefault();" style="opacity: 0.5">В корзину</button>
+                {% elif request.user.is_authenticated or user.is_authenticated %}
                 <button class="add_to_cart_btn" onclick="event.preventDefault(); open_add_to_cart_form({{ product.id }}, '{{ product.name }}', '{{ product.category_name }}', {{ product.price_with_discount }}, '{{ product.image }}')">В корзину</button>
                 {% else %}
                 <button class="add_to_cart_btn" onclick="document.getElementById('login_form_window').style.display = 'block'">В корзину</button>

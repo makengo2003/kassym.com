@@ -20,6 +20,7 @@ class CartModelPresenter(BaseModelPresenter):
     @staticmethod
     def get_many_service():
         request_user = getattr(settings, 'request_user', None)
+        CartItem.objects.filter(user=request_user, product__is_available=False).delete()
 
         return {
             "prefetch_related": [],

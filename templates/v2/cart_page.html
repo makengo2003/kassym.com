@@ -129,7 +129,7 @@
                             <button class="cancel_btn" @click="cancel_file_upload(cart_item, 'qr_code')">Отменить</button>
                             <div class="uploaded_status">
                                 <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
-                                <p>Готово</p>
+                                <p @click="open_uploaded_pdf(cart_item, 'qr_code')" style="cursor: pointer;">Посмотреть</p>
                             </div>
                         </div>
                     </div>
@@ -153,7 +153,7 @@
                             <button class="cancel_btn" @click="cancel_file_upload(deliveries_qr_code, 'file')">Отменить</button>
                             <div class="uploaded_status">
                                 <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
-                                <p>Готово</p>
+                                <p @click="open_uploaded_pdf(deliveries_qr_code, 'file')" style="cursor: pointer;">Посмотреть</p>
                             </div>
                         </div>
                     </div>
@@ -176,7 +176,7 @@
                             <button class="cancel_btn" @click="cancel_file_upload(selection_sheet, 'file')">Отменить</button>
                             <div class="uploaded_status">
                                 <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
-                                <p>Готово</p>
+                                <p @click="open_uploaded_pdf(selection_sheet, 'file')" style="cursor: pointer;">Посмотреть</p>
                             </div>
                         </div>
                     </div>
@@ -199,7 +199,7 @@
                             <button class="cancel_btn" @click="cancel_file_upload(selection_list, 'file')">Отменить</button>
                             <div class="uploaded_status">
                                 <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
-                                <p>Готово</p>
+                                <p @click="open_uploaded_pdf(selection_list, 'file')" style="cursor: pointer;">Посмотреть</p>
                             </div>
                         </div>
 
@@ -324,7 +324,7 @@
                         <button class="cancel_btn" @click="cancel_file_upload(paid_check_pdf, 'file')">Отменить</button>
                         <div class="uploaded_status">
                             <img width="30" height="30" src="{% static 'v2/imgs/uploaded.png' %}" alt="">
-                            <p>Готово</p>
+                            <p @click="open_uploaded_pdf(paid_check_pdf, 'file')" style="cursor: pointer;">Посмотреть</p>
                         </div>
                     </div>
                 </div>
@@ -344,10 +344,18 @@
 <a class="tech_support_btn" href="{{ contact.link }}" target="_blank">Тех. поддержка</a>
 {% endif %}
 {% endfor %}
+
+
+<div id="pdfViewer">
+    <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" onclick="close_pdf_viewer()">
+</div>
 {% endblock %}
 
 
 {% block scripts %}
+<script src="{% static 'v2/js/packages/mobile-detect.min.js' %}"></script>
+<script src="{% static 'v2/js/packages/pdf.min.js' %}"></script>
+<script src="{% static 'v2/js/packages/pdf.worker.min.js' %}"></script>
 <script src="{% static 'v2/js/packages/vue.global.prod.js' %}"></script>
 <script src="{% static 'v2/js/packages/moment.js' %}"></script>
 <script src="{% static 'v2/js/packages/moment-tz.js' %}"></script>
