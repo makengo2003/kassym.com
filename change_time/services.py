@@ -1,12 +1,13 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from dateutil.relativedelta import relativedelta
-from django.core.exceptions import ValidationError, BadRequest
+from django.core.exceptions import BadRequest
 from django.db.models import Q
 
 from change_time.models import ChangeTime
 from change_time.serializers import ChangeTimeSerializer
 from order.models import Order
+from product.models import Product
 from purchase.models import Purchase
 
 
@@ -24,6 +25,16 @@ def finish_change_time():
     Purchase.objects.filter(Q(status="will_be_tomorrow") | Q(status="new")).update(status="new",
                                                                                    last_modified=last_change_time.dt)
     Purchase.objects.filter(Q(status="is_being_considered")).update(last_modified=last_change_time.dt)
+
+    not_available_purchases = Purchase.objects.filter(
+        status="not_available", last_modified__date=last_change_time.dt - relativedelta(days=1)
+    ).select_related("order_item", "order_item__product")
+    product_ids = {}
+
+    for purchase in not_available_purchases:
+        product_ids[purchase.order_item.product_id] = True
+
+    Product.objects.filter(id__in=product_ids.keys()).update(is_available=False)
 
     ChangeTime.objects.create(dt=last_change_time.dt + relativedelta(days=1))
 

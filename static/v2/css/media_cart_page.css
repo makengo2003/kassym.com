@@ -1,6 +1,6 @@
 @media(max-width: 1150px) {
     #cart_page .qr_code.paid_check_pdf .qr_name p {
-        width: 355px;
+        width: 330px;
     }
 
 	#cart_page .qr_code .qr_name span, #cart_page .qr_code .qr_name p {
@@ -283,6 +283,14 @@
     .tech_support_btn {
         padding: 5px 12px;
         font-size: 17px;
+    }
+
+    #cart_page .qr_code .uploaded {
+        gap: 10px;
+    }
+
+    #cart_page .qr_code .upload {
+        gap: 15px;
     }
 }
 

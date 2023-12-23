@@ -219,7 +219,8 @@ cart_app = Vue.createApp({
                 }
 
                 for (var i = 0; i < this.cart.length; i++) {
-                    data[this.cart[i]["qr_code"]] = this.uploaded_files[this.cart[i]["qr_code"]]
+                    var qr_code = this.cart[i]["qr_code"].slice(0, this.cart[i]["qr_code"].indexOf(":"))
+                    data[qr_code] = this.uploaded_files[this.cart[i]["qr_code"]]
                     data["comments"][this.cart[i]["id"]] = this.cart[i]["comments"]
                 }
 
@@ -262,6 +263,19 @@ cart_app = Vue.createApp({
         remove_selection_list(selection_list) {
             this.cancel_file_upload(selection_list, "file")
             this.additional_selection_lists.splice(this.additional_selection_lists.indexOf(selection_list), 1)
+        },
+
+        open_uploaded_pdf(obj, label) {
+            var fileReader = new FileReader();
+
+            fileReader.onload = function(e) {
+                var arrayBuffer = e.target.result;
+                renderPdf(arrayBuffer);
+            };
+
+            fileReader.readAsArrayBuffer(this.uploaded_files[obj[label]]);
+            document.getElementById("pdfViewer").style.display = 'block'
+            document.body.style.overflow = 'hidden';
         }
     },
     mounted() {
@@ -294,7 +308,7 @@ function generateUUID() {
 document.addEventListener("DOMContentLoaded", function() {
     var footer = document.querySelector(".footer-container");
     var button = document.querySelector(".tech_support_btn");
-    var buttonHeight = button.getBoundingClientRect().top + 150;
+    var buttonHeight = button.getBoundingClientRect().top + 200;
 
     window.addEventListener("scroll", function() {
         var footerTop = footer.getBoundingClientRect().top;
@@ -307,3 +321,48 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
+function close_pdf_viewer() {
+    document.getElementById('pdfViewer').style.display = 'none'
+    document.body.style.overflow = 'auto';
+    destroyPdfViewer()
+}
+
+var pdfPages = [];
+function destroyPdfViewer() {
+    pdfPages.forEach(function(canvas) {
+        pdfViewer.removeChild(canvas);
+    });
+
+    pdfPages = [];
+}
+
+var md = new MobileDetect(window.navigator.userAgent);
+var device_is_mobile = md.mobile()
+var device_is_tablet = md.tablet()
+
+function renderPdf(arrayBuffer) {
+    pdfjsLib.getDocument(arrayBuffer, {viewer: { touch: true }}).promise.then(function(pdf) {
+        var pdfViewer = document.getElementById('pdfViewer');
+
+        for (var pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+            pdf.getPage(pageNumber).then(function(page) {
+                var canvas = document.createElement('canvas');
+                var context = canvas.getContext('2d');
+                var viewport = page.getViewport({ scale: device_is_mobile ? 1.5 : (device_is_tablet ? 1.75 : 2) });
+
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+
+                page.render(renderContext).promise.then(function() {
+                    pdfPages.push(canvas);
+                    pdfViewer.appendChild(canvas);
+                });
+            });
+        }
+    });
+}

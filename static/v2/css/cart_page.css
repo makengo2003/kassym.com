@@ -277,7 +277,7 @@ body {
 }
 
 #cart_page .qr_code.paid_check_pdf .qr_name p {
-    width: 405px;
+    width: 380px;
 }
 
 #cart_page .qr_code .upload {
@@ -544,7 +544,7 @@ body {
     padding: 7px 15px;
 
     bottom: 10%;
-    right: 7%;
+    right: 4%;
 
     border: none;
     border-radius: 7px;
@@ -555,7 +555,7 @@ body {
     font-size: 20px;
     text-decoration: none;
 
-    z-index: 10000;
+    z-index: 2;
 }
 
 .add_selection_list_btn {
@@ -566,4 +566,36 @@ body {
     color: white;
     background: #007671;
     border-radius: 5px;
+}
+
+
+
+#pdfViewer {
+    padding: 55px;
+
+    width: calc(100% - 110px);
+    height: calc(100% - 110px);
+
+    position: fixed;
+    display: none;
+
+    background: rgb(0 0 0 / 70%);
+    overflow: scroll;
+
+    top: 0;
+    z-index: 10;
+}
+
+#pdfViewer canvas {
+    display: flex;
+    margin: auto;
+}
+
+#pdfViewer .close_window_btn {
+    position: fixed;
+    cursor: pointer;
+
+    right: 22px;
+    top: 22px;
+    filter: invert(1);
 }

@@ -30,12 +30,23 @@
             <a>Заказ #{{ order.id }}</a>
         </div>
 
-        <div class="title">
+        <div class="title" style="margin-bottom: 15px">
             <h2>Заказ #{{ order.id }}</h2>
             {% if order.sorted_report or order.reports.all|length > 0 %}
             <a style="text-decoration: underline; color: blue" onclick='document.getElementById("report_window").style.display = "block"'>Посмотреть фотоотчеты</a>
             {% endif %}
         </div>
+
+        <h4 style="margin: 0;">Документы</h4>
+        <ol style="margin-top: 3px; margin-bottom: 35px;">
+            <li><a target="_blank" href="{{ order.paid_check_file.url }}">Чек с kaspi.kz</a></li>
+            <li><a target="_blank" href="{{ order.selection_sheet_file.url }}">Лист подбора</a></li>
+            <li><a target="_blank" href="{{ order.deliveries_qr_code.url }}">QR поставки</a></li>
+
+            {% for order_item in order.order_items.all %}
+            <li><a target="_blank" href="{{ order_item.qr_code.url }}">QR товара "{{ order_item.product.name }}"</a></li>
+            {% endfor %}
+        </ol>
 
         <div class="products_list">
             {% for order_item in order.order_items.all %}

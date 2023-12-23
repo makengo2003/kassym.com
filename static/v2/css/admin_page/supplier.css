@@ -103,6 +103,12 @@
     #supplier_section .images_block p {
         max-width: 300px;
     }
+
+    #supplier_section .content .table .list {
+        flex-direction: column;
+    }
+
+    #supplier_section .content .table .list .card {
+        width: calc(100% - 40px);
+    }
 }
-
-
