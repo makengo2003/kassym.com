@@ -50,6 +50,8 @@ class OrderItem(models.Model):
     product_price = models.PositiveIntegerField()
     total_price = models.PositiveIntegerField()
     comments = models.TextField(null=True, blank=True)
+    check_defects = models.BooleanField(default=False, null=True, blank=True)
+    with_gift = models.BooleanField(default=False, null=True, blank=True)
 
 
 class OrderReport(models.Model):

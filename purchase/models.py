@@ -24,6 +24,10 @@ class Purchase(models.Model):
     is_sorted = models.BooleanField(default=False, null=True, blank=True)
     last_modified = models.DateTimeField(default=datetime_now)
     is_purchased_by = models.ForeignKey(Buyer, on_delete=models.PROTECT, null=True, blank=True)
+    check_defects = models.BooleanField(default=False, null=True, blank=True)
+    with_gift = models.BooleanField(default=False, null=True, blank=True)
+    check_defects_checkbox = models.BooleanField(default=False, null=True, blank=True)
+    with_gift_checkbox = models.BooleanField(default=False, null=True, blank=True)
 
     def __str__(self):
         return self.order_item.product.name

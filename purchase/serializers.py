@@ -10,6 +10,7 @@ class PurchaseSerializer(serializers.Serializer):
     product_boutique = serializers.CharField(max_length=500, source="order_item__product__boutique")
     product_price = serializers.IntegerField(source="order_item__product__price")
     count = serializers.IntegerField()
+    check_defects_count = serializers.IntegerField()
     price_per_count = serializers.IntegerField()
     replaced_by_product_image = serializers.CharField(max_length=500)
 

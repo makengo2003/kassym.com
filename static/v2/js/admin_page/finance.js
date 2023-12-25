@@ -3,10 +3,14 @@ finance_app = Vue.createApp({
         return {
             selected_change_time: null,
             change_times: [],
-            finance: {
-                total_price: 0,
-                total_products_price: 0,
-            },
+            finance: {},
+
+            selected_employee: "",
+            employee_expenses: [],
+            employees: [],
+
+            total_expenses_sum_in_ruble: 0,
+            total_expenses_sum_in_tenge: 0,
         }
     },
     methods: {
@@ -26,7 +30,40 @@ finance_app = Vue.createApp({
         select_change_time() {
             axios("/api/user/get_finance/", {params: {change_time: this.selected_change_time.split(".").reverse().join("-")}}).then((response) => {
                 this.finance = response.data
+                this.selected_employee = ""
+                this.select_employee()
+
+                this.employees = []
+
+                for (var i = 0; i < this.finance["expenses"].length; i++) {
+                    if (!this.employees.includes(this.finance["expenses"][i]["employee_fullname"])) {
+                        this.employees.push(this.finance["expenses"][i]["employee_fullname"])
+                    }
+                }
             })
+        },
+        select_employee() {
+            this.employee_expenses = []
+            this.total_expenses_sum_in_ruble = 0
+            this.total_expenses_sum_in_tenge = 0
+
+            if (this.selected_employee) {
+                for (var i = 0; i < this.finance["expenses"].length; i++) {
+                    if (this.finance["expenses"][i]["employee_fullname"] == this.selected_employee) {
+                        this.employee_expenses.push(this.finance["expenses"][i])
+                    }
+                }
+            } else {
+                this.employee_expenses = Array.from(this.finance["expenses"])
+            }
+
+            for (var i = 0; i < this.employee_expenses.length; i++) {
+                if (this.employee_expenses[i]["currency"] == "рубль") {
+                    this.total_expenses_sum_in_ruble += this.employee_expenses[i]["sum"]
+                } else {
+                    this.total_expenses_sum_in_tenge += this.employee_expenses[i]["sum"]
+                }
+            }
         },
     },
 })

@@ -67,8 +67,10 @@ def start_to_sort(id, fullname):
     )
 
 
-def save_sorting(order_id, sorted_purchases, reports, files):
+def save_sorting(order_id, sorted_purchases, check_defects_checkbox, with_gift_checkbox, reports, files):
     sorted_purchases_ids = json.loads(sorted_purchases)
+    check_defects_checkbox_ids = json.loads(check_defects_checkbox)
+    with_gift_checkbox_ids = json.loads(with_gift_checkbox)
     reports = json.loads(reports)
 
     order_reports = []
@@ -80,6 +82,20 @@ def save_sorting(order_id, sorted_purchases, reports, files):
     OrderReport.objects.bulk_create(order_reports)
     Purchase.objects.filter(~Q(id__in=sorted_purchases_ids), order_item__order_id=order_id).update(is_sorted=False)
     Purchase.objects.filter(order_item__order_id=order_id, id__in=sorted_purchases_ids).update(is_sorted=True)
+
+    Purchase.objects.filter(~Q(id__in=check_defects_checkbox_ids), order_item__order_id=order_id).update(
+        check_defects_checkbox=False
+    )
+    Purchase.objects.filter(order_item__order_id=order_id, id__in=check_defects_checkbox_ids).update(
+        check_defects_checkbox=True
+    )
+
+    Purchase.objects.filter(~Q(id__in=with_gift_checkbox_ids), order_item__order_id=order_id).update(
+        with_gift_checkbox=False
+    )
+    Purchase.objects.filter(order_item__order_id=order_id, id__in=with_gift_checkbox_ids).update(
+        with_gift_checkbox=True
+    )
 
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(

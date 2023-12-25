@@ -147,6 +147,8 @@
                         <p class="qr_code">QR Code</p>
                         <p class="buyer">Закупщик</p>
                         <p class="status">Статус</p>
+                        <p class="is_sorted" style="width: 150px">Проверка на брак</p>
+                        <p class="is_sorted" style="width: 150px">Визитка + подарок</p>
                         <p class="is_sorted">Сортирован</p>
                     </div>
 
@@ -173,7 +175,10 @@
                                     <span v-else="">${ purchase.status_display }</span>
                                 </p>
 
-                                <p class="is_sorted"><input :disabled="sorting_disabled(purchase)" type="checkbox" v-model="purchase.is_sorted"></p>
+                                <p class="is_sorted" style="width: 150px"><input :disabled="opened_order.status != 'is_sorting'" v-if="purchase.check_defects" type="checkbox" v-model="purchase.check_defects_checkbox"></p>
+                                <p class="is_sorted" style="width: 150px"><input :disabled="opened_order.status != 'is_sorting'" v-if="purchase.with_gift" type="checkbox" v-model="purchase.with_gift_checkbox"></p>
+
+                                <p class="is_sorted"><input :disabled="sorting_disabled(purchase) || ((purchase.check_defects == true) && (purchase.check_defects_checkbox == false)) || ((purchase.with_gift == true) && (purchase.with_gift_checkbox == false))" type="checkbox" v-model="purchase.is_sorted"></p>
                             </div>
                         </div>
 

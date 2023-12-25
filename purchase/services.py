@@ -63,9 +63,10 @@ class PurchaseServicesPresenter:
             "order_item__product__boutique", "order_item__product__poster", "order_item__product__name",
             "order_item__product__vendor_number", "order_item__product__price", "price_per_count",
             "replaced_by_product_image"
-        ).annotate(count=Count("id")).distinct().order_by("-order_item__order__is_express",
-                                                          'order_item__product__boutique',
-                                                          '-order_item__product__id')
+        ).annotate(
+            count=Count("id"), check_defects_count=Count("id", filter=Q(order_item__check_defects=True))
+        ).distinct().order_by("-order_item__order__is_express", 'order_item__product__boutique',
+                              '-order_item__product__id')
 
         return PurchaseSerializer(products, many=True)
 
@@ -180,6 +181,7 @@ class PurchaseServicesPresenter:
         return {
             "product_poster": "/media/" + product["poster"],
             "count": len(purchases),
+            "check_defects_count": purchases.filter(order_item__check_defects=True).count(),
             "product_vendor_number": product["vendor_number"],
             "product_boutique": product["boutique"],
             "product_price": product["price"],

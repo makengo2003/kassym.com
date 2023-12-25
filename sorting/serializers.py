@@ -42,7 +42,8 @@ class PurchaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ["id", "status", "is_sorted", "replaced_by_product_image", "buyer", "status_display"]
+        fields = ["id", "status", "is_sorted", "replaced_by_product_image", "buyer", "status_display", "check_defects",
+                  "check_defects_checkbox", "with_gift", "with_gift_checkbox"]
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -51,7 +52,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ('qr_code', 'purchases', "product", "comments")
+        fields = ('qr_code', 'purchases', "product", "comments", "check_defects", "with_gift")
 
 
 class OrderSerializer(serializers.ModelSerializer):
