@@ -150,20 +150,21 @@ class ProductFormSerializer(serializers.ModelSerializer):
         else:
             product.status = "accepted"
 
-            if supplier_input:
-                phone_number = supplier_input.split(", ")[0]
-                supplier = Supplier.objects.filter(account__username=phone_number).first()
+            if product.category_id != 7:
+                if supplier_input:
+                    phone_number = supplier_input.split(", ")[0]
+                    supplier = Supplier.objects.filter(account__username=phone_number).first()
 
-                if supplier:
-                    product.supplier = supplier
-                    product.market = supplier.market
-                    product.boutique = supplier.boutique
-                    product.vendor_number = supplier.account.username
+                    if supplier:
+                        product.supplier = supplier
+                        product.market = supplier.market
+                        product.boutique = supplier.boutique
+                        product.vendor_number = supplier.account.username
+                    else:
+                        product.vendor_number = phone_number
+                        product.market = "sadovod"
                 else:
-                    product.vendor_number = phone_number
                     product.market = "sadovod"
-            else:
-                product.market = "sadovod"
 
         product.save()
 
@@ -221,25 +222,26 @@ class ProductFormSerializer(serializers.ModelSerializer):
         else:
             supplier_input = validated_data.pop("supplier_input", None)
 
-            if supplier_input:
-                phone_number = supplier_input.split(", ")[0]
-                supplier = Supplier.objects.filter(account__username=phone_number).first()
+            if validated_data["category_id"] != 7:
+                if supplier_input:
+                    phone_number = supplier_input.split(", ")[0]
+                    supplier = Supplier.objects.filter(account__username=phone_number).first()
 
-                if supplier:
-                    product_form["supplier"] = supplier
-                    product_form["market"] = supplier.market
-                    product_form["boutique"] = supplier.boutique
-                    product_form["vendor_number"] = supplier.account.username
+                    if supplier:
+                        product_form["supplier"] = supplier
+                        product_form["market"] = supplier.market
+                        product_form["boutique"] = supplier.boutique
+                        product_form["vendor_number"] = supplier.account.username
+                    else:
+                        product_form["vendor_number"] = phone_number
+                        product_form["market"] = "sadovod"
+                        product_form["boutique"] = None
+                        product_form["supplier"] = None
                 else:
-                    product_form["vendor_number"] = phone_number
                     product_form["market"] = "sadovod"
+                    product_form["vendor_number"] = None
                     product_form["boutique"] = None
                     product_form["supplier"] = None
-            else:
-                product_form["market"] = "sadovod"
-                product_form["vendor_number"] = None
-                product_form["boutique"] = None
-                product_form["supplier"] = None
 
         status = validated_data.pop("status", None)
         if not status:

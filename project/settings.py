@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'purchase',
     'sorting',
     'supplier',
+    'expense',
 
     'base_object_presenter',
     'django_user_agents',

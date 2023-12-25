@@ -92,7 +92,18 @@
                         </div>
                     </div>
 
-                    <textarea v-model="cart_item.comments" placeholder="Комментария к товару"></textarea>
+                    <div class="cart_item_bottom_block">
+                        <textarea v-model="cart_item.comments" placeholder="Комментария к товару"></textarea>
+
+                        <div class="cart_item_checkbox">
+                            <input :id="'check_defects_' + cart_item.id" type="checkbox" v-model="cart_item.check_defects">
+                            <label :for="'check_defects_' + cart_item.id">Проверка на брак (30 рубль)</label>
+                        </div>
+                        <div class="cart_item_checkbox">
+                            <input :id="'with_gift_' + cart_item.id" type="checkbox" v-model="cart_item.with_gift">
+                            <label :for="'with_gift_' + cart_item.id">Добавить подарок + визитку (60 рубль)</label>
+                        </div>
+                    </div>
                     <hr>
                 </div>
             </div>

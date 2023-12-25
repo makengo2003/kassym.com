@@ -18,7 +18,7 @@
             <h3>Общий</h3>
 
             <div class="actions">
-                <div class="action">
+                <div class="action" style="padding: 35px 30px">
                     <img src="{% static 'v2/imgs/total_price_icon.png' %}" style="width: 35px; height: 40px">
 
                     <div class="text">
@@ -28,83 +28,72 @@
                 </div>
 
                 <div class="action">
+                    <img src="{% static 'v2/imgs/total_expenses_icon.png' %}" style="width: 40px; height: 40px">
+
+                    <div class="text">
+                        <p>${ finance.total_expenses_in_ruble } Р</p>
+                        <span style="opacity: 0.7; font-size: 14px; margin-top: 2.5px;">и ${ finance.total_expenses_in_tenge } Тг</span>
+                        <span>Расходы</span>
+                    </div>
+                </div>
+
+                <div class="action">
                     <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}">
-
-                    <div class="text">
-                        <p>${ finance.total_products_price_for_markets + finance.total_products_price_for_china } Р</p>
-                        <span>За товары (Общий)</span>
-                    </div>
-                </div>
-
-                <div class="action">
-                    <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}" style="visibility: hidden; width: 0;">
-
-                    <div class="text">
-                        <p>${ finance.total_products_price_for_china } Р</p>
-                        <span>За товары (Китай)</span>
-                    </div>
-                </div>
-
-                <div class="action">
-                    <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}" style="visibility: hidden; width: 0;">
 
                     <div class="text">
                         <p>${ finance.total_products_price_for_markets } Р</p>
                         <span>За товары (Базар)</span>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div style="display: none" class="block">
-            <h3>Росходы отделов</h3>
-
-            <div class="actions">
-                <div class="action">
-                    <div class="text">
-                        <p>${ finance.total_managers_expenses_in_ruble } тг</p>
-                        <p style="font-size: 12px; opacity: 0.6;">${ finance.total_managers_expenses_in_tenge } тг</p>
-                        <span>На каспий</span>
-                    </div>
-                </div>
 
                 <div class="action">
-                    <div class="text">
-                        <p>${ finance.total_buyers_expenses_in_ruble } Р</p>
-                        <p style="font-size: 12px; opacity: 0.6;">${ finance.total_buyers_expenses_in_tenge } тг</p>
-                        <span>За товары</span>
-                    </div>
-                </div>
+                    <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}" style="visibility: hidden; width: 0">
 
-                <div class="action">
                     <div class="text">
-                        <p>${ finance.total_sorters_expenses_in_ruble } Р</p>
-                        <p style="font-size: 12px; opacity: 0.6;">${ finance.total_sorters_expenses_in_tenge } тг</p>
-                        <span>Росходы</span>
+                        <p>${ finance.total_products_price_for_china } Р</p>
+                        <span>За товары (Китай)</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div style="display: none" class="block">
+        <div class="block">
             <h3>Росходы сотрудников</h3>
 
             <div class="pre_table">
                 <div class="table">
+                    <h4 style="margin-bottom: 10px">Сотрудники: </h4>
+
+                    <div class="select_employee" style="display: flex; gap: 10px; align-items: center;">
+                        <select v-model="selected_employee" @change="select_employee()" style="padding: 4px">
+                            <option value="">Все</option>
+                            <option v-for="employee in employees" :value="employee">${ employee }</option>
+                        </select>
+
+                        <p v-if="total_expenses_sum_in_ruble > 0 || total_expenses_sum_in_tenge > 0">
+                            Сумма расходов:
+                            <span v-if="total_expenses_sum_in_ruble > 0">${ total_expenses_sum_in_ruble } Р</span>
+                            <span v-if="total_expenses_sum_in_ruble > 0 && total_expenses_sum_in_tenge > 0">, </span>
+                            <span v-if="total_expenses_sum_in_tenge > 0">${ total_expenses_sum_in_tenge } Тг</span>
+                        </p>
+                    </div>
+
                     <div class="columns">
                         <p class="is_express"></p>
                         <p class="company_name">Сотрудник</p>
+                        <p class="company_name">Отдел</p>
                         <p class="count">Сумма</p>
                         <p class="description">Описание</p>
                     </div>
 
                     <div class="rows">
-                        <div class="row" v-for="expense in finance.expenses">
+                        <div class="row" v-for="expense in employee_expenses">
                             <hr>
                             <div class="_row">
                                 <p class="is_express"></p>
-                                <p class="company_name" style="text-decoration: none">${ expense.staff_fullname }</p>
-                                <p class="count">${ expense.sum }</p>
+                                <p class="company_name" style="text-decoration: none">${ expense.employee_fullname }</p>
+                                <p class="company_name" style="text-decoration: none">${ expense.employee_type }</p>
+                                <p class="count">${ expense.sum } ${ expense.currency }</p>
                                 <p class="description">${ expense.description }</p>
                             </div>
                         </div>

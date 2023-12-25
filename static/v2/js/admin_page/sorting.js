@@ -124,11 +124,21 @@ sorting_app = Vue.createApp({
         check_sorting() {
             this.opened_order["save_sorting_form"] = {
                 "sorted": [],
+                "check_defects_checkbox": [],
+                "with_gift_checkbox": [],
                 "reports": [],
             }
 
             for (var i = 0; i < this.opened_order.order_items.length; i++) {
                 for (var j = 0; j < this.opened_order.order_items[i].purchases.length; j++) {
+                    if (this.opened_order.order_items[i].purchases[j].check_defects_checkbox) {
+                        this.opened_order["save_sorting_form"]["check_defects_checkbox"].push(this.opened_order.order_items[i].purchases[j].id)
+                    }
+
+                    if (this.opened_order.order_items[i].purchases[j].with_gift_checkbox) {
+                        this.opened_order["save_sorting_form"]["with_gift_checkbox"].push(this.opened_order.order_items[i].purchases[j].id)
+                    }
+
                     if (this.opened_order.order_items[i].purchases[j].is_sorted) {
                         this.opened_order["save_sorting_form"]["sorted"].push(this.opened_order.order_items[i].purchases[j].id)
                     }
@@ -146,17 +156,14 @@ sorting_app = Vue.createApp({
                  }
             }
 
-            if (this.opened_order["save_sorting_form"]["sorted"].length == 0) {
-                Swal.fire("Выберите сортированный товар", "", "warning")
-                return false
-            }
-
             return true
         },
         get_save_sorting_form() {
             var data = {
                 order_id: this.opened_order.id,
                 sorted_purchases: JSON.stringify(this.opened_order["save_sorting_form"]["sorted"]),
+                check_defects_checkbox: JSON.stringify(this.opened_order["save_sorting_form"]["check_defects_checkbox"]),
+                with_gift_checkbox: JSON.stringify(this.opened_order["save_sorting_form"]["with_gift_checkbox"]),
                 reports: JSON.stringify(this.opened_order["save_sorting_form"]["reports"]),
             }
 

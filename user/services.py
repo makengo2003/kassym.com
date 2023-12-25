@@ -7,13 +7,15 @@ from django.contrib.sessions.models import Session
 
 from typing import Mapping, List
 
-from django.db.models import F, Case, When, Q, Sum, DecimalField
+from django.db.models import F, Case, When, Q, Sum, DecimalField, Value
+from django.db.models.functions import Concat
 from django.shortcuts import get_object_or_404
 from django_user_agents.utils import get_user_agent
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.request import Request
 from user_agents.parsers import UserAgent
 
+from expense.models import Expense
 from order.models import Order, OrderItem
 from product.models import Product
 from product.serializers import ProductsSerializer
@@ -241,32 +243,23 @@ def get_finance(change_time):
     total_products_price_for_markets = int(total_products_price_for_markets or 0)
     total_products_price_for_china = int(total_products_price_for_china or 0)
 
-    # total_expenses_in_ruble = 0
-    # total_expenses_in_tenge = 0
-    # total_managers_expenses_in_ruble = 0
-    # total_managers_expenses_in_tenge = 0
-    # total_buyers_expenses_in_ruble = 0
-    # total_buyers_expenses_in_tenge = 0
-    # total_sorters_expenses_in_ruble = 0
-    # total_sorters_expenses_in_tenge = 0
-    #
-    # expenses = [{
-    #     "staff_fullname": "adqweqwd",
-    #     "sum": 123,
-    #     "description": "adrkpoegjifn oajnesio njinaksd ",
-    # }] * 20
+    total_expenses_in_ruble = Expense.objects.filter(change_time=change_time, currency="ruble").aggregate(sum=Sum("sum"))["sum"]
+    total_expenses_in_tenge = Expense.objects.filter(change_time=change_time, currency="tenge").aggregate(sum=Sum("sum"))["sum"]
+    expenses = [{
+        "employee_fullname": expense.employee_fullname,
+        "sum": expense.sum,
+        "description": expense.description,
+        "currency": expense.get_currency_display(),
+        "employee_type": expense.get_employee_type_display(),
+    } for expense in Expense.objects.filter(change_time=change_time).annotate(
+        employee_fullname=Concat(F("user__first_name"), Value(" "), F("user__last_name"))
+    ).only("sum", "description", "currency", "employee_type").order_by("-id")]
 
     return {
         "total_price": total_price,
         "total_products_price_for_markets": total_products_price_for_markets,
         "total_products_price_for_china": total_products_price_for_china,
-        # "total_expenses_in_ruble": total_expenses_in_ruble,
-        # "total_expenses_in_tenge": total_expenses_in_tenge,
-        # "total_managers_expenses_in_ruble": total_managers_expenses_in_ruble,
-        # "total_managers_expenses_in_tenge": total_managers_expenses_in_tenge,
-        # "total_buyers_expenses_in_ruble": total_buyers_expenses_in_ruble,
-        # "total_buyers_expenses_in_tenge": total_buyers_expenses_in_tenge,
-        # "total_sorters_expenses_in_ruble": total_sorters_expenses_in_ruble,
-        # "total_sorters_expenses_in_tenge": total_sorters_expenses_in_tenge,
-        # "expenses": expenses
+        "total_expenses_in_ruble": total_expenses_in_ruble,
+        "total_expenses_in_tenge": total_expenses_in_tenge,
+        "expenses": expenses
     }

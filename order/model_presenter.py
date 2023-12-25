@@ -102,6 +102,8 @@ class OrderModelPresenter(BaseModelPresenter):
     def get_object_add_form_serializer_extra_fields():
         return {
             "comments": serializers.JSONField(),
+            "check_defects": serializers.JSONField(),
+            "with_gift": serializers.JSONField(),
             "order_comments": serializers.CharField(required=False)
         }
 
@@ -112,6 +114,8 @@ class OrderModelPresenter(BaseModelPresenter):
         order_items = []
         files = validated_data.pop("files")
         comments = validated_data.pop("comments", {})
+        check_defects_list = validated_data.pop("check_defects", {})
+        with_gift_list = validated_data.pop("with_gift", {})
         i = 0
 
         for qr_code in files:
@@ -121,9 +125,12 @@ class OrderModelPresenter(BaseModelPresenter):
                                  cart_item.product.discount_percentage / 100)
                 total_price = cart_item.count * product_price
                 comment = comments.get(str(cart_item.id), "")
+                check_defects = check_defects_list.get(str(cart_item.id), False)
+                with_gift = with_gift_list.get(str(cart_item.id), False)
                 order_items.append(
                     OrderItem(qr_code=files[qr_code], count=cart_item.count, product_id=cart_item.product_id,
-                              product_price=product_price, total_price=total_price, comments=comment))
+                              product_price=product_price, total_price=total_price, comments=comment,
+                              check_defects=check_defects, with_gift=with_gift))
 
                 cart_item.product.count -= cart_item.count
 
@@ -151,7 +158,9 @@ class OrderModelPresenter(BaseModelPresenter):
         selection_sheet_file = merge_pdfs([file_name] + additional_selection_lists)
 
         calculated_prices = calculate(request_user,
-                                      {"is_express": validated_data.get("is_express")},
+                                      {"is_express": validated_data.get("is_express"),
+                                       "check_defects": check_defects_list,
+                                       "with_gift": with_gift_list},
                                       cart_items=cart_items)
         deliveries_qr_code = validated_data.pop("deliveries_qr_code")
         paid_check_file = validated_data.pop("paid_check_file")
@@ -164,7 +173,8 @@ class OrderModelPresenter(BaseModelPresenter):
 
         order = Order(user=request_user, company_name=company_name,
                       deliveries_qr_code=deliveries_qr_code,
-                      selection_sheet_file=selection_sheet_file, paid_check_file=paid_check_file, comments=order_comments,
+                      selection_sheet_file=selection_sheet_file, paid_check_file=paid_check_file,
+                      comments=order_comments,
                       **validated_data, **calculated_prices)
 
         for order_items_obj in order_items:
@@ -177,12 +187,15 @@ class OrderModelPresenter(BaseModelPresenter):
         purchases = []
 
         for order_item in order_items:
-            supplier_price = {}
+            fields = {
+                "check_defects": order_item.check_defects,
+                "with_gift": order_item.with_gift,
+            }
 
             if order_item.product.supplier_price:
-                supplier_price["price_per_count"] = order_item.product.supplier_price
+                fields["price_per_count"] = order_item.product.supplier_price
 
-            purchase = Purchase(**supplier_price, order_item=order_item)
+            purchase = Purchase(**fields, order_item=order_item)
             purchases += [purchase] * order_item.count
 
         Purchase.objects.bulk_create(purchases)

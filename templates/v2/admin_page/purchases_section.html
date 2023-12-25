@@ -123,6 +123,10 @@
                             <span>Фото заменён</span>
                             <p><a target="_blank" style="color: blue; text-decoration: underline;" @click="opened_product_image = '/media/' + opened_purchase.replaced_by_product_image">Посмотреть</a></p>
                         </div>
+                        <div class="text" v-if="opened_purchase.check_defects_count > 0">
+                            <span>Проверка на брак</span>
+                            <p>${ opened_purchase.check_defects_count } шт.</p>
+                        </div>
                         <div class="text" v-if="purchase_actions_are_available()">
                             <span>Количество купленных</span>
                             <input :disabled="purchasing_is_available" type="number" v-model="purchase_form.purchased_count">
@@ -242,6 +246,10 @@
                         <div class="text" v-if="opened_market != 'china'">
                             <span>Цена за шт.</span>
                             <input type="number" v-model="is_being_considered_form.price_per_count" :disabled="is_being_considered">
+                        </div>
+                        <div class="text" v-if="is_being_considered_form.check_defects_count > 0">
+                            <span>Проверка на брак</span>
+                            <p>${ is_being_considered_form.check_defects_count } шт.</p>
                         </div>
 
 

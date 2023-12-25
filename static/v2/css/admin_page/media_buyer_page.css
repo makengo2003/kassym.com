@@ -1,4 +1,12 @@
 @media(max-width: 630px) {
+    #finance_section .actions .action:nth-child(2) {
+        padding: 35px 30px;
+    }
+
+    #finance_section .actions .action:nth-child(3), #finance_section .actions .action:nth-child(4) {
+        padding: 35px 30px;
+    }
+
     .section .content .actions .action img {
         display: none;
     }

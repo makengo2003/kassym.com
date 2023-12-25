@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/sorting/', include("sorting.urls")),
     path('api/delivering/', include("delivering.urls")),
     path('api/supplier/', include("supplier.urls")),
+    path('api/expense/', include("expense.urls")),
     path('__debug__/', include('debug_toolbar.urls')),
 ]
 

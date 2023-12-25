@@ -162,8 +162,21 @@ cart_app = Vue.createApp({
 
                 if (this.cart_is_confirmed) {
                     this.is_calculating_price = true
+                    var data = {
+                        is_express: this.express_checkbox,
+                        check_defects: {},
+                        with_gift: {},
+                    }
 
-                    axios("/api/order/calculate/", {params: {is_express: this.express_checkbox}}).then((response) => {
+                    for (var i = 0; i < this.cart.length; i++) {
+                        data["check_defects"][this.cart[i]["id"]] = this.cart[i]["check_defects"]
+                        data["with_gift"][this.cart[i]["id"]] = this.cart[i]["with_gift"]
+                    }
+
+                    data["check_defects"] = JSON.stringify(data["check_defects"])
+                    data["with_gift"] = JSON.stringify(data["with_gift"])
+
+                    axios("/api/order/calculate/", {params: data}).then((response) => {
                         this.payment_info = response.data
                         this.current_page = "payment"
                         window.scrollTo({top: 0, behavior: "smooth"});
@@ -212,6 +225,8 @@ cart_app = Vue.createApp({
                 var data = {
                     is_express: this.express_checkbox,
                     comments: {},
+                    check_defects: {},
+                    with_gift: {},
                     order_comments: this.comments,
                     deliveries_qr_code: this.uploaded_files[this.deliveries_qr_code["file"]],
                     selection_sheet_file: this.uploaded_files[this.selection_sheet["file"]],
@@ -222,9 +237,13 @@ cart_app = Vue.createApp({
                     var qr_code = this.cart[i]["qr_code"].slice(0, this.cart[i]["qr_code"].indexOf(":"))
                     data[qr_code] = this.uploaded_files[this.cart[i]["qr_code"]]
                     data["comments"][this.cart[i]["id"]] = this.cart[i]["comments"]
+                    data["check_defects"][this.cart[i]["id"]] = this.cart[i]["check_defects"]
+                    data["with_gift"][this.cart[i]["id"]] = this.cart[i]["with_gift"]
                 }
 
                 data["comments"] = JSON.stringify(data["comments"])
+                data["check_defects"] = JSON.stringify(data["check_defects"])
+                data["with_gift"] = JSON.stringify(data["with_gift"])
 
                 for (var i = 0; i < this.additional_selection_lists.length; i++) {
                     data[this.additional_selection_lists[i]["file"]] = this.uploaded_files[this.additional_selection_lists[i]["file"]]

@@ -1,3 +1,5 @@
+import json
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -17,6 +19,14 @@ def calculate(user, data, cart_items=None):
     specific_products_count = 0
     products_ids = {}
 
+    check_defects_list = data["check_defects"]
+    if type(check_defects_list) == str:
+        check_defects_list = json.loads(check_defects_list)
+
+    with_gift_list = data["with_gift"]
+    if type(with_gift_list) == str:
+        with_gift_list = json.loads(with_gift_list)
+
     for cart_item in cart_items:
         total_products_price += cart_item.count * (cart_item.product.price - cart_item.product.price * cart_item.product.discount_percentage / 100)
         total_products_count += cart_item.count
@@ -32,6 +42,14 @@ def calculate(user, data, cart_items=None):
             specific_products_count += cart_item.count
 
         products_ids[cart_item.product_id] = products_ids.get(cart_item.product_id, 0) + cart_item.count
+
+        check_defects = check_defects_list.get(str(cart_item.id), False)
+        if check_defects:
+            total_service_price += 30 * cart_item.count
+
+        with_gift = with_gift_list.get(str(cart_item.id), False)
+        if with_gift:
+            total_service_price += 60 * cart_item.count
 
     service_price_per_count = 50
     express_price_per_count = 150

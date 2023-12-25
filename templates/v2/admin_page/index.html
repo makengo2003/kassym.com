@@ -54,13 +54,13 @@
         {% if request.user.buyer or request.user.super_admin %}
         <p :style="opened_section == 'purchases' ? 'color: #00FFF5;' : ''" @click="open_section('purchases')"><img :src="opened_section == 'purchases' ? '{% static 'v2/imgs/blue_orders_icon.png' %}' : '{% static 'v2/imgs/orders_icon.png' %}'"><span>Закуп</span></p>
         <p :style="opened_section == 'sorting' ? 'color: #00FFF5;' : ''" @click="open_section('sorting')"><img :src="opened_section == 'sorting' ? '{% static 'v2/imgs/blue_sorting_icon.png' %}' : '{% static 'v2/imgs/sorting_icon.png' %}'"><span>Сортировка</span></p>
-        <p :style="opened_section == 'delivering' ? 'color: #00FFF5;' : ''" @click="open_section('delivering')"><img :src="opened_section == 'delivering' ? '{% static 'v2/imgs/blue_delivery_icon.png' %}' : '{% static 'v2/imgs/delivery_icon.png' %}'"><span>Отправка</span></p>
+<!--        <p :style="opened_section == 'delivering' ? 'color: #00FFF5;' : ''" @click="open_section('delivering')"><img :src="opened_section == 'delivering' ? '{% static 'v2/imgs/blue_delivery_icon.png' %}' : '{% static 'v2/imgs/delivery_icon.png' %}'"><span>Отправка</span></p>-->
         {% endif %}
 
         {% if request.user.super_admin %}
         <p :style="opened_section == 'finance' ? 'color: #00FFF5;' : ''" @click="open_section('finance')"><img :src="opened_section == 'finance' ? '{% static 'v2/imgs/blue_finance_icon.png' %}' : '{% static 'v2/imgs/finance_icon.png' %}'"><span>Финансы</span></p>
         <p :style="opened_section == 'suppliers' ? 'color: #00FFF5;' : ''" @click="open_section('suppliers')"><img :src="opened_section == 'suppliers' ? '{% static 'v2/imgs/blue_finance_icon.png' %}' : '{% static 'v2/imgs/finance_icon.png' %}'"><span>Поставщики</span></p>
-        {% elif not request.user.supplier %}
+        {% elif request.user.buyer or request.user.manager %}
         <p :style="opened_section == 'expenses' ? 'color: #00FFF5;' : ''" @click="open_section('expenses')"><img :src="opened_section == 'expenses' ? '{% static 'v2/imgs/blue_expenses_icon.png' %}' : '{% static 'v2/imgs/expenses_icon.png' %}'"><span>Расходы</span></p>
         {% endif %}
 
@@ -82,7 +82,10 @@
     {% if request.user.buyer or request.user.super_admin %}
         {% include 'v2/admin_page/purchases_section.html' %}
         {% include 'v2/admin_page/sorting_section.html' %}
+
+        {% comment %}
         {% include 'v2/admin_page/delivering_section.html' %}
+        {% endcomment %}
     {% endif %}
 
     {% if request.user.super_admin %}
@@ -114,7 +117,7 @@
         <script src="{% static 'v2/js/admin_page/base.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/buyer.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/sorting.js' %}?v={{ server_ran_time }}"></script>
-        <script src="{% static 'v2/js/admin_page/delivering.js' %}?v={{ server_ran_time }}"></script>
+<!--        <script src="{% static 'v2/js/admin_page/delivering.js' %}?v={{ server_ran_time }}"></script>-->
         <script src="{% static 'v2/js/admin_page/supplier.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/finance.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/suppliers.js' %}?v={{ server_ran_time }}"></script>

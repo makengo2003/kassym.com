@@ -32,6 +32,7 @@ def start_to_sort_view(request):
 @permission_classes([IsBuyer])
 def save_sorting_view(request):
     services.save_sorting(request.data.get("order_id"), request.data.get("sorted_purchases"),
+                          request.data.get("check_defects_checkbox"), request.data.get("with_gift_checkbox"),
                           request.data.get("reports"), request.FILES)
     return Response({"success": True})
 

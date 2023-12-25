@@ -2,33 +2,60 @@
 
 <div id="expenses_section" class="section">
     <div class="header">
-        <div class="_header">
+        <div class="_header" style="flex-direction: column">
             <h3>Расходы</h3>
-            <p>Сумма расходов: <span>${ total_expenses_in_tenge } тг / ${ total_expenses_in_ruble } Р</span></p>
+            <p v-if="total_expenses_sum_in_ruble > 0 || total_expenses_sum_in_tenge > 0">
+                Сумма расходов:
+                <span v-if="total_expenses_sum_in_ruble > 0">${ total_expenses_sum_in_ruble } Р</span>
+                <span v-if="total_expenses_sum_in_ruble > 0 && total_expenses_sum_in_tenge > 0">, </span>
+                <span v-if="total_expenses_sum_in_tenge > 0">${ total_expenses_sum_in_tenge } Тг</span>
+            </p>
         </div>
 
         <hr>
 
         <div class="sub_header">
             <select @change="select_change_time()" v-model="selected_change_time">
-                <option v-for="change_time in change_times" :value="change_time.dt">Смена: ${ change_time.dt }</option>
+                <option v-for="change_time in change_times" :value="change_time.dt">Дата: ${ change_time.dt }</option>
             </select>
 
             <div v-if="selected_change_time_is_today()" class="add_expense_btn_block">
-                <button @click="open_expense_form()">Добавить расходы</button>
+                <button class="active" @click="open_expense_form()" style="background: #1D1D42">Добавить расходы</button>
             </div>
         </div>
     </div>
 
     <div class="content">
-        <div class="actions">
-            <div class="action" v-for="expense in expenses">
-                <div class="text">
-                    <p>${ expense.total_managers_expenses_in_ruble } P</p>
-                    <p style="font-size: 12px; opacity: 0.6;">${ expense.total_managers_expenses_in_tenge } тг</p>
-                    <span>${ expense.description }</span>
+        <div class="table">
+            <div class="list">
+                <div class="card" v-for="expense in expenses" style="border-radius: 10px; min-height: 65px; align-items: center">
+                    <div class="text">
+                        <b style="font-size: 17.5px;">${ expense.sum } ${ expense.currency }</b>
+                        <span style="opacity: 0.5; font-size: 13px;">${ expense.description }</span>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="window" v-if="opened_expense_form != null" id="expense_form" style="display: block">
+        <form class="_window change_password_window" @submit.prevent="save_expense()" style="height: fit-content">
+            {% csrf_token %}
+            <h3>Добавить расходы</h3>
+
+            <h5 style="margin: -8px 0;">Валюта</h5>
+            <select v-model="opened_expense_form.currency" required>
+                <option value="ruble">Рубль</option>
+                <option value="tenge">Тенге</option>
+            </select>
+
+            <input type="number" placeholder="Сумма" required v-model="opened_expense_form.sum">
+            <input type="text" placeholder="Описание" required v-model="opened_expense_form.description">
+
+            <p></p>
+
+            <button type="submit">Сохранить</button>
+            <img src="{% static 'v2/imgs/close_form.png' %}" class="close_window_btn" @click="close_expense_form()">
+        </form>
     </div>
 </div>
