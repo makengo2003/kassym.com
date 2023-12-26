@@ -106,7 +106,9 @@ def save_sorting(order_id, sorted_purchases, check_defects_checkbox, with_gift_c
 
 def finish_sorting(order_id):
     request_user = getattr(settings, 'request_user', None)
-    Order.objects.filter(id=order_id).update(status="sorted", is_sorting_by=request_user.first_name + " " + request_user.last_name, sorted_dt=datetime_now())
+    Order.objects.filter(id=order_id).update(status="sorted",
+                                             is_sorting_by=request_user.first_name + " " + request_user.last_name,
+                                             sorted_dt=datetime_now())
 
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -117,7 +119,8 @@ def finish_sorting(order_id):
 
 def get_not_sorted_products(search_input):
     if search_input:
-        search_filtration = Q(order_item__product__name_lower__icontains=search_input.strip().lower()) | Q(order_item__product__code_lower__icontains=search_input.strip().lower())
+        search_filtration = Q(order_item__product__name_lower__icontains=search_input.strip().lower()) | Q(
+            order_item__product__code_lower__icontains=search_input.strip().lower())
     else:
         search_filtration = Q()
 
@@ -131,16 +134,17 @@ def get_not_sorted_products(search_input):
         "order_item__product__boutique", "order_item__product__poster", "order_item__product__name",
         "order_item__product__vendor_number", "order_item__product__price", "price_per_count",
         "replaced_by_product_image"
-    ).annotate(count=Count("id")).distinct().order_by("-order_item__order__is_express",
-                                                      'order_item__product__boutique',
-                                                      '-order_item__product__id')
+    ).annotate(count=Count("id"), check_defects_count=Count("id", filter=Q(check_defects=True))).distinct().order_by(
+        "-order_item__order__is_express",
+        'order_item__product__boutique',
+        '-order_item__product__id')
 
     return PurchaseSerializer(products, many=True)
 
 
 def get_not_sorted_product(product_id):
     filtration = ((Q(order_items__purchases__status="purchased") | Q(order_items__purchases__status="replaced")) &
-              (Q(order_items__purchases__is_sorted=False) & Q(order_items__product__id=product_id)))
+                  (Q(order_items__purchases__is_sorted=False) & Q(order_items__product__id=product_id)))
 
     orders = Order.objects.filter(
         ~Q(status="canceled"),
