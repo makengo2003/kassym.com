@@ -126,7 +126,7 @@ def get_not_sorted_products(search_input):
 
     products = Purchase.objects.filter(
         search_filtration,
-        ~Q(order_item__order__status="canceled"),
+        ~Q(order_item__order__status="canceled") & ~Q(order_item__order__status="sorted"),
         (Q(status="purchased") | Q(status="replaced")),
         is_sorted=False
     ).values(
