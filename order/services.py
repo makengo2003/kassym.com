@@ -49,7 +49,7 @@ def calculate(user, data, cart_items=None):
 
         with_gift = with_gift_list.get(str(cart_item.id), False)
         if with_gift:
-            total_service_price += 60 * cart_item.count
+            total_service_price += 50 * cart_item.count
 
     service_price_per_count = 50
     express_price_per_count = 150
