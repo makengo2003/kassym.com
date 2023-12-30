@@ -191,6 +191,61 @@ function open_add_to_cart_form(id, name, category_name, price, poster) {
     }
 }
 
+function open_add_to_my_cards_form(id) {
+    Swal.fire({
+        title: "Добавить в мои карточки?",
+        text: "Добавьте товар в мои карточки и получайте сообщение о статусе товара",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Добавить",
+        cancelButtonText: "Отменить"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.post("/api/user/add_to_my_cards/", {product_id: id}, {
+                headers: {
+                    "X-CSRFToken": $cookies.get("csrftoken"),
+                }
+            }).then((response) => {
+                Swal.fire("Добавлен", "", "success")
+            }).catch((error) => {
+                Swal.fire("Ошибка", "Не удалось добавить в мои карточки", "error")
+            })
+        }
+    })
+}
+
+function remove_my_card(id) {
+    Swal.fire({
+        title: "Удалить из моих карточек?",
+        text: "После удалений, вы перестанете получать сообщение о статусе товара",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Удалить",
+        cancelButtonText: "Назад"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.post("/api/user/remove_from_my_cards/", {product_id: id}, {
+                headers: {
+                    "X-CSRFToken": $cookies.get("csrftoken"),
+                }
+            }).then((response) => {
+                Swal.fire({
+                    title: "Удален",
+                    icon: "success"
+                }).then((response) => {
+                    window.location.reload()
+                })
+            }).catch((error) => {
+                Swal.fire("Ошибка", "Не удалось удалить из моих карточек", "error")
+            })
+        }
+    })
+}
+
 function plus_count() {
     document.getElementById("add_to_cart_form-count").innerText = parseInt(document.getElementById("add_to_cart_form-count").innerText) + 1
     count_onchange()

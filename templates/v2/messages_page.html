@@ -1,0 +1,90 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/messages_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}?v={{ server_ran_time }}">
+{% endblock %}
+
+
+{% block body %}
+<div class="block" id="messages_page">
+    <div class="container">
+        <div class="section">
+            <h2>Сообщения</h2>
+
+            <div class="chats">
+
+                <hr>
+
+                <a href="product_status/" class="chat">
+                    <img src="{% static 'v2/imgs/product_status_message_icon.png' %}">
+
+                    <div class="text">
+                        <h3>Остатки</h3>
+                        <p>{{ messages.product_status.last_message }}</p>
+                    </div>
+
+                    {% if messages.product_status.has_not_read_count > 0 %}
+                    <div class="count">
+                        <span>{% if messages.product_status.has_not_read_count > 99 %}+99{% else %}{{ messages.product_status.has_not_read_count }}{% endif %}</span>
+                    </div>
+                    {% endif %}
+                </a>
+
+                <hr>
+
+                <a href="order_status/" class="chat">
+                    <img src="{% static 'v2/imgs/order_status_message_icon.png' %}">
+
+                    <div class="text">
+                        <h3>Заказы</h3>
+                        <p>{{ messages.order_status.last_message }}</p>
+                    </div>
+
+                    {% if messages.order_status.has_not_read_count > 0 %}
+                    <div class="count">
+                        <span>{% if messages.order_status.has_not_read_count > 99 %}+99{% else %}{{ messages.order_status.has_not_read_count }}{% endif %}</span>
+                    </div>
+                    {% endif %}
+                </a>
+
+                <hr>
+
+                <a href="news/" class="chat">
+                    <img src="{% static 'v2/imgs/news_message_icon.png' %}">
+
+                    <div class="text">
+                        <h3>Новости</h3>
+                        <p>{{ messages.news.last_message }}</p>
+                    </div>
+
+                    {% if messages.news.has_not_read_count > 0 %}
+                    <div class="count">
+                        <span>{% if messages.news.has_not_read_count > 99 %}+99{% else %}{{ messages.news.has_not_read_count }}{% endif %}</span>
+                    </div>
+                    {% endif %}
+                </a>
+
+                <hr>
+
+                <a href="tech_support/" class="chat">
+                    <img src="{% static 'v2/imgs/tech_support_message_icon.png' %}">
+
+                    <div class="text">
+                        <h3>Тех. поддержка</h3>
+                        <p>{{ messages.tech_support.last_message }}</p>
+                    </div>
+
+                    {% if messages.tech_support.has_not_read_count > 0 %}
+                    <div class="count">
+                        <span>{% if messages.tech_support.has_not_read_count > 99 %}+99{% else %}{{ messages.tech_support.has_not_read_count }}{% endif %}</span>
+                    </div>
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -2,11 +2,13 @@
 {% load site_settings_tags %}
 {% load static %}
 {% load static_files_versions_tags %}
+{% load messages_count_tags %}
 
 {% get_categories as categories %}
 {% get_contacts as contacts %}
 {% get_slides as slides %}
 {% get_server_ran_time as server_ran_time %}
+{% get_messages_count as messages_count %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,14 +47,21 @@
 
 		<div class="block navbar-block">
 			<div class="container navbar-container">
-				<h2><a href="/">kassym <br> qazaq</a></h2>
+				<a style="width: fit-content" href="/"><h2 style="width: fit-content"><img src="{% static 'v2/imgs/kaskat_logo.png' %}" id="kaskat_logo"></h2></a>
 
 				<form class="search" action="/search_result/">
 					<input type="text" placeholder="Наименование или артикул" name="search_input">
 					<button>Поиск</button>
 				</form>
 
-				<div class="authentication">
+				{% if request.user.is_authenticated %}
+				<a id="messages_anchor" style="margin: auto 0 auto auto; height: 30px; width: 30px" href="/messages/">
+					<img src="{% static 'v2/imgs/chat_icon.png' %}" width="30" height="30">
+					{% if messages_count > 0 %}<div class="count"><span>{% if messages_count > 99 %}+99{% else %}{{ messages_count }}{% endif %}</span></div>{% endif %}
+				</a>
+				{% endif %}
+
+				<div class="authentication" style="{% if request.user.is_authenticated %}margin-left: 2px{% else %}margin-left: auto{% endif %}">
 					{% if not request.user.is_authenticated %}
 					<button class="signup_btn" onclick="document.getElementById('login_form_window').style.display = 'block'">Войти</button>
 					{% else %}
@@ -75,6 +84,7 @@
 						<div class="profile_dropdown">
 							<a href="/profile/"><img src="{% static 'v2/imgs/profile_icon.png' %}" alt=""><span>Профиль</span></a>
 							<a href="/favourites/"><img src="{% static 'v2/imgs/empty_heart.png' %}" alt=""><span>Избранные</span></a>
+							<a href="/my_cards/" style="transform: translateX(-3px); gap: 11.5px;"><img style="width: 31px; height: 28px;" src="{% static 'v2/imgs/my_cards_icon.png' %}" alt=""><span>Мои карточки</span></a>
 							<a href="/cart/"><img style="transform: translateX(-2px);" src="{% static 'v2/imgs/cart_icon.png' %}" alt=""><span>Корзина</span></a>
 							<a href="/my_orders/"><img style="transform: translateX(-2px);" src="{% static 'v2/imgs/my_orders_icon.png' %}" alt=""><span>Мои заказы</span></a>
 							<a href="/courses/"><img src="{% static 'v2/imgs/courses_icon.png' %}" alt=""><span>Курсы</span></a>
@@ -85,7 +95,7 @@
 					{% endif %}
 				</div>
 
-				<div class="hamburger-menu" onclick="open_burger()">
+				<div class="hamburger-menu" onclick="open_burger()" style="margin-left: 20px">
 					<div class="bar"></div>
 					<div class="bar"></div>
 					<div class="bar"></div>
@@ -99,6 +109,7 @@
 
 							{% if request.user.is_authenticated %}
 							<a href="/favourites/">Избранные</a>
+							<a href="/my_cards/">Мои карточки</a>
 							<a href="/cart/">Корзина</a>
 							<a href="/my_orders/">Мои заказы</a>
 							<a href="/courses/">Курсы</a>
@@ -161,6 +172,7 @@
 					<p><a href="/products/?category_id=7">Ниши</a></p>
 					<p><a href="/profile/">Профиль</a></p>
 					<p><a href="/favourites/">Избранные</a></p>
+					<p><a href="/my_cards/">Мои карточки</a></p>
 					{% else %}
 					<p><a onclick="document.getElementById('login_form_window').style.display = 'block'">Ниши</a></p>
 					<p><a onclick="document.getElementById('login_form_window').style.display = 'block'">Профиль</a></p>

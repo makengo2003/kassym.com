@@ -1,5 +1,6 @@
 import json
 import random
+from threading import Thread
 from typing import Optional, Mapping, TypeVar, Sequence
 
 from django.contrib.auth.models import User
@@ -8,6 +9,7 @@ from django.db.models.functions import Coalesce
 from django.template.loader import render_to_string
 
 from category.models import Category
+from message.services import create_product_status_messages
 from user.models import FavouriteProduct
 from .models import Product
 from .serializers import ProductsSerializer, ProductSerializer, ProductFormSerializer
@@ -154,6 +156,7 @@ def change_product_is_available_status(product_id: int) -> None:
         When(is_available=True, then=False),
         When(is_available=False, then=True)
     ))
+    Thread(target=create_product_status_messages, args=(product_id,)).start()
 
 
 def get_top_5_products_of_each_category(user):

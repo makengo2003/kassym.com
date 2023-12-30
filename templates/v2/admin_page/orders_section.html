@@ -41,8 +41,8 @@
                     <span>Принятые заказы</span>
                 </div>
             </div>
-            <div class="action" @click="open_category('canceled_orders')" :style="opened_category == 'canceled_orders' ? 'border-color: #14C25A' : ''">
-                <img src="{% static 'v2/imgs/all_orders_icon.png' %}">
+            <div class="action" @click="open_category('canceled_orders')" :style="opened_category == 'canceled_orders' ? 'border-color: #e63152' : ''">
+                <img src="{% static 'v2/imgs/canceled_orders_icon.png' %}">
                 <div class="text">
                     <p>${ orders_counts.canceled_orders_count }</p>
                     <span>Отмененные заказы</span>

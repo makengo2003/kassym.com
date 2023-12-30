@@ -9,6 +9,12 @@ class FavouriteProduct(models.Model):
     product = models.ForeignKey("product.Product", on_delete=models.CASCADE, related_name="favourites")
 
 
+class MyCard(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="my_cards")
+    product = models.ForeignKey("product.Product", on_delete=models.PROTECT, related_name="my_cards")
+    last_status = models.CharField(max_length=255, default="just_created")
+
+
 class Client(models.Model):
     account = models.OneToOneField(User, on_delete=models.PROTECT, blank=True, related_name="client")
     fullname = models.CharField(max_length=255)

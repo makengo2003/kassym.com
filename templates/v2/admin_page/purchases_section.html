@@ -23,7 +23,7 @@
                     <span v-else="">0 товаров</span>
                 </div>
             </div>
-            <div class="action" @click="open_market('yuzhnye_vorota')" :style="opened_market == 'yuzhnye_vorota' ? 'border-color: green' : ''">
+            <div class="action" @click="open_market('yuzhnye_vorota')" :style="opened_market == 'yuzhnye_vorota' ? 'border-color: #16c25a' : ''">
                 <img src="{% static 'v2/imgs/yuzhnye_vorota_icon.png' %}">
                 <div class="text">
                     <p>Южные ворота</p>
@@ -31,8 +31,8 @@
                     <span v-else="">0 товаров</span>
                 </div>
             </div>
-            <div class="action" @click="open_market('china')" :style="opened_market == 'china' ? 'border-color: green' : ''">
-                <img src="{% static 'v2/imgs/china_market_icon.png' %}">
+            <div class="action" @click="open_market('china')" :style="opened_market == 'china' ? 'border-color: #e73959' : ''">
+                <img src="{% static 'v2/imgs/china_icon.png' %}">
                 <div class="text">
                     <p>Китай</p>
                     <span v-if="purchases_counts.china > 0">${ purchases_counts.china } позиции</span>
@@ -104,10 +104,6 @@
                             <p>${ opened_purchase.product_vendor_number }</p>
                         </div>
                         <div class="text" v-if="opened_market != 'china'">
-                            <span>Бутик</span>
-                            <p>${ opened_purchase.product_boutique }</p>
-                        </div>
-                        <div class="text" v-if="opened_market != 'china'">
                             <span>Цена в каталоге</span>
                             <p>${ opened_purchase.product_price } Р</p>
                         </div>
@@ -126,6 +122,25 @@
                         <div class="text" v-if="opened_purchase.check_defects_count > 0">
                             <span>Проверка на брак</span>
                             <p>${ opened_purchase.check_defects_count } шт.</p>
+                        </div>
+                        <div class="text" v-if="purchase_actions_are_available() && opened_market != 'china'">
+                            <span>Базар</span>
+                            <select v-model="purchase_form.market" :disabled="purchasing_is_available">
+                                <option value="sadovod">Садовод</option>
+                                <option value="yuzhnye_vorota">Южные ворота</option>
+                            </select>
+                        </div>
+                        <div class="text" v-else-if="opened_market != 'china'">
+                            <span>Базар</span>
+                            <p>${ opened_purchase.product_market_display }</p>
+                        </div>
+                        <div class="text" v-if="purchase_actions_are_available() && opened_market != 'china'">
+                            <span>Бутик</span>
+                            <input :disabled="purchasing_is_available" type="text" v-model="purchase_form.boutique">
+                        </div>
+                        <div class="text" v-else-if="opened_market != 'china'">
+                            <span>Бутик</span>
+                            <p>${ opened_purchase.product_boutique }</p>
                         </div>
                         <div class="text" v-if="purchase_actions_are_available()">
                             <span>Количество купленных</span>

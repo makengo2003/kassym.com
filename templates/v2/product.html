@@ -103,6 +103,8 @@
                         <button style="opacity: 0.5">Добавить в корзину</button>
                         {% endif %}
 
+                        <button onclick="open_add_to_my_cards_form({{ product.id }})">Добавить в мои карточки</button>
+
                         <div class="availability">
                             {% if product.is_available %}
                                 <p class="is_available">В наличии</p>

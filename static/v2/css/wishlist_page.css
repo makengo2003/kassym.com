@@ -1,27 +1,27 @@
-#wishlist_page .container {
+#wishlist_page .container, #my_cards_page .container {
     margin-top: 20px;
 }
 
-#wishlist_page .product_title * {
+#wishlist_page .product_title *, #my_cards_page .product_title * {
     margin: 0;
 
 }
 
-#wishlist_page .product_title {
+#wishlist_page .product_title, #my_cards_page .product_title {
     display: flex;
     flex-direction: column;
     margin: 12px 0px 17px 0px;
     gap: 5px;
 }
 
-#wishlist_page .product_title p {
+#wishlist_page .product_title p, #my_cards_page .product_title p {
     opacity: 0.5;
     font-size: 12px;
     text-decoration: underline;
     cursor: pointer;
 }
 
-#wishlist_page .path {
+#wishlist_page .path, #my_cards_page .path {
     font-size: 12px;
     display: flex;
     align-items: center;
@@ -30,14 +30,14 @@
     height: 20px;
 }
 
-#wishlist_page .path a {
+#wishlist_page .path a, #my_cards_page .path a {
     text-decoration: none;
     color: gray;
     transition: color 0.3s;
     min-width: fit-content;
 }
 
-#wishlist_page .path a:last-child {
+#wishlist_page .path a:last-child, #my_cards_page .path a:last-child {
     min-width: auto;
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -45,44 +45,44 @@
     line-break: anywhere;
 }
 
-#wishlist_page .path span {
+#wishlist_page .path span, #my_cards_page .path span {
     cursor: default;
     color: gray;
 }
 
-#wishlist_page .path button {
+#wishlist_page .path button, #my_cards_page .path button {
     border: none;
     background: none;
     padding: 0;
     margin: 0;
 }
 
-#wishlist_page .path a:hover {
+#wishlist_page .path a:hover, #my_cards_page .path a:hover {
     color: black;
 
 }
 
-#wishlist_page .path button .bar {
+#wishlist_page .path button .bar, #my_cards_page .path button .bar {
     width: 9.5px;
     height: 2px;
     background-color: gray;
     transition: background-color 0.3s;
 }
 
-#wishlist_page .path button:hover .bar {
+#wishlist_page .path button:hover .bar, #my_cards_page .path button:hover .bar {
     background-color: black;
 }
 
-#wishlist_page .path button .bar:first-child {
+#wishlist_page .path button .bar:first-child, #my_cards_page .path button .bar:first-child {
     transform: rotate(-45deg) translateY(2.5px);
 
 }
 
-#wishlist_page .path button .bar:nth-child(2) {
+#wishlist_page .path button .bar:nth-child(2), #my_cards_page .path button .bar:nth-child(2) {
     transform: rotate(45deg) translateY(-2.5px);
 
 }
 
-#wishlist_page .products_list {
+#wishlist_page .products_list, #my_cards_page .products_list {
     margin-bottom: 70px;
 }

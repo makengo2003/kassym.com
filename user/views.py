@@ -120,3 +120,17 @@ def get_finance_view(request: Request) -> Response:
         finance = services.get_finance(request.query_params.get("change_time"))
         return Response(finance)
     return Response({"message": "you are not super admin"})
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_to_my_cards_view(request):
+    services.add_to_my_cards(request.user, request.data.pop("product_id"))
+    return Response({"success": True})
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def remove_from_my_cards_view(request: Request) -> Response:
+    services.remove_from_my_cards(request.user, request.data.pop("product_id"))
+    return Response({"success": True})

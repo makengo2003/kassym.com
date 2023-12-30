@@ -9,9 +9,11 @@ from product import services as product_services
 from order.services_presenter import OrderServicesPresenter
 from order import services as order_services
 from user import services as user_services
+from message import services as message_services
 import random
 
 
+@check_account_expiration()
 def search_page_view(request):
     if request.user.is_authenticated:
         products_count = product_services.get_many(request.user, request.GET)["count"]
@@ -30,6 +32,30 @@ def favourites_page_view(request):
     if request.user.is_authenticated:
         products = user_services.get_favourite_products(request.user)
         return render(request, "v2/wishlist_page.html", {"products": products})
+    return redirect("/")
+
+
+@check_account_expiration()
+def my_cards_page_view(request):
+    if request.user.is_authenticated:
+        products = user_services.get_my_cards(request.user)
+        return render(request, "v2/my_cards_page.html", {"products": products, "my_cards_page": True})
+    return redirect("/")
+
+
+@check_account_expiration()
+def messages_page_view(request):
+    if request.user.is_authenticated:
+        messages = message_services.get_messages_preview_data(request.user)
+        return render(request, "v2/messages_page.html", {"messages": messages})
+    return redirect("/")
+
+
+@check_account_expiration()
+def message_page_view(request, message_type):
+    if request.user.is_authenticated:
+        messages = message_services.get_messages(request.user, message_type)
+        return render(request, "v2/message_page.html", {"messages": messages, "message_type": message_type})
     return redirect("/")
 
 
@@ -167,6 +193,7 @@ def super_admin_page_view(request):
     return redirect("/")
 
 
+@check_account_expiration()
 def my_orders_page_view(request):
     if hasattr(request.user, "client"):
         orders = OrderServicesPresenter().get_many({"ordering": ["-id"]})
@@ -174,6 +201,7 @@ def my_orders_page_view(request):
     return redirect("/")
 
 
+@check_account_expiration()
 def my_order_page_view(request):
     if hasattr(request.user, "client"):
         order = order_services.get_order(request.user, int(request.GET.get("id", 0)))

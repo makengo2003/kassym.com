@@ -1,0 +1,53 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/messages_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/message_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}?v={{ server_ran_time }}">
+{% endblock %}
+
+
+{% block body %}
+<div class="block" id="messages_page">
+    <div class="container">
+        <div class="section">
+            <h2>
+                {% if message_type == 'product_status' %}
+                Остатки
+                {% elif message_type == 'order_status' %}
+                Мои заказы
+                {% elif message_type == 'news' %}
+                Новости
+                {% elif message_type == 'tech_support' %}
+                Тех. поддержка
+                {% endif %}
+            </h2>
+
+            <hr>
+
+            <div class="messages" id="messages">
+                {% for message in messages %}
+                <div class="message">
+                    <img src="{% static 'v2/imgs/kaskat_icon.png' %}" alt="">
+                    <div class="text">
+                        {% if not message.has_read %}<p style="color: red;">Непрочитанное сообщение</p>{% endif %}
+                        <p>{{ message.text }}</p>
+                        <p>{{ message.get_formatted_dt }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    var scrollableDiv = document.getElementById('messages');
+    scrollableDiv.scrollTop = scrollableDiv.scrollHeight + 200;
+</script>
+{% endblock %}

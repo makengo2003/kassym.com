@@ -162,7 +162,8 @@
         z-index: 2;
         background: white;
         width: inherit;
-        height: 80px;
+        height: 140px;
+        gap: 6px;
         justify-content: center;
     }
 

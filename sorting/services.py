@@ -5,6 +5,7 @@ from channels.layers import get_channel_layer
 from django.db.models import Q, Case, When, Count, F, Value, BooleanField
 
 from change_time.models import ChangeTime
+from message.models import Message
 from order.models import Order, OrderReport
 from product.models import Product
 from project import settings
@@ -59,6 +60,7 @@ def get_order(order_id):
 
 def start_to_sort(id, fullname):
     Order.objects.filter(id=id).update(is_sorting_by=fullname, status="is_sorting")
+    Message.objects.create(type="order_status", text=f"Ваш заказ #{id} проходит этап сортировки. Скоро он будет отправлен вашим клиентам!", to_user_id=Order.objects.filter(id=id).values("user_id").first()["user_id"])
 
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -109,6 +111,7 @@ def finish_sorting(order_id):
     Order.objects.filter(id=order_id).update(status="sorted",
                                              is_sorting_by=request_user.first_name + " " + request_user.last_name,
                                              sorted_dt=datetime_now())
+    Message.objects.create(type="order_status", text=f"Ваш заказ #{order_id} завершил этап сортировки и готов к следующему этапу – отправке.", to_user_id=Order.objects.filter(id=order_id).values("user_id").first()["user_id"])
 
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(

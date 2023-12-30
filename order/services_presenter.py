@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404
 
 from base_object_presenter.serializers import BaseSerializer
 from base_object_presenter.services import BaseServicesPresenter
+from message.models import Message
 from project import settings
 from project.utils import datetime_now
 from .model_presenter import OrderModelPresenter
@@ -95,6 +96,7 @@ class OrderServicesPresenter(BaseServicesPresenter):
     def accept_order(self, order_id):
         request_user = getattr(settings, 'request_user', None)
         self.model_presenter.model.objects.filter(id=order_id).update(status="accepted", manager=request_user.manager, accepted_dt=datetime_now())
+        Message.objects.create(type="order_status", text=f'Ваш заказ #{order_id} принят, и завтра начнется процесс закупки товаров. Следите за статусом товаров в разделе "Мои заказы".', to_user_id=self.model_presenter.model.objects.filter(id=order_id).values("user_id").first()["user_id"])
 
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(

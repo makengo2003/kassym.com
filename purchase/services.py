@@ -62,7 +62,7 @@ class PurchaseServicesPresenter:
             "order_item__product__id", "order_item__order__is_express",
             "order_item__product__boutique", "order_item__product__poster", "order_item__product__name",
             "order_item__product__vendor_number", "order_item__product__price", "price_per_count",
-            "replaced_by_product_image"
+            "replaced_by_product_image", "order_item__product__market"
         ).annotate(
             count=Count("id"), check_defects_count=Count("id", filter=Q(order_item__check_defects=True))
         ).distinct().order_by("-order_item__order__is_express", 'order_item__product__boutique',
@@ -148,6 +148,12 @@ class PurchaseServicesPresenter:
                 "fullname": clients[key]["fullname"],
                 "product_count": clients[key]["product_count"],
             })
+
+        product = Product.objects.filter(id=data["product_id"]).only("category_id", "market", "boutique").first()
+        if product.category_id != 7:
+            product.market = data["market"]
+            product.boutique = data["boutique"]
+            product.save(update_fields=["market", "boutique"])
 
         if replaced_found:
             return {"success": True, "is_being_considered_report": is_being_considered_report}

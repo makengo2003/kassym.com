@@ -95,11 +95,15 @@ body {
 }
 
 .navbar-container h2, .navbar-container a {
-    width: 235px;
+    width: fit-content;
     text-decoration: none;
     color: black;
     font-family: Gilroy-Bold;
     line-height: 20px;
+}
+
+.navbar-container a {
+    margin-right: 65px;
 }
 
 .navbar-container .search {
@@ -707,7 +711,7 @@ body {
 .navbar-container .profile_dropdown {
     position: absolute;
     right: 0;
-    bottom: -338%;
+    bottom: -403%;
 
     display: flex;
     flex-direction: column;
@@ -733,4 +737,32 @@ body {
 .navbar-container .authentication .profile_dropdown_btn.active_profile_dropdown .bars {
     transform: rotate(-180deg);
     transition: transform 0.2s 0s;
+}
+
+#messages_anchor {
+    transform: translateY(-1px);
+    position: relative;
+}
+
+#messages_anchor .count {
+    background: red;
+    border-radius: 50%;
+    min-height: 20px;
+    min-width: 20px;
+    color: white;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    font-size: 12px;
+    top: -7px;
+    right: -7px;
+}
+
+#messages_anchor .count span {
+    transform: translate(0.5px, 0.4px);
+}
+
+#kaskat_logo {
+    height: 30px;
 }

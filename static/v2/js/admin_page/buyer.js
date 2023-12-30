@@ -203,6 +203,11 @@ purchases_app = Vue.createApp({
                 if (this.opened_purchase.price_per_count) {
                     this.purchase_form["price_per_count"] = this.opened_purchase.price_per_count
                 }
+
+                if (this.opened_market != "china") {
+                    this.purchase_form["market"] = this.opened_purchase.product_market
+                    this.purchase_form["boutique"] = this.opened_purchase.product_boutique
+                }
             }
 
             if (this.selected_status == "purchased" || this.selected_status == "replaced") {
