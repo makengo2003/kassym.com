@@ -5,6 +5,9 @@ from .views import *
 urlpatterns = [
     path("", main_page_view, name="main_page"),
     path("favourites/", favourites_page_view, name="favourites_page"),
+    path("my_cards/", my_cards_page_view, name="my_cards_page"),
+    path("messages/", messages_page_view, name="messages_page"),
+    path("messages/<str:message_type>/", message_page_view, name="message_page"),
     path("my_orders/", my_orders_page_view, name="my_orders_page"),
     path("my_order/", my_order_page_view, name="my_order_page"),
     path("products/", products_page_view, name="products_page"),

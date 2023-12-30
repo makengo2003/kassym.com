@@ -7,8 +7,8 @@ from django.contrib.sessions.models import Session
 
 from typing import Mapping, List
 
-from django.db.models import F, Case, When, Q, Sum, DecimalField, Value
-from django.db.models.functions import Concat
+from django.db.models import F, Case, When, Q, Sum, DecimalField, Value, OuterRef, Exists, BooleanField
+from django.db.models.functions import Concat, Coalesce
 from django.shortcuts import get_object_or_404
 from django_user_agents.utils import get_user_agent
 from rest_framework.exceptions import ValidationError, PermissionDenied
@@ -22,7 +22,7 @@ from product.serializers import ProductsSerializer
 from project.settings import BOT_TOKEN
 from purchase.models import Purchase
 from site_settings.models import Contact
-from .models import FavouriteProduct, Client, UserRequest
+from .models import FavouriteProduct, Client, UserRequest, MyCard
 from .serializers import ChangePasswordSerializer, ClientSerializer, ClientFormSerializer
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -263,3 +263,31 @@ def get_finance(change_time):
         "total_expenses_in_tenge": total_expenses_in_tenge,
         "expenses": expenses
     }
+
+
+def get_my_cards(user):
+    if user.is_authenticated:
+        favourite_subquery = FavouriteProduct.objects.filter(
+            user_id=user.pk, product_id=OuterRef('id')
+        ).values('user_id')
+
+        is_favourite_case = Coalesce(
+            Exists(favourite_subquery), Value(False), output_field=BooleanField()
+        )
+    else:
+        is_favourite_case = Case(When(id__gt=0, then=False))
+
+    products = Product.objects.filter(my_cards__user__username=user.username).annotate(
+        is_favourite=is_favourite_case,
+        image=F("poster"),
+        category_name=F("category__name"),
+    ).order_by("-my_cards__id").distinct().only("id", "name", "price", "code", "is_available", "count", "currency", "poster")
+    return ProductsSerializer(products, many=True).data
+
+
+def add_to_my_cards(user, product_id):
+    MyCard.objects.get_or_create(user=user, product_id=product_id)
+
+
+def remove_from_my_cards(user, product_id):
+    MyCard.objects.filter(user=user, product_id=product_id).delete()

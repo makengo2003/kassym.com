@@ -133,6 +133,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 4px;
 }
 
 #product_template .product_info .actions .product_action .add_to_cart_block button {

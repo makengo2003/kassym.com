@@ -19,5 +19,7 @@ urlpatterns = [
     path("get_clients/", get_clients_view, name="get_clients"),
     path("search_clients/", search_clients_view, name="search_clients"),
     path("leave_request/", leave_request_view, name="leave_request"),
-    path("get_finance/", get_finance_view, name="get_finance")
+    path("get_finance/", get_finance_view, name="get_finance"),
+    path("add_to_my_cards/", add_to_my_cards_view, name="add_to_my_cards"),
+    path("remove_from_my_cards/", remove_from_my_cards_view, name="remove_from_my_cards")
 ]

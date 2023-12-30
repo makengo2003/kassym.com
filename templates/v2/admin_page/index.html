@@ -48,24 +48,24 @@
 
         {% if request.user.manager or request.user.super_admin %}
         <p :style="opened_section == 'orders' ? 'color: #00FFF5;' : ''" @click="open_section('orders')"><img :src="opened_section == 'orders' ? '{% static 'v2/imgs/blue_orders_icon.png' %}' : '{% static 'v2/imgs/orders_icon.png' %}'"><span>Заказ товаров</span></p>
-        <p :style="opened_section == 'is_being_considered' ? 'color: #00FFF5;' : ''" @click="open_section('is_being_considered')"><img :src="opened_section == 'is_being_considered' ? '{% static 'v2/imgs/blue_orders_icon.png' %}' : '{% static 'v2/imgs/orders_icon.png' %}'"><span>Рассматривается</span></p>
+        <p :style="opened_section == 'is_being_considered' ? 'color: #00FFF5;' : ''" @click="open_section('is_being_considered')"><img :src="opened_section == 'is_being_considered' ? '{% static 'v2/imgs/blue_is_being_considered_icon.png' %}' : '{% static 'v2/imgs/is_being_considered_icon.png' %}'"><span>Рассматривается</span></p>
         {% endif %}
 
         {% if request.user.buyer or request.user.super_admin %}
-        <p :style="opened_section == 'purchases' ? 'color: #00FFF5;' : ''" @click="open_section('purchases')"><img :src="opened_section == 'purchases' ? '{% static 'v2/imgs/blue_orders_icon.png' %}' : '{% static 'v2/imgs/orders_icon.png' %}'"><span>Закуп</span></p>
+        <p :style="opened_section == 'purchases' ? 'color: #00FFF5;' : ''" @click="open_section('purchases')"><img :src="opened_section == 'purchases' ? '{% static 'v2/imgs/blue_purchases_icon.png' %}' : '{% static 'v2/imgs/purchases_icon.png' %}'"><span>Закуп</span></p>
         <p :style="opened_section == 'sorting' ? 'color: #00FFF5;' : ''" @click="open_section('sorting')"><img :src="opened_section == 'sorting' ? '{% static 'v2/imgs/blue_sorting_icon.png' %}' : '{% static 'v2/imgs/sorting_icon.png' %}'"><span>Сортировка</span></p>
 <!--        <p :style="opened_section == 'delivering' ? 'color: #00FFF5;' : ''" @click="open_section('delivering')"><img :src="opened_section == 'delivering' ? '{% static 'v2/imgs/blue_delivery_icon.png' %}' : '{% static 'v2/imgs/delivery_icon.png' %}'"><span>Отправка</span></p>-->
         {% endif %}
 
         {% if request.user.super_admin %}
         <p :style="opened_section == 'finance' ? 'color: #00FFF5;' : ''" @click="open_section('finance')"><img :src="opened_section == 'finance' ? '{% static 'v2/imgs/blue_finance_icon.png' %}' : '{% static 'v2/imgs/finance_icon.png' %}'"><span>Финансы</span></p>
-        <p :style="opened_section == 'suppliers' ? 'color: #00FFF5;' : ''" @click="open_section('suppliers')"><img :src="opened_section == 'suppliers' ? '{% static 'v2/imgs/blue_finance_icon.png' %}' : '{% static 'v2/imgs/finance_icon.png' %}'"><span>Поставщики</span></p>
+        <p :style="opened_section == 'suppliers' ? 'color: #00FFF5;' : ''" @click="open_section('suppliers')"><img :src="opened_section == 'suppliers' ? '{% static 'v2/imgs/blue_suppliers_icon.png' %}' : '{% static 'v2/imgs/suppliers_icon.png' %}'"><span>Поставщики</span></p>
         {% elif request.user.buyer or request.user.manager %}
         <p :style="opened_section == 'expenses' ? 'color: #00FFF5;' : ''" @click="open_section('expenses')"><img :src="opened_section == 'expenses' ? '{% static 'v2/imgs/blue_expenses_icon.png' %}' : '{% static 'v2/imgs/expenses_icon.png' %}'"><span>Расходы</span></p>
         {% endif %}
 
         {% if request.user.supplier %}
-        <p :style="opened_section == 'supplier' ? 'color: #00FFF5;' : ''" @click="open_section('supplier')"><img :src="opened_section == 'supplier' ? '{% static 'v2/imgs/blue_orders_icon.png' %}' : '{% static 'v2/imgs/orders_icon.png' %}'"><span>Мои товары</span></p>
+        <p :style="opened_section == 'supplier' ? 'color: #00FFF5;' : ''" @click="open_section('supplier')"><img :src="opened_section == 'supplier' ? '{% static 'v2/imgs/blue_purchases_icon.png' %}' : '{% static 'v2/imgs/purchases_icon.png' %}'"><span>Мои товары</span></p>
         {% endif %}
 
         <hr>

@@ -254,6 +254,17 @@
 								<div id="product_form_description_editor"></div>
 							</div>
 							<div class="add_product block_css" v-if="product_form['category_id'] != main_category_id">
+								<b>Базар:</b>
+								<select v-model="product_form['market']" required>
+									<option value="sadovod">Садовод</option>
+									<option value="yuzhnye_vorota">Южные ворота</option>
+								</select>
+							</div>
+							<div class="add_product block_css" v-if="product_form['category_id'] != main_category_id">
+								<b>Бутик:</b>
+								<input type="text" placeholder="Бутик" v-model="product_form['boutique']" required>
+							</div>
+							<div class="add_product block_css" v-if="product_form['category_id'] != main_category_id">
 								<b>Цена у поставщика:</b>
 								<input type="number" placeholder="Цена у поставщика" v-model="product_form['supplier_price']">
 							</div>

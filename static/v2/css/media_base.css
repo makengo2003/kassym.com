@@ -1,4 +1,12 @@
 @media(max-width: 1150px) {
+    .navbar-container a {
+        margin-right: 60px;
+    }
+
+    .navbar-container .authentication .profile_dropdown_btn .user * {
+        max-width: 155px;
+    }
+
 	.container {
 		width: 850px;
 	}
@@ -70,6 +78,15 @@
     #add_to_cart_form form {
         width: 500px;
         max-width: 500px;
+    }
+
+    #messages_anchor {
+        transform: translateY(3.5px);
+    }
+
+    #kaskat_logo {
+        height: 25px;
+        transform: translateY(4.6px)
     }
 }
 

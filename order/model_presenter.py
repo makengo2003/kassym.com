@@ -11,6 +11,8 @@ from rest_framework import serializers
 
 from base_object_presenter.models import BaseModelPresenter
 from cart.models import CartItem
+from message.models import Message
+from message.services import create_product_status_messages
 from purchase.models import Purchase
 from .models import Order, OrderItem
 from .services import calculate
@@ -134,7 +136,7 @@ class OrderModelPresenter(BaseModelPresenter):
 
                 cart_item.product.count -= cart_item.count
 
-                if cart_item.product.count < 0:
+                if cart_item.product.count <= 0:
                     cart_item.product.count = 0
 
                     if cart_item.product.supplier_id != None:
@@ -212,6 +214,11 @@ class OrderModelPresenter(BaseModelPresenter):
             "managers_room", {"type": "managers_message", "message": {"action": "orders_count_changed",
                                                                       "order_id": order.id}}
         )
+        Message.objects.create(type="order_status", text=f"Ваш заказ #{order.id} успешно оформлен и готовится к обработке.",
+                               to_user_id=Order.objects.filter(id=order.id).values("user_id").first()["user_id"])
+
+        for order_item in order.order_items.all():
+            create_product_status_messages(order_item.product_id)
 
     @staticmethod
     def get_updatable_fields():

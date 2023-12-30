@@ -1,9 +1,11 @@
+from threading import Thread
 from typing import MutableMapping
 
 from django.core.files.storage import FileSystemStorage
 from django_bulk_update.helper import bulk_update
 from rest_framework import serializers
 
+from message.services import create_product_status_messages
 from project import settings
 from supplier.models import Supplier
 from supplier.services import get_rating
@@ -101,7 +103,7 @@ class ProductFormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        exclude = ["category", "supplier", "code", "vendor_number", "market", "boutique", "name_lower", "code_lower",
+        exclude = ["category", "supplier", "code", "vendor_number", "name_lower", "code_lower",
                    "poster"]
 
     def get_price(self, supplier_price):
@@ -162,9 +164,11 @@ class ProductFormSerializer(serializers.ModelSerializer):
                         product.vendor_number = supplier.account.username
                     else:
                         product.vendor_number = phone_number
-                        product.market = "sadovod"
+                        product.market = validated_data.get("market", "sadovod")
+                        product.boutique = validated_data.get("boutique", "")
                 else:
-                    product.market = "sadovod"
+                    product.market = validated_data.get("market", "sadovod")
+                    product.boutique = validated_data.get("boutique", "")
 
         product.save()
 
@@ -234,13 +238,13 @@ class ProductFormSerializer(serializers.ModelSerializer):
                         product_form["vendor_number"] = supplier.account.username
                     else:
                         product_form["vendor_number"] = phone_number
-                        product_form["market"] = "sadovod"
-                        product_form["boutique"] = None
+                        product_form["market"] = validated_data.get("market", "sadovod")
+                        product_form["boutique"] = validated_data.get("boutique", "")
                         product_form["supplier"] = None
                 else:
-                    product_form["market"] = "sadovod"
+                    product_form["market"] = validated_data.get("market", "sadovod")
                     product_form["vendor_number"] = None
-                    product_form["boutique"] = None
+                    product_form["boutique"] = validated_data.get("boutique", "")
                     product_form["supplier"] = None
 
         status = validated_data.pop("status", None)
@@ -249,9 +253,13 @@ class ProductFormSerializer(serializers.ModelSerializer):
 
         validated_data.pop("supplier_price", None)
         validated_data.pop("price", None)
+        validated_data.pop("market", None)
+        validated_data.pop("boutique", None)
 
         bulk_update(product_images, update_fields=["image"])
         Product.objects.filter(id=product.pk).update(**validated_data, **product_form, price=price,
                                                      supplier_price=supplier_price, status=status)
+
+        Thread(target=create_product_status_messages, args=(product.id,)).start()
 
         return product

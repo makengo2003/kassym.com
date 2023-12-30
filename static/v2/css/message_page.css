@@ -1,0 +1,49 @@
+#messages_page .section .messages {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+    max-height: 62vh;
+    overflow-y: scroll;
+}
+
+#messages_page .section .messages * {
+    margin: 0;
+}
+
+#messages_page .section .messages .message {
+    display: flex;
+    align-items: end;
+    gap: 13px;
+}
+
+#messages_page .section .messages .message img {
+    width: 50px;
+    height: 50px;
+}
+
+#messages_page .section .messages .message .text {
+    padding: 15px;
+    background: #80808029;
+    color: black;
+    border-radius: 7px;
+    max-width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+@media(max-width: 630px) {
+    #messages_page .section .messages {
+        max-height: 68vh;
+    }
+
+    #messages_page .section .messages .message {
+        gap: 8px;
+    }
+
+    #messages_page .section .messages .message img {
+        width: 40px;
+        height: 40px;
+    }
+}

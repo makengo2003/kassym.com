@@ -1,0 +1,37 @@
+{% extends 'v2/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'v2/css/wishlist_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/main_page.css' %}?v={{ server_ran_time }}">
+<link rel="stylesheet" href="{% static 'v2/css/media_main_page.css' %}?v={{ server_ran_time }}">
+{% endblock %}
+
+
+{% block body %}
+<div class="block" id="my_cards_page">
+    <div class="container">
+        <div class="path">
+            <button class="go_back_btn" onclick="window.history.go(-1)">
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </button>
+            <a href="/">Главная</a>
+            <span>/</span>
+            <a>Мои карточки</a>
+        </div>
+
+        <div class="product_title">
+            <h2>Мои избранные</h2>
+            <p style="text-decoration: none; opacity: 0.7">Добавьте товары в мои карточки и получайте сообщение о статусе товаров</p>
+        </div>
+
+        {% include 'v2/products.html' %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'v2/js/products.js' %}?v={{ server_ran_time }}"></script>
+{% endblock %}
