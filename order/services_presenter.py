@@ -96,7 +96,7 @@ class OrderServicesPresenter(BaseServicesPresenter):
     def accept_order(self, order_id):
         request_user = getattr(settings, 'request_user', None)
         self.model_presenter.model.objects.filter(id=order_id).update(status="accepted", manager=request_user.manager, accepted_dt=datetime_now())
-        Message.objects.create(type="order_status", text=f'Ваш заказ #{order_id} принят, и завтра начнется процесс закупки товаров. Следите за статусом товаров в разделе "Мои заказы".', to_user_id=self.model_presenter.model.objects.filter(id=order_id).values("user_id").first()["user_id"])
+        Message.objects.create(type="order_status", text=f'Ваш заказ #{order_id} принят, и завтра начнется процесс закупки товаров. Следите за статусом товаров на странице заказа.', to_user_id=self.model_presenter.model.objects.filter(id=order_id).values("user_id").first()["user_id"])
 
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
@@ -157,6 +157,8 @@ class OrderServicesPresenter(BaseServicesPresenter):
         self.model_presenter.model.objects.filter(id=order_id).update(status="canceled", manager=request_user.manager,
                                                                       canceled_dt=datetime_now(),
                                                                       cancellation_reason=reason)
+        Message.objects.create(type="order_status", text=f'Ваш заказ #{order_id} отменен по причине: "{reason}".', to_user_id=self.model_presenter.model.objects.filter(id=order_id).values("user_id").first()["user_id"])
+
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             "managers_room", {"type": "managers_message", "message": {"action": "orders_count_changed",
