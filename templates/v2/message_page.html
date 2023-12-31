@@ -33,7 +33,7 @@
                     <img src="{% static 'v2/imgs/kaskat_icon.png' %}" alt="">
                     <div class="text">
                         {% if not message.has_read %}<p style="color: red;">Непрочитанное сообщение</p>{% endif %}
-                        <p>{{ message.text }}</p>
+                        <p style="white-space: pre-line">{{ message.text }}</p>
                         <p>{{ message.get_formatted_dt }}</p>
                     </div>
                 </div>
