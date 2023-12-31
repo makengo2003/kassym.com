@@ -95,7 +95,7 @@
 					{% endif %}
 				</div>
 
-				<div class="hamburger-menu" onclick="open_burger()" style="margin-left: 20px">
+				<div class="hamburger-menu" onclick="open_burger()" style="{% if request.user.is_authenticated %}margin-left: 20px{% else %}margin-left: auto{% endif %}">
 					<div class="bar"></div>
 					<div class="bar"></div>
 					<div class="bar"></div>
