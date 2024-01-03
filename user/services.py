@@ -220,7 +220,8 @@ def get_favourite_products(user):
         is_favourite=Case(When(id__gt=0, then=True)),
         image=F("poster"),
         category_name=F("category__name"),
-    ).order_by("-favourites__id").distinct().only("id", "name", "price", "code", "is_available", "count", "currency", "poster")
+    ).order_by("-favourites__id").distinct().only("id", "name", "price", "code", "is_available", "count", "currency",
+                                                  "poster")
     return ProductsSerializer(products, many=True).data
 
 
@@ -228,23 +229,45 @@ def get_finance(change_time):
     finance = Order.objects.filter(~Q(status="new") & ~Q(status="canceled"), created_at__date=change_time).aggregate(
         total_price=Sum("total_sum_in_tenge"),
     )
-    purchases = Purchase.objects.filter(~Q(order_item__order__status="canceled"), order_item__order__created_at__date=change_time).select_related("order_item__product")
+    new_purchases = Purchase.objects.filter(
+        ~Q(order_item__order__status="new") & ~Q(order_item__order__status="canceled"),
+        order_item__order__created_at__date=change_time
+    ).select_related("order_item__product")
 
-    total_products_price_for_markets = 0
-    total_products_price_for_china = 0
+    total_new_products_price_for_markets = 0
+    total_new_products_price_for_china = 0
 
-    for purchase in purchases:
+    for purchase in new_purchases:
         if purchase.order_item.product.category_id == 7:
-            total_products_price_for_china += purchase.order_item.product_price
+            total_new_products_price_for_china += purchase.order_item.product_price
         else:
-            total_products_price_for_markets += purchase.order_item.product_price
+            total_new_products_price_for_markets += purchase.order_item.product_price
+
+    prev_purchases = Purchase.objects.filter(
+        ~Q(order_item__order__status="new") & ~Q(order_item__order__status="canceled"),
+        order_item__order__created_at__date__lt=change_time, last_modified__date__gte=change_time
+    ).select_related("order_item__product")
+
+    total_prev_products_price_for_markets = 0
+    total_prev_products_price_for_china = 0
+
+    for purchase in prev_purchases:
+        if purchase.order_item.product.category_id == 7:
+            total_prev_products_price_for_china += purchase.order_item.product_price
+        else:
+            total_prev_products_price_for_markets += purchase.order_item.product_price
 
     total_price = int(finance["total_price"] or 0)
-    total_products_price_for_markets = int(total_products_price_for_markets or 0)
-    total_products_price_for_china = int(total_products_price_for_china or 0)
+    total_new_products_price_for_markets = int(total_new_products_price_for_markets or 0)
+    total_new_products_price_for_china = int(total_new_products_price_for_china or 0)
 
-    total_expenses_in_ruble = Expense.objects.filter(change_time=change_time, currency="ruble").aggregate(sum=Sum("sum"))["sum"]
-    total_expenses_in_tenge = Expense.objects.filter(change_time=change_time, currency="tenge").aggregate(sum=Sum("sum"))["sum"]
+    total_prev_products_price_for_markets = int(total_prev_products_price_for_markets or 0)
+    total_prev_products_price_for_china = int(total_prev_products_price_for_china or 0)
+
+    total_expenses_in_ruble = \
+        Expense.objects.filter(change_time=change_time, currency="ruble").aggregate(sum=Sum("sum"))["sum"]
+    total_expenses_in_tenge = \
+        Expense.objects.filter(change_time=change_time, currency="tenge").aggregate(sum=Sum("sum"))["sum"]
     expenses = [{
         "employee_fullname": expense.employee_fullname,
         "sum": expense.sum,
@@ -257,8 +280,10 @@ def get_finance(change_time):
 
     return {
         "total_price": total_price,
-        "total_products_price_for_markets": total_products_price_for_markets,
-        "total_products_price_for_china": total_products_price_for_china,
+        "total_new_products_price_for_markets": total_new_products_price_for_markets,
+        "total_new_products_price_for_china": total_new_products_price_for_china,
+        "total_prev_products_price_for_markets": total_prev_products_price_for_markets,
+        "total_prev_products_price_for_china": total_prev_products_price_for_china,
         "total_expenses_in_ruble": total_expenses_in_ruble,
         "total_expenses_in_tenge": total_expenses_in_tenge,
         "expenses": expenses
@@ -281,7 +306,8 @@ def get_my_cards(user):
         is_favourite=is_favourite_case,
         image=F("poster"),
         category_name=F("category__name"),
-    ).order_by("-my_cards__id").distinct().only("id", "name", "price", "code", "is_available", "count", "currency", "poster")
+    ).order_by("-my_cards__id").distinct().only("id", "name", "price", "code", "is_available", "count", "currency",
+                                                "poster")
     return ProductsSerializer(products, many=True).data
 
 

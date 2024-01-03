@@ -267,6 +267,11 @@ purchases_app = Vue.createApp({
                 return
             }
 
+            if (!(this.purchase_form["boutique"]) && this.opened_market != "china") {
+                Swal.fire("Вы забыли указать бутик", "", "error")
+                return
+            }
+
             Swal.fire({
                 title: "Пожалуйста, внимательно проверьте введенные данные",
                 icon: "warning",

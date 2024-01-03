@@ -41,7 +41,8 @@
                     <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}">
 
                     <div class="text">
-                        <p>${ finance.total_products_price_for_markets } Р</p>
+                        <p>${ finance.total_new_products_price_for_markets + finance.total_prev_products_price_for_markets } Р</p>
+                        <span style="opacity: 0.85; font-size: 12.5px; margin-top: 2px;">Добавлено: ${ finance.total_prev_products_price_for_markets }p</span>
                         <span>За товары (Базар)</span>
                     </div>
                 </div>
@@ -50,7 +51,8 @@
                     <img src="{% static 'v2/imgs/accepted_orders_icon.png' %}" style="visibility: hidden; width: 0">
 
                     <div class="text">
-                        <p>${ finance.total_products_price_for_china } Р</p>
+                        <p>${ finance.total_new_products_price_for_china + finance.total_prev_products_price_for_china } Р</p>
+                        <span style="opacity: 0.85; font-size: 12.5px; margin-top: 2px;">Добавлено: ${ finance.total_prev_products_price_for_china }p</span>
                         <span>За товары (Китай)</span>
                     </div>
                 </div>
