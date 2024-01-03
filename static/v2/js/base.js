@@ -141,29 +141,19 @@ function close_instruction_video() {
     document.getElementById('watch_instruction_window').style.display = 'none'
 }
 
-function wait_burger_opening() {
-    document.getElementsByClassName("burger-container")[0].classList.toggle("active_burger")
-    document.getElementsByClassName("burger")[0].removeEventListener("transitionend", wait_burger_opening)
-}
-
-
 function open_burger() {
     close_categories_burger()
+
     document.getElementsByClassName("hamburger-menu")[0].classList.toggle('active_hamburger');
-    document.getElementsByClassName("burger")[0].addEventListener("transitionend", wait_burger_opening)
     document.getElementsByClassName("hamburger-menu")[0].onclick = close_burger
+
     document.body.style.overflow = 'hidden';
 }
 
-function wait_burger_content_closing() {
-    document.getElementsByClassName("hamburger-menu")[0].classList.toggle('active_hamburger');
-    document.getElementsByClassName("burger-container")[0].removeEventListener("transitionend", wait_burger_content_closing)
-}
-
 function close_burger() {
-    document.getElementsByClassName("burger-container")[0].classList.toggle("active_burger")
-    document.getElementsByClassName("burger-container")[0].addEventListener("transitionend", wait_burger_content_closing)
+    document.getElementsByClassName("hamburger-menu")[0].classList.toggle('active_hamburger');
     document.getElementsByClassName("hamburger-menu")[0].onclick = open_burger
+
     document.body.style.overflow = 'auto';
 }
 
