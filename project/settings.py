@@ -24,14 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-d0jc1^@a+2d0hy6+j@_as)l39x-d7z4k!q7p+fqgf-gu1n_uvi'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 if DEBUG:
     SITE_DOMAIN = "127.0.0.1:8000"
 else:
     SITE_DOMAIN = "kassym.com"
 
-ALLOWED_HOSTS = [SITE_DOMAIN, "127.0.0.1", "192.168.79.119", "172.20.10.3", "192.168.224.119"]
+ALLOWED_HOSTS = [SITE_DOMAIN, "127.0.0.1", "192.168.79.119", "172.20.10.3", "192.168.81.119"]
 
 
 # Application definition

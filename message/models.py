@@ -17,6 +17,6 @@ class Message(models.Model):
         return self.dt.strftime("%d.%m.%Y, %H:%M")
 
 
-# class MessageFile(models.Model):
-#     message = models.ForeignKey(Message, on_delete=models.CASCADE)
-#     file = models.FileField(upload_to="message_files/")
+class MessageFile(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name="files")
+    file = models.FileField(upload_to="message_files/")

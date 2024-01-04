@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="{% static 'v2/css/admin_page/finance_section.css' %}?v={{ server_ran_time }}">
     <link rel="stylesheet" href="{% static 'v2/css/admin_page/expenses_section.css' %}?v={{ server_ran_time }}">
     <link rel="stylesheet" href="{% static 'v2/css/admin_page/supplier.css' %}?v={{ server_ran_time }}">
+    <link rel="stylesheet" href="{% static 'v2/css/message_page.css' %}?v={{ server_ran_time }}">
+    <link rel="stylesheet" href="{% static 'v2/css/admin_page/tech_support.css' %}?v={{ server_ran_time }}">
     <link rel="stylesheet" href="{% static 'v2/css/admin_page/quill.snow.css' %}?v={{ server_ran_time }}">
 
     <style>
@@ -49,6 +51,7 @@
         {% if request.user.manager or request.user.super_admin %}
         <p :style="opened_section == 'orders' ? 'color: #00FFF5;' : ''" @click="open_section('orders')"><img :src="opened_section == 'orders' ? '{% static 'v2/imgs/blue_orders_icon.png' %}' : '{% static 'v2/imgs/orders_icon.png' %}'"><span>Заказ товаров</span></p>
         <p :style="opened_section == 'is_being_considered' ? 'color: #00FFF5;' : ''" @click="open_section('is_being_considered')"><img :src="opened_section == 'is_being_considered' ? '{% static 'v2/imgs/blue_is_being_considered_icon.png' %}' : '{% static 'v2/imgs/is_being_considered_icon.png' %}'"><span>Рассматривается</span></p>
+        <p :style="opened_section == 'tech_support' ? 'color: #00FFF5;' : ''" @click="open_section('tech_support')"><img :src="opened_section == 'tech_support' ? '{% static 'v2/imgs/blue_chat_icon.png' %}' : '{% static 'v2/imgs/chat__icon.png' %}'"><span>Тех. поддержка</span></p>
         {% endif %}
 
         {% if request.user.buyer or request.user.super_admin %}
@@ -77,6 +80,7 @@
     {% if request.user.manager or request.user.super_admin %}
         {% include 'v2/admin_page/orders_section.html' %}
         {% include 'v2/admin_page/is_being_considered_section.html' %}
+        {% include 'v2/admin_page/tech_support_section.html' %}
     {% endif %}
 
     {% if request.user.buyer or request.user.super_admin %}
@@ -123,6 +127,7 @@
         <script src="{% static 'v2/js/admin_page/suppliers.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/is_being_considered.js' %}?v={{ server_ran_time }}"></script>
         <script src="{% static 'v2/js/admin_page/expenses.js' %}?v={{ server_ran_time }}"></script>
+        <script src="{% static 'v2/js/admin_page/tech_support.js' %}?v={{ server_ran_time }}"></script>
 
         <script src="{% static 'v2/js/admin_page/sidebar.js' %}?v={{ server_ran_time }}"></script>
 

@@ -54,7 +54,10 @@ def messages_page_view(request):
 @check_account_expiration()
 def message_page_view(request, message_type):
     if request.user.is_authenticated:
-        messages = message_services.get_messages(request.user, message_type)
+        messages = message_services.get_messages(request.user, message_type, int(request.GET.get("id__gt", 0)), int(request.GET.get("user_id", 0)))
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return render(request, "v2/messages.html", {"messages": messages, "message_type": message_type})
         return render(request, "v2/message_page.html", {"messages": messages, "message_type": message_type})
     return redirect("/")
 

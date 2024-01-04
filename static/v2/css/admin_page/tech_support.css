@@ -1,0 +1,70 @@
+#tech_support_section .chats {
+    background: white;
+    display: flex;
+
+    height: 82%;
+    width: 100%;
+}
+
+#tech_support_section .chats * {
+    margin: 0;
+}
+
+#tech_support_section .chats .chats_list {
+    box-shadow: 1px 0px 0px 0px #d2d2d2;
+    padding: 0 15px 0 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: scroll;
+    min-width: 200px;
+}
+
+#tech_support_section .chats .chats_list .chat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#tech_support_section .chats .chats_list .chat .count {
+    margin-left: auto;
+    background: red;
+    border-radius: 50%;
+    min-height: 23px;
+    min-width: 23px;
+    color: white;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+#tech_support_section .chats .chats_list .chat .count span {
+    font-size: 12px;
+    transform: translate(0.5px, 0.4px);
+}
+
+#tech_support_section .chats .chats_list .chat p:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#tech_support_section .chats .chats_list .chat span {
+    max-width: 200px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    min-height: min-content;
+    line-break: anywhere;
+}
+
+#tech_support_section .chats .conversation {
+    width: 100%;
+    padding: 0 20px;
+}
+
+#tech_support_section .chats .conversation .messages {
+    min-height: 70vh;
+    max-height: 70vh;
+    margin-bottom: 15px;
+}

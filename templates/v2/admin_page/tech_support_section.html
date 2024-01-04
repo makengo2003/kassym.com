@@ -1,0 +1,57 @@
+{% load static %}
+
+<div id="tech_support_section" class="section">
+    <div class="header">
+        <div class="_header">
+            <h3>Чаты</h3>
+        </div>
+
+        <div class="sub_header">
+            <form class="searching" @submit.prevent="get_chats()">
+                <input type="text" v-model="search_input">
+                <button type="submit">Поиск</button>
+                <span v-if="searched" style="cursor: pointer" @click="search_input=''; get_chats()">Отменить поиск</span>
+            </form>
+        </div>
+
+        <hr>
+    </div>
+
+    <div class="chats">
+        <div class="chats_list">
+            <div class="chat" v-for="chat in chats">
+                <p :style="selected_user_id == chat.user_id ? 'color: blue': ''" @click="select_chat(chat)">
+                    <span>${ chat.user_phone_number }</span>
+                    <span>${ chat.user_fullname }</span>
+                </p>
+
+
+                <div class="count" v-if="chat.new_messages_count > 0">
+                    <span>${ chat.new_messages_count }</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="conversation">
+            <div class="messages" id="messages"></div>
+
+            <div class="input" id="chat" v-if="selected_user_id">
+                <div class="uploads">
+                    <div class="uploaded" v-for="(file, index) in uploaded_files" :key="index">
+                        <span>${ index + 1 }. ${ file.name }</span>
+                        <a style="font-size: 25px;" @click="delete_file(index)">×</a>
+                    </div>
+                    <a style="text-decoration: underline" @click="add_file()">Загрузить файл</a>
+                    <input type="file" style="display: none" @change="handle_file_upload($event)" id="file_upload_input">
+                </div>
+
+                <div class="textarea">
+                    <textarea v-model="textarea"></textarea>
+
+                    <img src="{% static 'v2/imgs/send.png' %}" @click="send_message()" :style="is_sending_message ? 'opacity: 0.3; pointer-events: none;' : ''">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
