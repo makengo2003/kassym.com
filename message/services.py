@@ -113,7 +113,7 @@ def get_chats(search_input=None):
         user_id=F("to_user_id"),
         user_phone_number=F("to_user__username"),
         user_fullname=F("to_user__client__fullname"),
-    )
+    ).order_by("-new_messages_count")
 
     return [{
         "user_id": chat["user_id"],
