@@ -74,7 +74,11 @@
 
                     <div class="text">
                         <h3>Тех. поддержка</h3>
+                        {% if messages.tech_support.last_message %}
                         <p>{{ messages.tech_support.last_message }}</p>
+                        {% else %}
+                        <p>Прикрепленные файлы:</p>
+                        {% endif %}
                     </div>
 
                     {% if messages.tech_support.has_not_read_count > 0 %}

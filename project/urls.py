@@ -35,6 +35,7 @@ urlpatterns = [
     path('api/delivering/', include("delivering.urls")),
     path('api/supplier/', include("supplier.urls")),
     path('api/expense/', include("expense.urls")),
+    path('api/message/', include("message.urls")),
     path('__debug__/', include('debug_toolbar.urls')),
 ]
 

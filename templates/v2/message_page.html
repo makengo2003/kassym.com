@@ -28,17 +28,27 @@
             <hr>
 
             <div class="messages" id="messages">
-                {% for message in messages %}
-                <div class="message">
-                    <img src="{% static 'v2/imgs/kaskat_icon.png' %}" alt="">
-                    <div class="text">
-                        {% if not message.has_read %}<p style="color: red;">Непрочитанное сообщение</p>{% endif %}
-                        <p style="white-space: pre-line">{{ message.text }}</p>
-                        <p>{{ message.get_formatted_dt }}</p>
-                    </div>
-                </div>
-                {% endfor %}
+                {% include 'v2/messages.html' %}
             </div>
+
+            {% if message_type == 'tech_support' %}
+            <div class="input" id="chat">
+                <div class="uploads">
+                    <div class="uploaded" v-for="(file, index) in uploaded_files" :key="index">
+                        <span>${ index + 1 }. ${ file.name }</span>
+                        <a style="font-size: 25px;" @click="delete_file(index)">×</a>
+                    </div>
+                    <a style="text-decoration: underline" @click="add_file()">Загрузить файл</a>
+                    <input type="file" style="display: none" @change="handle_file_upload($event)" id="file_upload_input">
+                </div>
+
+                <div class="textarea">
+                    <textarea v-model="textarea"></textarea>
+
+                    <img src="{% static 'v2/imgs/send.png' %}" @click="send_message()" :style="is_sending_message ? 'opacity: 0.3; pointer-events: none;' : ''">
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -50,4 +60,6 @@
     var scrollableDiv = document.getElementById('messages');
     scrollableDiv.scrollTop = scrollableDiv.scrollHeight + 200;
 </script>
+<script src="{% static 'v2/js/packages/vue.global.prod.js' %}"></script>
+<script src="{% static 'v2/js/chat_page.js' %}?v={{ server_ran_time }}"></script>
 {% endblock %}

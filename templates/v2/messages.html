@@ -1,0 +1,29 @@
+{% load static %}
+
+{% for message in messages %}
+<div class="message{% if message.from_me %} from_me{% endif %}" data-id="{{ message.id }}">
+    <img src="{% static 'v2/imgs/kaskat_icon.png' %}" alt="">
+    <div class="text">
+        {% if not message.from_me %}
+            {% if not message.has_read %}
+            <p style="color: red;">Непрочитанное сообщение</p>
+            {% endif %}
+        {% endif %}
+
+        {% if message.text %}
+        <p style="white-space: pre-line">{{ message.text }}</p>
+        {% endif %}
+
+        {% if message.files.count > 0 %}
+        <p>
+            <span>Прикрепленные файлы:</span><br>
+            {% for file in message.files.all %}
+            <a href="{{ file.file.url }}"><span style="color: black;">{{ forloop.counter }}. </span>{{ file.file.name|slice:"14:" }}</a><br>
+            {% endfor %}
+        </p>
+        {% endif %}
+
+        <p>{{ message.get_formatted_dt }}</p>
+    </div>
+</div>
+{% endfor %}

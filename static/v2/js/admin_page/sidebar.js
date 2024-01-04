@@ -16,6 +16,7 @@ sidebar_app = Vue.createApp({
                 "expenses": mounted_expenses_app,
                 "supplier": mounted_supplier_app,
                 "suppliers": mounted_suppliers_app,
+                "tech_support": mounted_tech_support_app,
             }
         }
     },
